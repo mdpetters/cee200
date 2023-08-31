@@ -5,7 +5,7 @@ Advanced Engineering Computation
 
 #### Department 
 Chemical and Environmental Engineering
-a
+
 #### Instructor
 Markus Petters \\
 Department of Chemical and Environmental Engineering \\
