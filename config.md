@@ -24,6 +24,7 @@ website_url   = "https://mdpetters.github.io/cee200/"
 \newcommand{\outline}[1]{@@outline @@title **✎ Lecture Outline**@@ @@content #1 @@ @@}
 \newcommand{\note}[1]{@@note @@title **✎ Note**@@ @@content #1 @@ @@}
 \newcommand{\learning}[1]{@@learning @@title **⏻ Learning Objectives**@@ @@content #1 @@ @@}
+\newcommand{\outcomes}[1]{@@learning @@title **⏻ Learning Outcomes**@@ @@content #1 @@ @@}
 \newcommand{\caution}[1]{@@warning @@title **⚠ Caution**@@ @@content #1 @@ @@}
 \newcommand{\exercise}[1]{@@exercise @@title **⌨ Assignments**@@ @@content #1 @@ @@}
 
