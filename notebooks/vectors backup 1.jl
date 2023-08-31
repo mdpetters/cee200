@@ -28,7 +28,7 @@ begin
 
 	md"""
 	$(TableOfContents(depth=4))
-	# A Review of Numeric Differentiation, Vectors, Matrices, and Vector Calculus
+	# Review of Numeric Differentiation, Vectors, Matrices, Vector Calculus
 	This notebook provides an illustrated review over key concepts in vector calculus with the objective to apply these operators in a computational context.
 	"""
 end
