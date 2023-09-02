@@ -25,14 +25,15 @@ begin
 	using PlutoUI
 	using ColorSchemes
 	using SymPy
-
+	using PlutoUI: combine
+	
 	SSE(y,X,β) = (y-X*β)'*(y-X*β)
 	linfit(x, y) = [ones(length(x), 1) x] \ y 
 	df = DataFrame(x = [1,2,3,4,5,6,7,8.0], 
 		y = [-0.2, 2.2, 3.5, 5.0, 8.8, 7, 10.0, 12.0])
 	
 	md"""
-	# Regression, Fredhom Integrals, Inversion, and Regularization 
+	# Linear Regression, Integral Equations, Data Inversion, and Regularization 
 
 	This notebook introduces mathematical descriptions of linear regression and it's application in inverse modeling.
 	$(TableOfContents(depth=4))
@@ -407,7 +408,7 @@ end
 # ╔═╡ 6497be76-a639-430f-963b-0486e14151b2
 md"""
 
-# The Moore–Penrose inverse 
+# The Moore–Penrose Pseudo-Inverse 
 
 The Moore-Penrose inverse, also sometimes referred to as the Pseudo-Inverse is defined by the pre-term in the ordinary least squares solution. For any matrix ``\mathbf{A}``, there is always one and only one pseudoinverse ``\mathbf{A^{+}}``
 
@@ -418,7 +419,7 @@ The Moore-Penrose inverse, also sometimes referred to as the Pseudo-Inverse is d
 
 # ╔═╡ 4cfff7c9-de08-43d2-8551-c166d22df965
 md"""
-# Fredholm Integral Equation
+# Integral Equations
 
 ## Detour: Ordinary Differential Equation
 
@@ -479,13 +480,21 @@ a & & \displaystyle\mathcal{F}\{f(x)\} =& \int_{-\infty}^{\infty} f(x)e^{i\alpha
 where ``K(\alpha, x) = e^{i\alpha x}``
 
 
+## Volterra Integral Equation 
+
+A [Volterra integral equation of the first kind](https://mathworld.wolfram.com/VolterraIntegralEquationoftheFirstKind.html) is defined as
+
+$\int_{a}^{x}K(x,t)u(t)dt=y(x)$
+ 
+The distinction to the Fredholm integral equation is that the integration limits  depend on ``x``.
+
 """
 
 
 # ╔═╡ 341081cc-a36b-4cdb-99e7-9ac34730b254
 md"""
 
-## (Fredholm) Integrals in Science and Engineering
+## Integral Equations in Science and Engineering
 
 - Surface temperature from interior measurements
 - Measurement reconstruction (e.g. size distribution from mobility measurements)
@@ -501,6 +510,8 @@ These problems have in common that the taken measurement is the result of a conv
 
 # ╔═╡ d415e3d4-3034-4bab-8ee0-e2645e6daa8f
 md"""
+
+# Data Inversion of Integral Equations
 
 ## Illustrative Example
 
@@ -562,10 +573,19 @@ Below is an example how to calculate the matrix ``\mathbf{A}\vec{u}``. The discr
 
 """
 
+# ╔═╡ 3ab8590a-bb4e-4e6b-9b53-3603c23aaeeb
+@bind sv combine() do Child
+	md"""
+	n  $(
+		Child(Slider(10:1:100, default = 10))
+	) 
+	"""
+end
+
 # ╔═╡ 5cd36360-bd59-44c9-850e-79e5de8a21e8
 myA, myu, myAu, myy = let
 	a, b = 0.0, π
-	n, m = 10,10
+	n, m = sv[1],sv[1]
 	c, d = 1e-20, π/2
 	A = zeros(n,m)
 	w = (b-a)/n
@@ -586,7 +606,7 @@ end
 # ╔═╡ 17bcf2c6-5b89-4703-be18-c7c6c0433508
 md"""
 
-# Data Inversion
+## Inversion by Ordinary Least Squares Regression
 
 The inverse problem is to find $u(t)$ for a known kernel $K(x,t)$ and set of measurements $y(x)$. Thus we seek the best ``\vec{u}`` that matches observations  ``\vec{u}``. This is the same as the regression problem.
 
@@ -613,9 +633,268 @@ uhat = myA \ myy
 
 # ╔═╡ f52780fe-14d6-476c-9cfc-a656c09a7a01
 begin
-	plot(myu, xlabel = "n", color = :black, label = "true u(t)")
+	plot(myu, xlabel = "Sample # (n)", color = :black, label = "true u(t)")
 	plot!(uhat, color = :darkred, label = "u from inversion")
 end
+
+# ╔═╡ f8918afb-d4cd-4d6e-b030-955a9434c2ff
+md"""
+## Ill-Posed Problems
+
+In a well posed problem, three fundamental conditions must be satisfied:
+
+1. The problem must have a unique solution.
+2. The solution must depend continuously on the data or the parameters.
+3. The solution must be stable against small changes in the data or the parameters.
+
+
+"""
+
+# ╔═╡ d26edc69-bd85-451d-99cc-5c0eee4aed40
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concept", [md"
+
+Ill posed problems violate one or more of these conditions, making them inherently more difficult to solve. Common characteristics of an ill posed problem are
+
+1. Lack of a Unique Solution
+2. Sensitivity to Initial Conditions (or System Noise)
+3. Nonexistence of a Solution
+
+The problem above is an ill posed problem because the solution is very sensitive to system noise."]))
+
+# ╔═╡ 59375052-fb7a-4728-9118-f5096850da9c
+md"""
+### Detour: Matrix Inverse.
+
+#### Rank and Rank Deficiency
+The `rank` of matrix A is the dimension of the vector space generated (or spanned) by its columns. This corresponds to the maximal number of linearly independent columns of A. This, in turn, is identical to the dimension of the vector space spanned by its rows.
+
+A matrix is said to have full rank if its rank equals the largest possible for a matrix of the same dimensions, which is the lesser of the number of rows and columns. A matrix is said to be rank-deficient if it does not have full rank.
+
+Matrices with full rank is invertible. Rank-deficient matrices are invertible using the Moore–Penrose inverse.
+"""
+
+# ╔═╡ 01451338-1a69-47fe-9727-d5c6aaa16758
+theA = [1 2; 0 0]
+
+# ╔═╡ 7f9348f6-508e-4ac8-a4bc-e2a75d127097
+rank(theA)
+
+# ╔═╡ 7995877d-99e8-434b-9d54-1d50eec61f79
+det(theA)
+
+# ╔═╡ 1f9bad57-f122-4a5c-bdc7-90543e50a5a8
+inv(theA)
+
+# ╔═╡ e72ae865-e53a-415c-a4d4-f9ac0db96646
+md"""
+
+#### The Moore–Penrose Inverse Revisited
+
+As derived above:
+
+```math
+\mathbf{A}^+ = \left(\mathbf{A}^\intercal \mathbf{A}\right)^{-1}\mathbf{A}^\intercal
+```
+
+The Moore-Penrose pseudo-inverse and solution has the following properties
+
+1. If ``m = n``, ``\mathbf{A}^+ = \mathbf{A}^{−1}`` if ``\mathbf{A}`` is full rank. The pseudo-inverse for the case where ``\mathbf{A}`` is not full rank will be considered below
+2. If ``m > n`` the solution is the one that minimizes the quantity ``||\mathbf{A}\vec{y} - \vec{u} ||_2^2``. That is, in this case there are more constraining equations than there are free variables. In this case it is not generally possible find a solution to these equations. The pseudo-inverse gives the solution ``\vec{y}`` such that ``\mathbf{A}^+\vec{y}`` is closest (in a least-squared sense) to the desired solution vector ``\vec{u}``.
+3. If ``m < n`` , then the Moore-Penrose solution minimizes the 2-norm of ``\vec{y}``: ``||\vec{y}||_2``. In this case, there are generally an infinite number of solutions, and the Moore-Penrose solution is the particular solution whose vector 2-norm is minimal.
+
+When A is full rank, the Moore-Penrose pseudo-inverse can be directly calculated as follows:
+
+- If ``m > n``: ``\mathbf{A}^+ = \left(\mathbf{A}^\intercal \mathbf{A}\right)^{-1}\mathbf{A}^\intercal`` (see above)
+- If ``m < n``: ``\mathbf{A}^+ = \mathbf{A}^\intercal \left(\mathbf{A}\mathbf{A}^\intercal\right)^{-1}`` (which is known as the right inverse)
+
+However, when A is not full rank, then these formulas can not be used. More generally, the pseudo-inverse is best computed using the Singular Value Decomposition.
+
+"""
+
+# ╔═╡ 1ced6465-0899-4393-b93d-c3aa688a67f3
+md"""
+#### Singular Value Decomposition
+
+Let ``\mathbf{A} \in \mathbb{R}^{m \times n}``. Then there exists orthogonal matrices ``\mathbf{U} \in \mathbb{R}^{m \times m}`` and ``\mathbf{V} \in \mathbb{R}^{n \times n}`` such that the matrix ``\mathbf{A}`` can be decomposed as follows:
+
+```math
+\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T
+```
+
+where ``\Sigma`` is an ``m \times n`` diagonal matrix having the form
+
+```math
+\Sigma = \begin{bmatrix}
+\sigma_1 & 0 & 0 & \dots & 0 & 0 \\
+0 & \sigma_2 & 0 & \dots & 0 & 0 \\
+0 & 0 & \sigma_3 & \dots & 0 & 0  \\
+\vdots & \vdots & \vdots & \dots & \vdots \\
+0 & 0 & 0 & \dots & \sigma_p & 0\\
+\end{bmatrix}
+```
+
+and
+
+$\sigma_1 > \sigma_2 > \sigma_3 > \dots > \sigma_p \quad \quad p = \min\{m,n\}$
+
+The ``<\sigma_i>`` are termed the *singular values* of the matrix ``\mathbf{A}``. The columns of ``\mathbf{U}`` are termed the left singular vectors, while the columns of ``\mathbf{V}`` are termed the right singular vectors. The decomposition described  is called the *Singular Value Decomposition*, which is conveniently abbreviated as SVD.
+
+Note that the SVD can be obtained usign virtually any Linear Algebra package. 
+"""
+
+# ╔═╡ e6eed0fa-ff80-4898-94d4-d44653b8b898
+# Notes
+# 1. Σ is returned as a vector (skinny). Diagonal(Σ) converts it to a Matrix
+# 2. The identity is only approximate due to numerical errors in the SVD algorithm
+let 
+	U, Σ, V = svd(myA)
+	myA ≈ U*Diagonal(Σ)*V'
+end
+
+# ╔═╡ 6ad8f345-fd60-40fa-a61c-dff02137171a
+md"""
+
+#### The Moore-Penrose Inverse from the SVD
+
+Using the SVD, the pseudo-inverse of a matrix can be easily computed as follows. 
+
+$\mathbf{A}^+ = \mathbf{V} \mathbf{\Sigma}^+ \mathbf{U}^T$
+
+where the matrix ``\mathbf{\Sigma}^+`` takes the form:
+
+```math
+\mathbf{\Sigma}^+ =  
+\begin{bmatrix}
+\frac{1}{\sigma_1} & 0 & 0 & \dots & 0 & 0 \\
+0 & \frac{1}{\sigma_2} & 0 & \dots & 0 & 0 \\
+0 & 0 & \frac{1}{\sigma_3} & \dots & 0 & 0  \\
+\vdots & \vdots & \vdots & \dots & \vdots \\
+0 & 0 & 0 & \dots & \frac{1}{\sigma_p} & 0\\
+\end{bmatrix}
+```
+
+for all of the non-zero singular values. If any of the ``σ_i`` are zero, then a zero is placed in corresponding entry of ``\mathbf{\Sigma}^+``. If the matrix ``\mathbf{A}`` is rank deficient, then one or more of its singular values will be zero. Hence, the SVD provides a means to compute the pseudo-inverse of a singular matrix.
+
+"""
+
+# ╔═╡ 6900e0ed-615e-4ede-87ca-0ba44382438b
+let 
+	U, Σ, V = svd(myA)
+	pinv(myA) ≈ V*Diagonal(1.0./Σ)*U'
+end
+
+# ╔═╡ 83fc9f05-12ac-4c93-8d92-3590e892dd1e
+md"""
+### Consequence of Near-Zero Singular Values
+
+Notice that the computation of ``\mathbf{A}^+`` via the SVD includes ``<\frac{1}{\sigma_i}>`` terms. If ``{\sigma_i}> = 0`` this is infinity and hence the term is removed for the pseudo inverse. The matrix is rank deficient, the true inverse is not defined, there are infinite solutions, and the proplem is ill-posed. Now consider near zero singular values. This results in very large ``<\frac{1}{\sigma_i}>``. These large entries in ``\mathbf{A}^+`` are then multiplied the observations ``\vec{y}`` to esitmate the solution:
+
+```math
+{\hat{\vec{u}}}
+	=
+	\left(\mathbf{A}^\intercal \mathbf{A}\right)^{-1}\mathbf{A}^\intercal \vec{y} = \mathbf{A}^+  \vec{y}
+```
+
+Small errors in ``\vec{y}`` amplify, thus causing the poor performance of the linear regression solution.
+
+As shown in the plot below for the singular values decay near exponentially. As the number of samples increases the values ``<\sigma_i>`` drop into the numerical noise.
+
+A consequence of near-zero singular values is that the matrix is **effectively rank-deficient** (and thus not invertible, and thus the problem is ill-posed) though it will appear as full rank. 
+"""
+
+# ╔═╡ aabdeb85-2ca7-43ae-b413-92cc73c5fff1
+begin
+	U, Σ, V = svd(myA)
+	plot(Σ, yscale = :log10, color = :black, ylabel = "σᵢ", xlabel = "Sample # (m)", 
+		ylim = [1e-20, 10], label = :none)
+end
+
+# ╔═╡ 46a31a35-e5f9-4e71-8d44-7093c6feb6a1
+Markdown.MD(
+	Markdown.Admonition("info", "Exercise", [md"
+- Change the number of smaples n using the slider above.
+- As you increase n, observe how the ordindary least squares inversion becomes noisy, and eventually useless. At the same time, observe how the singular values decay into the machine precision (~2e-16) for a Float64.
+"]))
+
+# ╔═╡ 42bd1e5f-25ea-4375-8a9c-3c5e8ded2867
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concept", [md"
+Machine epsilon or machine precision is an upper bound on the relative approximation error due to rounding in floating point arithmetic. This value characterizes computer arithmetic in the field of numerical analysis, and by extension in the subject of computational science. 
+
+In `Julia`, the epsilon of a data type can be determined using `eps(x)`.
+"]))
+
+# ╔═╡ f7dbe9d9-b709-47fe-9a7b-9a6cedb8d3c9
+eps(Float64(1.0))  # Precision of 64 bin floating point
+
+# ╔═╡ df2601bc-e560-4801-93bf-226700e1bde8
+eps(Float32(1.0))  # Precision of 32 bin floating point
+
+# ╔═╡ e386f4ba-3cce-44e1-b289-082afb765e37
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concepts", [md"
+- The purpose of the SVD is to express the matrix in the terms of their singular values.  
+- The SVD is provides a numerical method to compute the pseudo inverse.
+- The SVD is a rank-revealing algorithm, i.e. allows you the measure the rank of a matrix.
+- The SVD is computationally expensive (``> O(n^2)``) and thus calculating the SVD for large problems (``n,m > 10^6``) is not feasible.
+"]))
+
+# ╔═╡ da679600-4485-47c1-9999-6d4392a0e6f2
+md"""
+##  Inversion by Regularization
+
+Tikhonov regularization is a means to filter this noise by solving the minimization problem 
+
+```math
+{ {\vec{u_{\lambda}}}}=\mathrm{minimize}\left\{ \left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}\right\} 
+```
+
+where ``\vec{u_{\lambda}}`` is the regularized estimate of ``\vec{u}``,
+``\left\lVert \cdot\right\rVert _{2}`` is the Euclidean norm, ``{\rm {\bf L}}`` is the Tikhonov filter matrix, ``\lambda`` is the regularization parameter, and ``\vec{u_{0}}`` is a vector of an *a priori* guess of the solution. The initial guess can be taken to be ``\vec{u_{0}}=0`` if no *a priori* information is known. The matrix ``{\mathbf{A}}`` does not need to be square. 
+
+For ``\lambda=0`` the Tikhonov problem reverts to the ordinary least
+squares solution. If ``\mathbf{A}`` is square and ``\lambda=0``,
+the least-squares solution is ``\vec{u_\lambda}={{\mathbf{A}}^{+}\vec{y}}``. For large ``\lambda`` the solution reverts to the initial guess,
+i.e. ``\lim_{\lambda\rightarrow\infty}{\vec{u_{\lambda}}}={\vec{u_{0}}}``.
+Therefore, the regularization parameter ``\lambda`` interpolates between
+the initial guess and the noisy ordinary least squares solution. The
+filter matrix ``{{\mathbf{L}}}`` provides additional smoothness constraints on the solution. The simplest form is to use the identity matrix, ``{\mathbf{L}} =\mathbf{I}``.
+
+The formal solution to the Tikhonov problem is given by
+
+```math
+\vec{u_{\lambda}}=\left({\rm {\bf A}^{T}}{\rm {\bf A}}+\lambda^{2}{{\bf L}^{T}{\rm {\bf L}}}\right)^{-1}\left({\rm {\bf A}^{T}}{\vec{u}}+\lambda^{2}{{\mathbf{L}}^{T}{{\mathbf{L}}}\vec{u_{0}}}\right)
+```
+
+The equation is readily derived by writing ``f=\left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert {{\mathbf{L}}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}``,
+take ``\frac{df}{d{\rm {\rm x}}}=0``, and solve for ``\vec{u}``. Use
+[http://www.matrixcalculus.org/](http://www.matrixcalculus.org/)
+to validate symbolic matrix derivatives.
+
+"""
+
+# ╔═╡ 45835413-d81b-4816-8f9b-ef7060efa272
+Markdown.MD(
+	Markdown.Admonition("info", "Exercises", [md"
+1. Show that for ``\lambda = 0``, the Tikhonov solution is equal to 
+	
+```math
+{\hat{\vec{u}}}
+	=
+	\left(\mathbf{A}^\intercal \mathbf{A}\right)^{-1}\mathbf{A}^\intercal \vec{y} = \mathbf{A}^+  \vec{y}
+```
+
+2. Show that ``{\vec{u_{\lambda}}} = \mathrm{minimize}\left\{ \lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}\right\}`` implies 
+	
+$\vec{u_{\lambda}} = \vec{u_0}$
+
+3. Show that ``\mathbf{L} = \mathbf{I}`` and ``\vec{u_0} = 0`` implies 
+	
+```math
+\vec{u_{\lambda}} = \left({\rm {\bf A}^{T}}{\rm {\bf A}}+\lambda^{2} \mathbf{I}\right)^{-1}\left({\rm {\bf A}^{T}}{\vec{u}}\right)
+```
+"]))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -645,7 +924,7 @@ SymPy = "~1.1.12"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0-beta2"
+julia_version = "1.9.3"
 manifest_format = "2.0"
 project_hash = "16b7d3f7cfceedbf28e8144c3f2773a8306c531a"
 
@@ -745,7 +1024,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -1045,12 +1324,12 @@ version = "0.16.1"
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
-version = "0.6.4"
+version = "0.6.3"
 
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "8.0.1+1"
+version = "7.84.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -1059,7 +1338,7 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.11.0+1"
+version = "1.10.2+0"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -1165,7 +1444,7 @@ version = "1.1.7"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.2+1"
+version = "2.28.2+0"
 
 [[deps.Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
@@ -1183,7 +1462,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2023.1.10"
+version = "2022.10.11"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
@@ -1204,12 +1483,12 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.21+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-version = "0.8.1+2"
+version = "0.8.1+0"
 
 [[deps.OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
@@ -1243,7 +1522,7 @@ version = "1.6.2"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.42.0+1"
+version = "10.42.0+0"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -1265,7 +1544,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.10.0"
+version = "1.9.2"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1350,7 +1629,7 @@ deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[deps.Random]]
-deps = ["SHA"]
+deps = ["SHA", "Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[deps.RecipesBase]]
@@ -1424,7 +1703,6 @@ version = "1.1.1"
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-version = "1.10.0"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
@@ -1463,7 +1741,7 @@ version = "0.3.0"
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
 uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "7.2.0+1"
+version = "5.10.1+6"
 
 [[deps.SymPy]]
 deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
@@ -1738,7 +2016,7 @@ version = "1.5.0+0"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+1"
+version = "1.2.13+0"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1767,7 +2045,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+1"
+version = "5.8.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1790,12 +2068,12 @@ version = "1.3.7+1"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.52.0+1"
+version = "1.48.0+0"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+2"
+version = "17.4.0+0"
 
 [[deps.x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1846,12 +2124,34 @@ version = "1.4.1+0"
 # ╟─6497be76-a639-430f-963b-0486e14151b2
 # ╟─4cfff7c9-de08-43d2-8551-c166d22df965
 # ╟─341081cc-a36b-4cdb-99e7-9ac34730b254
-# ╟─d415e3d4-3034-4bab-8ee0-e2645e6daa8f
+# ╠═d415e3d4-3034-4bab-8ee0-e2645e6daa8f
 # ╠═90e078ad-088a-4415-bcc5-44fc01dc8406
 # ╟─ec5da1c6-3952-4576-b09d-b84af7b14bb2
+# ╟─3ab8590a-bb4e-4e6b-9b53-3603c23aaeeb
 # ╠═5cd36360-bd59-44c9-850e-79e5de8a21e8
 # ╟─17bcf2c6-5b89-4703-be18-c7c6c0433508
 # ╠═20147eab-eb85-4b3b-a1fd-9451994c8942
 # ╟─f52780fe-14d6-476c-9cfc-a656c09a7a01
+# ╟─f8918afb-d4cd-4d6e-b030-955a9434c2ff
+# ╟─d26edc69-bd85-451d-99cc-5c0eee4aed40
+# ╟─59375052-fb7a-4728-9118-f5096850da9c
+# ╠═01451338-1a69-47fe-9727-d5c6aaa16758
+# ╠═7f9348f6-508e-4ac8-a4bc-e2a75d127097
+# ╠═7995877d-99e8-434b-9d54-1d50eec61f79
+# ╠═1f9bad57-f122-4a5c-bdc7-90543e50a5a8
+# ╟─e72ae865-e53a-415c-a4d4-f9ac0db96646
+# ╟─1ced6465-0899-4393-b93d-c3aa688a67f3
+# ╠═e6eed0fa-ff80-4898-94d4-d44653b8b898
+# ╟─6ad8f345-fd60-40fa-a61c-dff02137171a
+# ╠═6900e0ed-615e-4ede-87ca-0ba44382438b
+# ╟─83fc9f05-12ac-4c93-8d92-3590e892dd1e
+# ╠═aabdeb85-2ca7-43ae-b413-92cc73c5fff1
+# ╟─46a31a35-e5f9-4e71-8d44-7093c6feb6a1
+# ╟─42bd1e5f-25ea-4375-8a9c-3c5e8ded2867
+# ╠═f7dbe9d9-b709-47fe-9a7b-9a6cedb8d3c9
+# ╠═df2601bc-e560-4801-93bf-226700e1bde8
+# ╟─e386f4ba-3cce-44e1-b289-082afb765e37
+# ╟─da679600-4485-47c1-9999-6d4392a0e6f2
+# ╟─45835413-d81b-4816-8f9b-ef7060efa272
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

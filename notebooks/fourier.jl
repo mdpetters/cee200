@@ -186,9 +186,9 @@ y(t) = \sum_{i=1}^{3} A_i\cos(2πf_it + ϕ_i)
 @bind v combine() do Child
 	md"""
 	A₁ (a.u.) $(
-		Child(Slider(0:0.1:10, default = 1))
+		Child(Slider(0:0.1:10, default = 0.3))
 	) f₁ (Hz) $(
-		Child(Slider(0.1:0.1:50, default = 0.5))
+		Child(Slider(0.1:0.1:50, default = 3))
 	) Φ₁ (deg) $( 
 		Child(Slider(0:1:180, default = 45))
 	)
@@ -196,17 +196,17 @@ y(t) = \sum_{i=1}^{3} A_i\cos(2πf_it + ϕ_i)
 	A₂ (a.u.) $(
 		Child(Slider(0:0.1:10, default = 1))
 	) f₂ (Hz) $(
-		Child(Slider(0.1:0.1:50, default = 0.5))
+		Child(Slider(0.1:0.1:50, default = 30))
 	) Φ₂ (deg) $( 
-		Child(Slider(0:1:180, default = 45))
+		Child(Slider(0:1:180, default = 90))
 	)
 
 	A₃ (a.u.) $(
-		Child(Slider(0:0.1:10, default = 1))
+		Child(Slider(0:0.1:10, default = 0.5))
 	) f₃ (Hz) $(
-		Child(Slider(0.1:0.1:50, default = 0.5))
+		Child(Slider(0.1:0.1:50, default = 10))
 	) Φ₃ (deg) $( 
-		Child(Slider(0:1:180, default = 45))
+		Child(Slider(0:1:180, default = 1809))
 	)
 	"""
 end
@@ -1051,7 +1051,7 @@ SymPy = "~1.1.12"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0-beta2"
+julia_version = "1.9.3"
 manifest_format = "2.0"
 project_hash = "b4df7c7302d7bb8ec7ad1e3c28af42ed98063e38"
 
@@ -1165,7 +1165,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -1487,12 +1487,12 @@ uuid = "4af54fe1-eca0-43a8-85a7-787d91b784e3"
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
-version = "0.6.4"
+version = "0.6.3"
 
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "8.0.1+1"
+version = "7.84.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -1501,7 +1501,7 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.11.0+1"
+version = "1.10.2+0"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -1613,7 +1613,7 @@ version = "1.1.7"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.2+1"
+version = "2.28.2+0"
 
 [[deps.Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
@@ -1631,7 +1631,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2023.1.10"
+version = "2022.10.11"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
@@ -1652,12 +1652,12 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.21+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-version = "0.8.1+2"
+version = "0.8.1+0"
 
 [[deps.OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
@@ -1691,7 +1691,7 @@ version = "1.6.2"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.42.0+1"
+version = "10.42.0+0"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -1713,7 +1713,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.10.0"
+version = "1.9.2"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1798,7 +1798,7 @@ deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[deps.Random]]
-deps = ["SHA"]
+deps = ["SHA", "Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[deps.RecipesBase]]
@@ -1872,7 +1872,6 @@ version = "1.1.1"
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-version = "1.10.0"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
@@ -1911,7 +1910,7 @@ version = "0.3.0"
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
 uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "7.2.0+1"
+version = "5.10.1+6"
 
 [[deps.SymPy]]
 deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
@@ -2186,7 +2185,7 @@ version = "1.5.0+0"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+1"
+version = "1.2.13+0"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -2215,7 +2214,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+1"
+version = "5.8.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2238,12 +2237,12 @@ version = "1.3.7+1"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.52.0+1"
+version = "1.48.0+0"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+2"
+version = "17.4.0+0"
 
 [[deps.x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2307,7 +2306,7 @@ version = "1.4.1+0"
 # ╟─e9ea80d2-48c2-4ce6-8f2d-d12c4d8a7a7d
 # ╟─1dd0225b-c974-49ae-99b2-b98d2360f0c5
 # ╟─9826982f-0d7c-43e2-8328-9b686612eaf5
-# ╟─f0a64881-805a-459d-9e8a-31efa787af7a
+# ╠═f0a64881-805a-459d-9e8a-31efa787af7a
 # ╟─c698ffa3-db8b-4920-b6ff-00416dc99094
 # ╟─09d0aa06-b1bd-4793-a08b-fa4cb4fa08c8
 # ╟─0605a57f-7cb2-4d83-ae54-ae1b65756efc
@@ -2317,7 +2316,7 @@ version = "1.4.1+0"
 # ╟─d410fc70-565e-46d9-af87-6585c74cdda3
 # ╠═f1c3da44-e3f2-4249-a194-28c1caf1b82a
 # ╟─5e046263-ff18-40b4-9810-f32b89316e3d
-# ╟─f44e4292-97bc-4372-b28e-6868f8e64449
+# ╠═f44e4292-97bc-4372-b28e-6868f8e64449
 # ╟─c72f0b73-75ca-4e42-b73d-eb573081fca0
 # ╟─45114e1c-baac-4334-bff8-6b019a16b11c
 # ╟─c0072a98-ddb5-4ac7-9d10-37bcf460b8e3
