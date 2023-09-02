@@ -1,7 +1,7 @@
 
 # Regression, Data Inversion, and Regularization
 
-This module .  
+This module ...  
 
 \learning{
 **By the end of this lesson you have learned**
