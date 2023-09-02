@@ -1,10 +1,10 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.17.7
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 22f50c78-4371-11ee-0998-3f4adc43bebe
+# ╔═╡ 089ab50c-4389-11ee-0ba5-a7b731f99a15
 begin
 	using PlutoUI, LaTeXStrings
 	using HypertextLiteral
@@ -16,148 +16,193 @@ begin
 
 	md"""
 $(TableOfContents(depth=4))
-# Example ODEs: Systems of Equations
+# Example ODEs: Chapman Cycle
 	"""
 end
 
-# ╔═╡ c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-md"""
+# ╔═╡ 30aff398-cab1-4a6a-a47e-9a92a37da053
+begin
+img_url = "../data/ozone_hole.jpg"
 
-Consider a simple reaction mechamism involving species ``x``, ``y``, and ``z``
+	md"""
+Ozone depletion consists of two related events observed since the late 1970s: a steady lowering of about four percent in the total amount of ozone in Earth's atmosphere, and a much larger springtime decrease in stratospheric ozone (the ozone layer) around Earth's polar regions. 
+
+$(LocalResource(img_url, :width => 300))
+
+The [Ozone hole](https://ozonewatch.gsfc.nasa.gov/facts/hole_SH.html) has been an environmental problem of global concern related to the release of CFCs in the atmosphere. The Chapman cycle describes the main reactions that naturally determine, to first approximation, the concentration of ozone in the stratosphere.
 
 ```math
-\begin{array}
-& x \rightarrow y & \;\;\; \frac{dx}{dt} = -ax \\
-y \rightarrow z & \quad \quad \; \frac{dy}{dt} = ax - by \\
- & \frac{dz}{dt} = by \\
-\end{array}
+\begin{align}
+& \textbf{Chapman Cycle} \\
+(1) \quad & O_2 + hν & \rightarrow & \quad 2O⋅ \\
+(2) \quad & O⋅ +\; O_2 + M & \rightarrow & \quad O_3 + M \\
+(3) \quad & O_3 + hν & \rightarrow & \quad O_2 +\; O⋅ \\
+\hline 
+\text{Net} \quad & O_2 + 2hν & \rightarrow & \quad\; O⋅ \\
+& \\
+& \textbf{CFCs Catalytic Cycle 1} \\
+\quad & CCl_2F_2 + hν & \rightarrow & \quad CClF_2 + Cl\cdot \\
+(4) \quad & Cl⋅ +\; O_3 & \rightarrow & \quad ClO\cdot +\; O_2 \\
+(5) \quad & ClO\cdot +\; O\cdot & \rightarrow & \quad  Cl\cdot +\; O_2 \\
+\\
+& \textbf{Cl⋅ Catalytic Cycle 2} \\
+(6) \quad & ClO\cdot + ClO\cdot + M & \rightarrow & \quad (ClO)_2 + M \\
+(7) \quad & (ClO)_2 + hν & \rightarrow & \quad Cl\cdot +\; ClOO \\
+(8) \quad & ClOO + M & \rightarrow & \quad Cl\cdot +\; O_2 + M \\
+\end{align}
+```
+	
+Without the interference of halogens and other species that catalyze the destruction of ozone, the ozone layer maintains a steady state concentration via the Chapman Cycle. Both ``O_2`` and ``O_3`` absorb light in this reaction scheme, forming atomic O, which destroys and creates ozone. This is a natural cycle that does not affect the overall concentration of ozone.
+
+CFCs release chlorine by absorbing light.CFCs alone are harmless to the ozone layer: it is the chlorine atoms released by photolysis that are harmful. Chlorine released from CFCs participates in a catalytic chain reaction which results in the destruction of ``O_3``. Using reactions mechanism, we can develop a model for the catalytic destruction of ``O_3`` in the ozone layer by chlorine released from CFCs. The reaction mechanism can be modeled using a set of system of coupled ODEs
+	
+```math
+\begin{align}
+\frac{d[O_2]}{dt} &=-r_1-r_2+r_3+r_4+r_5+r_8 \\
+\frac{d[O]}{dt}   &= \frac{2k_1 [O_2] + k_3 [O_3]}{k_2 [O2]+k_5 [ClO]}\\
+\frac{d[O_3]}{dt} &= r_2-r_3-r_4 \\
+\frac{d[Cl]}{dt}  &= \frac{k_5[O] [ClO]+k_7 [Cl_2O_2]+k_8 [ClO_2]}{k_4[O_3]} \\
+\frac{d[ClO]}{dt} &= \frac{k_7[Cl_2O_2]+k_8 [ClO_2]}{(2k_6)^{0.5}} \\
+\frac{d[Cl2O2]}{[dt} &= r_6-r_7 \\
+\frac{d[ClO2]}{dt}  &= r_7-r_8 	
+\end{align}
 ```
 
-In this reaction ``x`` decays into ``y``, ``y`` decays into ``z``.  All reactions are first order. An example would be a [radiatioactive decay chain](https://en.wikipedia.org/wiki/Decay_chain).
+with the rate laws given by
 	
+```math
+\begin{align}
+r_1 &=     k_1[O_2]     & k_1 &=  1.03E-94 \\
+r_2 &=     k_2[O_2][O] & k_2 &=     5.92E-34 \\
+r_3 &=     k_3[O_3]     & k_3 &=     4.38E-26  \\
+r_4 &=     k_4[O_3][Cl] & k_4 &=     1.22E-11  \\
+r_5 &=     k_5[O][ClO] & k_5 &=     3.8E-11 \\
+r_6 &=     k_6[ClO][ClO] & k_6 &=     2.16E-32 \\
+r_7 &=     k_7[Cl_2O_2]     & k_7 &=     8.53E-15 \\
+r_8 &=     k_8[ClO_2]     & k_8 &=     6.51E-13 
+\end{align}
+```
+
+Rates of reaction are in ``\frac{cm^3}{molecule s}``. The initical conditions are:
+
+```math
+\begin{align}
+t(0)&=0 \\
+[O_2](0)&=2E17 \\
+[O](0)&=1E-6 \\
+[O_3](0)&=5E12 \\
+[Cl](0)&=6.46E4 \\
+[ClO](0)&=7.22E7 \\
+[Cl_2O_2](0)&=1E-6 \\
+[ClO_2](0)&=1E-6 \\
+\end{align}
+```
+
+
 """
 
-# ╔═╡ 6d5d7138-6ab0-4ad8-9562-4364750d9081
-md"""
-# 2. SymPy Solution
-
-Notes on the solution:
-- SymPy can solve systems of equations. 
-- It is possible to use `Julia` metaprograming to extract the analytical solution from SymPy and evaluate it without having to retype the equation. 
-""" 
-
-# ╔═╡ 15e7e493-2b04-4fb4-8554-40494ef2a3c0
-@syms a b t x() y() z()
-
-# ╔═╡ 5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# x -> y reaction
-eq1 = diff(x(t), t) + a*x(t)
-
-# ╔═╡ fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# y -> z reaction
-eq2 = diff(y(t), t) - a*x(t) + b*y(t)
-
-# ╔═╡ 8be795f6-c566-433e-9f67-8d0482f3c279
-# buildup of z
-eq3 = diff(z(t), t) - b*y(t) 
-
-# ╔═╡ 7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# solves for the system of equation with initial conditions x(0) = 2, y(0) = 0, z(0) = 0. That is, start with only x in the system
-eq4 = dsolve([eq1, eq2, eq3], ics = Dict(x(0) => 2, y(0) => 0, z(0) => 0))
-
-# ╔═╡ aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# This extracts the solution and evaluates it for t = 0:10.
-# Be careful not to use t, a, b as variables as it will conflict with the symbol 
-# definition. Hence the use of t1, c1, c2
-# asols is an array of solutions for x, y, and z
-begin
-	function eval_solution(eq, t1, c1, c2)
-		es(f, time) = f(Dict(t => time, a => c1, b => c2) )
-		map(eq) do y
-    		map(x -> es(y.rhs(), x), t1)
-		end
-	end
-	myt = 0:0.1:10
-	asols = eval_solution(eq4, myt, 1.0, 0.5)
 end
 
-# ╔═╡ 1ce7feed-5a14-44cf-ab07-470e71368a5e
-begin
-	plot(myt, asols[1,:], size = (500, 300), xlabel = "t", 
-		legend = :outertopright, 	label = "x", color = :black)
-	plot!(myt, asols[2,:], label = "y", color = :darkred)
-	plot!(myt, asols[3,:], label = "z", color = :steelblue3)
-end
-
-# ╔═╡ 3157d7f2-fc5c-452b-8137-a9e03c181135
-md"""
-The solution is as expected: x decays exponentially, y first increases and then decays, z increases over time.
-"""
-
-# ╔═╡ 258556db-42ff-43c5-84f5-0d70d0f882ff
-md"""
-# 3. ODE Solver
+# ╔═╡ e2fddf8b-632f-435f-b57d-925df99b4609
+;md"""
+# ODE Solver
 
 ## a. Define the Problem
 
-A few notes about the setup of the ODEProblem:
-- There are 3 equations so the are 3 elements in the u array
-- There are three initial conditions in u0
 """
 
-# ╔═╡ 89110eba-fa8b-49e6-8bf9-24b8acece074
+# ╔═╡ 553e7256-adff-455d-85a4-9711306ddd0a
 begin
-	function f!(du, u, p, t)  
-		du[1] = -p[1]*u[1]                # x equation
-		du[2] = p[1]*u[1] - p[2]*u[2]     # y equation
-		du[3] = p[2]*u[2]                 # z equation
+	function f!(du, u, p, t) 
+		O2    = u[1]
+		O     = u[2]
+		O3    = u[3]
+		Cl    = u[4]
+		ClO   = u[5]
+		Cl2O2 = u[6]
+		ClO2  = u[7]
+		
+		k1 = 1.03E-94 
+		k2 = 5.92E-34     
+		k3 = 4.38E-26     
+		k4 = 1.22E-11     
+		k5 = 3.8E-11     
+		k6 = 2.16E-32     
+		k7 = 8.53E-15     
+		k8 = 6.51E-13     
+
+		r1 = k1*O2     
+		r2 = k2*(O2)*(O)     
+		r3 = k3*(O3)     
+		r4 = k4*(O3)*(Cl)     
+		r5 = k5*(O)*(ClO)     
+		r6 = k6*(ClO)*(ClO)     
+		r7 = k7*(Cl2O2)     
+		r8 = k8*(ClO2)   
+		
+		du[1] = -r1-r2+r3+r4+r5+r8
+		du[2] = (2*k1*(O2)+k3*(O3))/(k2*(O2)+k5*(ClO))
+		du[3] = r2-r3-r4
+		du[4] = (k5*(O)*(ClO)+k7*(Cl2O2)+k8*(ClO2))/(k4*(O3))
+		du[5] = ((k7*(Cl2O2)+k8*(ClO2))/(2*k6))^0.5
+		du[6] = r6-r7
+		du[7] = r7-r8
 	end
-	u0 = [2, 0, 0]                # initial concentrations for x, y, and z
-	tspan = [0.0, 10.0]           # integrate from 0 to 10s
-	problem = ODEProblem(f!, u0, tspan, [1.0, 0.5]) # initialize the ODE problem
+	
+	u0 = ([2E17, 1E-6, 5E12, 6.46E4, 7.22E7, 1E-6, 1E-6])
+	tspan = (0.0, 86400.0*10)           
+	problem = ODEProblem(f!, u0, tspan, [-1.0]) 
 end
 
-# ╔═╡ 4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
+# ╔═╡ ca32b33f-180e-43c0-a684-0a994aa4c8dd
 md"""
 ## b. Run the Solver
 
+Notes on running this solver:
+
+- The differential equations for the system are very stif because the rate constants for each reaction vary so greatly.
+- The solution method is ``RadauIIA5()``, which is recommended for stiff problems [documentation](https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/).
+- At long runtimes the model may "blow up". For the given initial conditions at ~17 days.
+- It is possible to reduce the tolerance, but for this the precision must be increased. For example, we could switch the type of BigFloat which allows for greater precision. This, in turn, however, increase memory footprint and runtime. 
+- reltol < 1e-12 is not possible with Float64.
+- If the results are in question, it is valid/encouraged to play with different solvers and tolerances.
 """
 
-# ╔═╡ 83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-solution = solve(problem, RK4(), reltol = 1e-8, abstol = 1e-8)
-
-# ╔═╡ 24c7963c-cb1e-43cf-b0bb-fd383fde3c05
+# ╔═╡ 28201571-e89e-4e0a-b4e7-a6ef92470542
 md"""
 ## c. Unpacking the Solution
 
-- As with the second order equation, there are multiple elements returned at each time step. 
-- In this case it is x, y, and z concentrations
+Notes on Solution
+- As before, the solution is an array of concentrations at each time step.
+
 """
 
-# ╔═╡ 72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
+# ╔═╡ 000249aa-f05d-4762-b27c-8d90fc8eae74
+solution = solve(problem, RadauIIA5(), reltol = 1e-12, abstol = 1e-12, 
+	alg_hints = [:stiff])
 
-
-# ╔═╡ bd4878a2-27cd-4b74-af3e-1061de5886e5
+# ╔═╡ bf3c3769-9245-434c-83b1-f8824437a526
 solution.u
 
-# ╔═╡ 4ad58d78-22f4-4716-a0db-ac533b53cecf
+# ╔═╡ 5fa165e3-442f-4cc6-a61d-fcf5f0cc3c73
 md"""
 ## d. Visualizing the Solution
+
+Note that concentrations are in molecules cm⁻³. Notice the steady decline caused by the chain reactions set off by chlorine. On the other hand, it is expected to find an increase in chlorine concentration due to the liberation of free radicals that appear after chlorofluorocarbon breakup. Their concentration increases in a non-linear manner at a faster rate than ozone can renew itself. This is why it is a chain reaction.
 """
 
-# ╔═╡ 36065129-50b3-465a-b6a2-052c5a9e0339
+# ╔═╡ 3beb85a8-3122-44cb-aab9-b8a43add3ab6
 begin
-	xeq = map(x -> x[1], solution.u)
-	yeq = map(x -> x[2], solution.u)
-	zeq = map(x -> x[3], solution.u)
-	ts = solution.t
-	plot(ts, xeq, color = :black, label = "x RK4 Solution", lw = 3)
-	plot!(ts, yeq, color = :darkred, label = "y  RK4 Solution", lw = 3)
-	plot!(ts, zeq, color = :steelblue3, label = "z  RK4 Solution", lw = 3)
-	plot!(myt, asols[1,:], xlabel = "t", 
-		legend = :outertopright, label = "x - analytical", color = :lightgray)
-	plot!(myt, asols[2,:], label = "y - analytical", color = :navajowhite)
-	plot!(myt, asols[3,:], label = "z - analytical", color = :darkgray)
+	sol = hcat(solution.u...)
+	ts = solution.t ./ 86400
+	p1 = plot(ts, sol[2,:], label = "O", color = :black, ylabel = "# cm⁻³")
+	p2 = plot(ts, sol[3,:], label = "O3", color = :black)
+	p3 = plot(ts, sol[4,:], label = "Cl", color = :black, ylabel = "# cm⁻³")
+	p4 = plot(ts, sol[5,:], label = "ClO", color = :black)
+	p5 = plot(ts, sol[6,:], label = "Cl2O2", color = :black, 
+		ylabel = "# cm⁻³", xlabel = "t (days)")
+	p6 = plot(ts, sol[7,:], label = "ClO2", color = :black, xlabel = "t (days)")
+	plot(p1, p2, p3, p4, p5, p6, layout = grid(3,2), color = :black)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -187,9 +232,9 @@ SymPy = "~1.1.12"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "eb2038fe600b382d42dc31d65e5354a29a9577fd"
+project_hash = "27973903f110d0c213c3d6e9f39291ddf55d945e"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f5c25e8a5b29b5e941b7408bc8cc79fea4d9ef9a"
@@ -404,7 +449,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.0.2+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -1307,7 +1352,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.9.0"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -2163,25 +2208,15 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─22f50c78-4371-11ee-0998-3f4adc43bebe
-# ╟─c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-# ╟─6d5d7138-6ab0-4ad8-9562-4364750d9081
-# ╠═15e7e493-2b04-4fb4-8554-40494ef2a3c0
-# ╠═5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# ╠═fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# ╠═8be795f6-c566-433e-9f67-8d0482f3c279
-# ╠═7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# ╠═aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# ╠═1ce7feed-5a14-44cf-ab07-470e71368a5e
-# ╟─3157d7f2-fc5c-452b-8137-a9e03c181135
-# ╟─258556db-42ff-43c5-84f5-0d70d0f882ff
-# ╠═89110eba-fa8b-49e6-8bf9-24b8acece074
-# ╟─4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
-# ╠═83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-# ╟─24c7963c-cb1e-43cf-b0bb-fd383fde3c05
-# ╠═72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-# ╠═bd4878a2-27cd-4b74-af3e-1061de5886e5
-# ╟─4ad58d78-22f4-4716-a0db-ac533b53cecf
-# ╟─36065129-50b3-465a-b6a2-052c5a9e0339
+# ╟─089ab50c-4389-11ee-0ba5-a7b731f99a15
+# ╟─30aff398-cab1-4a6a-a47e-9a92a37da053
+# ╟─e2fddf8b-632f-435f-b57d-925df99b4609
+# ╠═553e7256-adff-455d-85a4-9711306ddd0a
+# ╟─ca32b33f-180e-43c0-a684-0a994aa4c8dd
+# ╟─28201571-e89e-4e0a-b4e7-a6ef92470542
+# ╠═000249aa-f05d-4762-b27c-8d90fc8eae74
+# ╠═bf3c3769-9245-434c-83b1-f8824437a526
+# ╟─5fa165e3-442f-4cc6-a61d-fcf5f0cc3c73
+# ╟─3beb85a8-3122-44cb-aab9-b8a43add3ab6
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

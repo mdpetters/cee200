@@ -4,7 +4,7 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 22f50c78-4371-11ee-0998-3f4adc43bebe
+# ╔═╡ f2bc5236-42e0-11ee-1031-3b55ef4cea51
 begin
 	using PlutoUI, LaTeXStrings
 	using HypertextLiteral
@@ -16,148 +16,168 @@ begin
 
 	md"""
 $(TableOfContents(depth=4))
-# Example ODEs: Systems of Equations
+# Example ODEs: Dampened Harmonic Oscillator
 	"""
 end
 
-# ╔═╡ c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-md"""
+# ╔═╡ c481cee0-7593-47fb-bf38-552016ede3c8
 
-Consider a simple reaction mechamism involving species ``x``, ``y``, and ``z``
+begin
+img_url = "http://hyperphysics.phy-astr.gsu.edu/hbase/images/oscda.gif"
+
+	md"""
+
+The [dampened harmonic oscillator](http://hyperphysics.phy-astr.gsu.edu/hbase/oscda.html) is a homogeneous second order differential equation. 
 
 ```math
-\begin{array}
-& x \rightarrow y & \;\;\; \frac{dx}{dt} = -ax \\
-y \rightarrow z & \quad \quad \; \frac{dy}{dt} = ax - by \\
- & \frac{dz}{dt} = by \\
-\end{array}
+m\frac{d^2x}{dt^2} + c \frac{dx}{dt} + kx = 0
 ```
 
-In this reaction ``x`` decays into ``y``, ``y`` decays into ``z``.  All reactions are first order. An example would be a [radiatioactive decay chain](https://en.wikipedia.org/wiki/Decay_chain).
+There are three key cases of the damped oscillator, overdamped, critically damped, and underdamped.   
+
+$(Resource(img_url))
 	
 """
 
-# ╔═╡ 6d5d7138-6ab0-4ad8-9562-4364750d9081
+end
+
+# ╔═╡ 86ddf564-eb18-4a81-bfeb-bf141d6ae7f8
 md"""
 # 2. SymPy Solution
 
 Notes on the solution:
-- SymPy can solve systems of equations. 
-- It is possible to use `Julia` metaprograming to extract the analytical solution from SymPy and evaluate it without having to retype the equation. 
+- The analaytical solution is first computed with the coefficients.
+- The oscillator is underdamped when the roots of the characteristic equation are negative.
+- The general form of the solution contains coefficients C1 and C2. These can be found by specifying the value of the solution and its derivative at a particular point.
+- This is illustrated with the help of SymPy and a specific example
+
+```math
+m = 1 \quad c = 1 \quad k = 10 \quad x(0) = -1 \quad x'(0) = 0
+```
 """ 
 
-# ╔═╡ 15e7e493-2b04-4fb4-8554-40494ef2a3c0
-@syms a b t x() y() z()
-
-# ╔═╡ 5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# x -> y reaction
-eq1 = diff(x(t), t) + a*x(t)
-
-# ╔═╡ fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# y -> z reaction
-eq2 = diff(y(t), t) - a*x(t) + b*y(t)
-
-# ╔═╡ 8be795f6-c566-433e-9f67-8d0482f3c279
-# buildup of z
-eq3 = diff(z(t), t) - b*y(t) 
-
-# ╔═╡ 7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# solves for the system of equation with initial conditions x(0) = 2, y(0) = 0, z(0) = 0. That is, start with only x in the system
-eq4 = dsolve([eq1, eq2, eq3], ics = Dict(x(0) => 2, y(0) => 0, z(0) => 0))
-
-# ╔═╡ aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# This extracts the solution and evaluates it for t = 0:10.
-# Be careful not to use t, a, b as variables as it will conflict with the symbol 
-# definition. Hence the use of t1, c1, c2
-# asols is an array of solutions for x, y, and z
+# ╔═╡ ed70182d-f9bb-4748-bb14-246cd7fd3fa2
+# General Equation
 begin
-	function eval_solution(eq, t1, c1, c2)
-		es(f, time) = f(Dict(t => time, a => c1, b => c2) )
-		map(eq) do y
-    		map(x -> es(y.rhs(), x), t1)
-		end
-	end
-	myt = 0:0.1:10
-	asols = eval_solution(eq4, myt, 1.0, 0.5)
+	@syms m c k t x()
+	D = Differential(t)
+	eq = m * D(D(x)(t))(t) + c * D(x)(t) + k * x(t)
 end
 
-# ╔═╡ 1ce7feed-5a14-44cf-ab07-470e71368a5e
-begin
-	plot(myt, asols[1,:], size = (500, 300), xlabel = "t", 
-		legend = :outertopright, 	label = "x", color = :black)
-	plot!(myt, asols[2,:], label = "y", color = :darkred)
-	plot!(myt, asols[3,:], label = "z", color = :steelblue3)
-end
+# ╔═╡ dce10e63-ac90-493e-a04a-e2f411a8efeb
+# General Solution
+ODE = dsolve(eq, x(t))
 
-# ╔═╡ 3157d7f2-fc5c-452b-8137-a9e03c181135
+# ╔═╡ ed74b953-056c-4fb6-a2cf-39ccba48b2ce
+# specific example for m = 1, c = 1, k = 10
+eq1 = D(D(x)(t))(t) +  D(x)(t) +  10 * x(t)
+
+# ╔═╡ c3050b52-81a0-43fc-9c73-4eecd1915475
+# Solve it 
+ODE1 = dsolve(eq1, x(t))
+
+# ╔═╡ a77d6653-c2b5-414c-a4e7-a7ace5a7b405
+# x(0) = C2. Since the initial condition is x(1) = -1, C2 = -1
+ODE1.rhs().subs(t, 0)
+
+# ╔═╡ b506d674-5dea-4dc1-a2ad-3f13db3c6b45
+# Take the derivative with respect to t
+xp = diff(ODE1.rhs(),t)
+
+# ╔═╡ 881b16d7-60b1-4a37-b042-b2dbc044421f
+# Substitute C2 = -1 = > C1 = -1/sqrt(39)
+asd = xp.subs(t, 0) 
+
+# ╔═╡ d21c859d-7674-4db0-a649-8b676e1201c2
+solve(asd)
+
+# ╔═╡ accf243e-c125-46cb-bd16-e6f80ed7f45b
 md"""
-The solution is as expected: x decays exponentially, y first increases and then decays, z increases over time.
+Substituting ``C_1`` and ``C_2`` back into the general form  we find the analytical solution:
+
+```math
+x(t) = \left ( -\frac{1}{\sqrt{39}} \sin \left (\frac{\sqrt{39}}{2}t \right) - 1 \cos \left (\frac{\sqrt{39}}{2}t \right) \right ) \exp \left (-\frac{t}{2} \right )
+```
 """
 
-# ╔═╡ 258556db-42ff-43c5-84f5-0d70d0f882ff
+# ╔═╡ 1606268a-4a00-489b-9fb1-200fd45db8a1
 md"""
 # 3. ODE Solver
 
 ## a. Define the Problem
 
 A few notes about the setup of the ODEProblem:
-- There are 3 equations so the are 3 elements in the u array
-- There are three initial conditions in u0
+- The constructor is `SecondOrderODEProblem`
+- The function `f!` requires input of the second derivative ddu, first derivative, du, and value u.
+- Initial condition require specification of both u0 and du0. In this case, initial position, and initial velocity.
 """
 
-# ╔═╡ 89110eba-fa8b-49e6-8bf9-24b8acece074
+# ╔═╡ 1c3cc530-5a37-410f-a641-e5721290fa4f
 begin
-	function f!(du, u, p, t)  
-		du[1] = -p[1]*u[1]                # x equation
-		du[2] = p[1]*u[1] - p[2]*u[2]     # y equation
-		du[3] = p[2]*u[2]                 # z equation
+	function f!(ddu, du, u, p, t)  
+		ddu[1] = p[1] * du[1] + p[2] * u[1]
 	end
-	u0 = [2, 0, 0]                # initial concentrations for x, y, and z
+	u0 =  [-1.0]                  # initial position
+	du0 = [0.0]                   # initial velocity
 	tspan = [0.0, 10.0]           # integrate from 0 to 10s
-	problem = ODEProblem(f!, u0, tspan, [1.0, 0.5]) # initialize the ODE problem
+	problem = SecondOrderODEProblem(f!, du0, u0, tspan, [-1.0, -10.0]) # initialize the ODE problem
 end
 
-# ╔═╡ 4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
+# ╔═╡ ec0b8d29-5b19-48a8-a45a-84503994a54e
 md"""
 ## b. Run the Solver
 
+Notes on running this solver:
+
+- The solution method is ``DPRKN6()``, which corresponds to a higher order [Runge–Kutta method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods).
+- Note that we are not specifying a time step, nor is the time step constant. The method sets the time-step adaptively as needed for accuracy. 
+- The [documentation](https://docs.sciml.ai/DiffEqDocs/stable/solvers/dynamical_solve/) provides a list of available solvers for second order problems. 
 """
 
-# ╔═╡ 83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-solution = solve(problem, RK4(), reltol = 1e-8, abstol = 1e-8)
+# ╔═╡ e5c3d6ff-75ac-4611-a4e5-25a09b9e5f7e
+solution = solve(problem, DPRKN6(), reltol = 1e-12, abstol = 1e-12)
 
-# ╔═╡ 24c7963c-cb1e-43cf-b0bb-fd383fde3c05
+# ╔═╡ 11021a05-e9be-400d-98d7-f752ef206185
 md"""
 ## c. Unpacking the Solution
 
-- As with the second order equation, there are multiple elements returned at each time step. 
-- In this case it is x, y, and z concentrations
+Notes on Solution
+- Because we specified "u" as an array, the solution is an array of arrays.
+- Since it is a second order problem, at each time step the solution reports du (here velocity) and u (here position). The second element in those arrays is the position.
+- To extract the solution we are using the [`map` function](https://en.wikipedia.org/wiki/Map_(higher-order_function). The map function applies a given function to each element of a collection. For example
+
+```julia
+map(x -> x + 1, [1, 2, 3, 4])
+```
+
+evaluates to `[2, 3, 4, 5]`
+
+```julia
+map(x -> x[2], solution.u)
+```
+
+extracts the second element of the array for each array in the solution array.
 """
 
-# ╔═╡ 72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-
-
-# ╔═╡ bd4878a2-27cd-4b74-af3e-1061de5886e5
+# ╔═╡ 7edc61af-e444-4848-a083-b5d4fb4dccca
 solution.u
 
-# ╔═╡ 4ad58d78-22f4-4716-a0db-ac533b53cecf
+# ╔═╡ db6985d9-259f-4861-b0d2-06b3cc18e271
+map(x -> x[2], solution.u)  # extracts the position
+
+# ╔═╡ e898acc6-7213-43ce-add7-3bb815ec253a
 md"""
 ## d. Visualizing the Solution
 """
 
-# ╔═╡ 36065129-50b3-465a-b6a2-052c5a9e0339
+# ╔═╡ 009125aa-55c5-46d6-8c5f-7983e9b24cc0
 begin
-	xeq = map(x -> x[1], solution.u)
-	yeq = map(x -> x[2], solution.u)
-	zeq = map(x -> x[3], solution.u)
+	pos = map(x -> x[2], solution.u)
 	ts = solution.t
-	plot(ts, xeq, color = :black, label = "x RK4 Solution", lw = 3)
-	plot!(ts, yeq, color = :darkred, label = "y  RK4 Solution", lw = 3)
-	plot!(ts, zeq, color = :steelblue3, label = "z  RK4 Solution", lw = 3)
-	plot!(myt, asols[1,:], xlabel = "t", 
-		legend = :outertopright, label = "x - analytical", color = :lightgray)
-	plot!(myt, asols[2,:], label = "y - analytical", color = :navajowhite)
-	plot!(myt, asols[3,:], label = "z - analytical", color = :darkgray)
+	plot(ts, pos, color = :black, label = "DPRKN6 Solution", lw = 3)
+	asol = @. -1.0/sqrt(39)*exp(-ts/2)*sin(sqrt(39)*ts/2.0) +
+		-1.0*exp(-ts/2)*cos(sqrt(39)*ts/2.0)
+	plot!(ts, asol, label = "Analytical Solution", xlabel = "t", ylabel = "x")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -180,16 +200,16 @@ LaTeXStrings = "~1.3.0"
 PlotThemes = "~3.1.0"
 Plots = "~1.38.17"
 PlutoUI = "~0.7.52"
-SymPy = "~1.1.12"
+SymPy = "~1.1.10"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.10.0-beta2"
 manifest_format = "2.0"
-project_hash = "eb2038fe600b382d42dc31d65e5354a29a9577fd"
+project_hash = "0e5c970ac256dbc048d0e70c70100bf82dafbf33"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f5c25e8a5b29b5e941b7408bc8cc79fea4d9ef9a"
@@ -251,19 +271,23 @@ uuid = "30b0a656-2188-435a-8636-2ec0e6a096e2"
 version = "0.1.29"
 
 [[deps.ArrayLayouts]]
-deps = ["FillArrays", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "609e6019f91369149556628d90345a1316f8dbd3"
+deps = ["FillArrays", "LinearAlgebra"]
+git-tree-sha1 = "dcda7e0ac618210eabf43751d5cafde100dd539b"
 uuid = "4c555306-a7a7-4459-81d9-ec55ddd5c99a"
-version = "1.2.1"
+version = "1.3.0"
+weakdeps = ["SparseArrays"]
+
+    [deps.ArrayLayouts.extensions]
+    ArrayLayoutsSparseArraysExt = "SparseArrays"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.BandedMatrices]]
 deps = ["ArrayLayouts", "FillArrays", "LinearAlgebra", "PrecompileTools"]
-git-tree-sha1 = "106122bad983acd8e21aef3f7a7f91a3ac739077"
+git-tree-sha1 = "12fbf29d5fffbbe0988949aceb257b29527eb770"
 uuid = "aae01518-5342-5314-be14-df237901396f"
-version = "0.17.36"
+version = "0.17.37"
 weakdeps = ["SparseArrays"]
 
     [deps.BandedMatrices.extensions]
@@ -404,7 +428,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.0.5+1"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -982,12 +1006,12 @@ version = "1.0.0"
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
-version = "0.6.3"
+version = "0.6.4"
 
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "7.84.0+0"
+version = "8.0.1+1"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -996,7 +1020,7 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.10.2+0"
+version = "1.11.0+1"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -1148,7 +1172,7 @@ version = "1.1.7"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.2+0"
+version = "2.28.2+1"
 
 [[deps.Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
@@ -1166,7 +1190,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2022.10.11"
+version = "2023.1.10"
 
 [[deps.MuladdMacro]]
 git-tree-sha1 = "cac9cc5499c25554cba55cd3c30543cff5ca4fab"
@@ -1216,12 +1240,12 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.21+4"
+version = "0.3.23+2"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-version = "0.8.1+0"
+version = "0.8.1+2"
 
 [[deps.OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
@@ -1267,7 +1291,7 @@ version = "6.54.0"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.42.0+0"
+version = "10.42.0+1"
 
 [[deps.PDMats]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
@@ -1307,7 +1331,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.10.0"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1422,7 +1446,7 @@ deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[deps.Random]]
-deps = ["SHA", "Serialization"]
+deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[deps.Random123]]
@@ -1632,6 +1656,7 @@ version = "1.1.1"
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+version = "1.10.0"
 
 [[deps.SparseDiffTools]]
 deps = ["ADTypes", "Adapt", "ArrayInterface", "Compat", "DataStructures", "FiniteDiff", "ForwardDiff", "Graphs", "LinearAlgebra", "Reexport", "Requires", "SciMLOperators", "Setfield", "SparseArrays", "StaticArrayInterface", "StaticArrays", "Tricks", "VertexSafeGraphs"]
@@ -1755,7 +1780,7 @@ uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
 uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "5.10.1+6"
+version = "7.2.0+1"
 
 [[deps.Sundials]]
 deps = ["CEnum", "DataStructures", "DiffEqBase", "Libdl", "LinearAlgebra", "Logging", "PrecompileTools", "Reexport", "SciMLBase", "SparseArrays", "Sundials_jll"]
@@ -1764,10 +1789,10 @@ uuid = "c3572dad-4567-51f8-b174-8c6c989267f4"
 version = "4.19.3"
 
 [[deps.Sundials_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "OpenBLAS_jll", "Pkg", "SuiteSparse_jll"]
-git-tree-sha1 = "04777432d74ec5bc91ca047c9e0e0fd7f81acdb6"
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "SuiteSparse_jll", "libblastrampoline_jll"]
+git-tree-sha1 = "ba4d38faeb62de7ef47155ed321dce40a549c305"
 uuid = "fb77eaff-e24c-56d4-86b1-d163f2edb164"
-version = "5.2.1+0"
+version = "5.2.2+0"
 
 [[deps.SymPy]]
 deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
@@ -2078,7 +2103,7 @@ version = "1.5.0+0"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+0"
+version = "1.2.13+1"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -2113,7 +2138,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+0"
+version = "5.8.0+1"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2136,12 +2161,12 @@ version = "1.3.7+1"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.48.0+0"
+version = "1.52.0+1"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+0"
+version = "17.4.0+2"
 
 [[deps.x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2163,25 +2188,26 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─22f50c78-4371-11ee-0998-3f4adc43bebe
-# ╟─c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-# ╟─6d5d7138-6ab0-4ad8-9562-4364750d9081
-# ╠═15e7e493-2b04-4fb4-8554-40494ef2a3c0
-# ╠═5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# ╠═fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# ╠═8be795f6-c566-433e-9f67-8d0482f3c279
-# ╠═7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# ╠═aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# ╠═1ce7feed-5a14-44cf-ab07-470e71368a5e
-# ╟─3157d7f2-fc5c-452b-8137-a9e03c181135
-# ╟─258556db-42ff-43c5-84f5-0d70d0f882ff
-# ╠═89110eba-fa8b-49e6-8bf9-24b8acece074
-# ╟─4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
-# ╠═83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-# ╟─24c7963c-cb1e-43cf-b0bb-fd383fde3c05
-# ╠═72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-# ╠═bd4878a2-27cd-4b74-af3e-1061de5886e5
-# ╟─4ad58d78-22f4-4716-a0db-ac533b53cecf
-# ╟─36065129-50b3-465a-b6a2-052c5a9e0339
+# ╟─f2bc5236-42e0-11ee-1031-3b55ef4cea51
+# ╟─c481cee0-7593-47fb-bf38-552016ede3c8
+# ╟─86ddf564-eb18-4a81-bfeb-bf141d6ae7f8
+# ╠═ed70182d-f9bb-4748-bb14-246cd7fd3fa2
+# ╠═dce10e63-ac90-493e-a04a-e2f411a8efeb
+# ╠═ed74b953-056c-4fb6-a2cf-39ccba48b2ce
+# ╠═c3050b52-81a0-43fc-9c73-4eecd1915475
+# ╠═a77d6653-c2b5-414c-a4e7-a7ace5a7b405
+# ╠═b506d674-5dea-4dc1-a2ad-3f13db3c6b45
+# ╠═881b16d7-60b1-4a37-b042-b2dbc044421f
+# ╠═d21c859d-7674-4db0-a649-8b676e1201c2
+# ╟─accf243e-c125-46cb-bd16-e6f80ed7f45b
+# ╠═1606268a-4a00-489b-9fb1-200fd45db8a1
+# ╠═1c3cc530-5a37-410f-a641-e5721290fa4f
+# ╟─ec0b8d29-5b19-48a8-a45a-84503994a54e
+# ╠═e5c3d6ff-75ac-4611-a4e5-25a09b9e5f7e
+# ╟─11021a05-e9be-400d-98d7-f752ef206185
+# ╠═7edc61af-e444-4848-a083-b5d4fb4dccca
+# ╠═db6985d9-259f-4861-b0d2-06b3cc18e271
+# ╟─e898acc6-7213-43ce-add7-3bb815ec253a
+# ╠═009125aa-55c5-46d6-8c5f-7983e9b24cc0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

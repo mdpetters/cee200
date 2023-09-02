@@ -1,5 +1,9 @@
 ### A Pluto.jl notebook ###
-# v0.17.7
+# v0.19.27
+
+#> [frontmatter]
+#> title = "Review of Numeric Differentiation, Vectors, Matrices, Vector Calculus"
+#> date = "2023-08-31"
 
 using Markdown
 using InteractiveUtils
@@ -26,19 +30,8 @@ begin
 	$(TableOfContents(depth=4))
 	# Review of Numeric Differentiation, Vectors, Matrices, Vector Calculus
 	This notebook provides an illustrated review over key concepts in vector calculus with the objective to apply these operators in a computational context.
-	# Learning Objectives
 	"""
 end
-
-# ╔═╡ 8cba9988-b750-448e-9b94-df412c4af5a3
-
-Markdown.MD(
-	Markdown.Admonition("tip", "Learning Objectives", [md"
-- Perform finite difference and automatic differentiation methods on functions.
-- Provide a geometeric explanation of standard vector operations (dot product, cross product).
-- Fluently work with vectors and matrices in a computational environment
-"]))
-
 
 # ╔═╡ 52f31447-9fb3-4c43-91ac-9cb27f209e04
 md"""
@@ -1433,6 +1426,7 @@ ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlotThemes = "ccf2f8ad-2431-5c83-bf29-c5338b663b6a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -1461,9 +1455,9 @@ Tensors = "~1.15.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "2e721e9c61dd759c8417ee8daaa1768d00584ed7"
+project_hash = "32c1c09ea1648c0688243283537dbf646f8ce074"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1675,7 +1669,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ComputationalResources]]
 git-tree-sha1 = "52cb3ec90e8a8bea0e62e275ba577ad0f74821f7"
@@ -2573,7 +2567,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PkgVersion]]
 deps = ["Pkg"]
@@ -3301,7 +3295,6 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╟─9cb51ec8-40ff-11ee-0ddd-3335291342a5
-# ╟─8cba9988-b750-448e-9b94-df412c4af5a3
 # ╟─52f31447-9fb3-4c43-91ac-9cb27f209e04
 # ╠═0348024a-027a-4ac2-9530-44803c6a6289
 # ╠═1a994a91-bcb2-4df6-9862-3f6eb696eb21

@@ -1,163 +1,482 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.17.7
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 22f50c78-4371-11ee-0998-3f4adc43bebe
+# ╔═╡ f2d91da6-421a-11ee-13bf-b97463cb98e2
 begin
+	using LinearAlgebra
 	using PlutoUI, LaTeXStrings
 	using HypertextLiteral
 	using Plots,  PlotThemes
+	using ForwardDiff
 	using Plots.PlotMeasures: px
 	using CalculusWithJulia
-	using DifferentialEquations
 	using SymPy
+	using DifferentialEquations
 
 	md"""
 $(TableOfContents(depth=4))
-# Example ODEs: Systems of Equations
+# Ordinary Differential Equations
+Analytical and numerical solutions of common ordinary differential equations. 
+	
+# Learning Objectives
 	"""
 end
 
-# ╔═╡ c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-md"""
+# ╔═╡ f0d9268c-f71c-42a7-b363-bd15b016b0c3
+Markdown.MD(
+	Markdown.Admonition("tip", "Learning Objectives", [md"
+- Classify differential equations by their order
+- Set up and execute symbolic solver to find the analytical solution
+- Explain how Euler's method numerically integrates ODEs
+- Visualize ODEs in phase space
+- Set up and execute a numerical ODE solver to compute the numerical solution of an ODE.
+	"]))
 
-Consider a simple reaction mechamism involving species ``x``, ``y``, and ``z``
+# ╔═╡ 9037d73b-51fe-4e9f-8545-e5bf13d45f9c
+md"""
+# Introduction
+
+## Definition of Differential Equations
+
+A differential equation is an equation, where the unknown is a function and both the function and its derivatives may appear in the equation. Differential equations are essential for a mathematical description of nature—they lie at the core of many physical theories. Here are a few important differential equations:
+
+**(a) Newton's law**: Mass times acceleration equals force, ``ma = f`` , where ``m`` is the particle mass, ``a = \frac{d^2x}{dt^2}`` is the particle acceleration, and ``f`` is the force acting on the particle. The unknown is ``\vec{x}(t)``, the position of the particle in space and time. 
+
 
 ```math
-\begin{array}
-& x \rightarrow y & \;\;\; \frac{dx}{dt} = -ax \\
-y \rightarrow z & \quad \quad \; \frac{dy}{dt} = ax - by \\
- & \frac{dz}{dt} = by \\
-\end{array}
+m \frac{d \vec{x}(t)}{dt^2} = f \left ( t,\vec{x(t)},\frac{\vec{x}(t)}{t} \right )
+```
+**(b) Radioactive Decay:** The amount ``u`` of a radioactive material changes in time as follows
+
+```math
+\frac{du(t)}{dt} = -k u(t)
 ```
 
-In this reaction ``x`` decays into ``y``, ``y`` decays into ``z``.  All reactions are first order. An example would be a [radiatioactive decay chain](https://en.wikipedia.org/wiki/Decay_chain).
-	
+where k is a positive constant representing radioactive properties of the material.
+
+**(c) The Heat Equation:** The temperature ``T`` in a solid material changes in time and in three space dimensions, labeled by ``x = (x, y, z)``, according to the equation
+
+```math
+\frac{T(t, \vec{x})}{t} = k \left (\frac{\partial^2 T(t, \vec{x})}{\partial x^2} + \frac{\partial^2 T(t, \vec{x})}{\partial y^2} + \frac{\partial^2 T(t, \vec{x})}{\partial z^2} \right )
+```
+
+where ``k`` is a positive constant representing thermal properties of the material.
+
 """
 
-# ╔═╡ 6d5d7138-6ab0-4ad8-9562-4364750d9081
+# ╔═╡ cdb8c029-9324-402c-9319-f91cfeb36d1d
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concepts", [md"
+- The equations in examples (a) and (b) are called ordinary differential equations (ODE). The unknown function depends on a single independent variable, ``t``. 
+
+- The equation in examples (c) is a partial differential equation (PDE) the unknown function depends on two or more independent variables, t, x, y, and z, and their partial derivatives appear in the equations.
+- The order of a differential equation is the highest derivative order that appears in the equation. Newton’s equation in example (a) is second order, the time decay equation in example (b) is first order, the wave equation in example and the heat equation in example (c) is first order in time and second order in space variables.
+"]))
+
+# ╔═╡ 1440a399-e391-4930-ad03-15bdce8c56d3
 md"""
-# 2. SymPy Solution
+## Brute Force Approach
 
-Notes on the solution:
-- SymPy can solve systems of equations. 
-- It is possible to use `Julia` metaprograming to extract the analytical solution from SymPy and evaluate it without having to retype the equation. 
-""" 
+When all other methods for solving an ODE fail, or in the cases where we have some intuition about what the solution to a DE might look like, it is sometimes possible to solve a DE simply by guessing the solution and validating it is correct. To use this method, we simply guess a solution to the differential equation, and then plug the solution into the differential equation to validate if it satisfies the equation. If it does then we have a particular solution to the DE, otherwise we start over again and try another guess. 
 
-# ╔═╡ 15e7e493-2b04-4fb4-8554-40494ef2a3c0
-@syms a b t x() y() z()
+This, to some extent, sets us free to simply accept that a solution is correct, even if it wasn't possible to derive the solution, or to prove that this is the only correct solution.
 
-# ╔═╡ 5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# x -> y reaction
-eq1 = diff(x(t), t) + a*x(t)
+## Analytical Approach
 
-# ╔═╡ fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# y -> z reaction
-eq2 = diff(y(t), t) - a*x(t) + b*y(t)
+##### Example: First-order initial-value problems
 
-# ╔═╡ 8be795f6-c566-433e-9f67-8d0482f3c279
-# buildup of z
-eq3 = diff(z(t), t) - b*y(t) 
+We are looking for solutions to an equation of the form (taking $y$ and $x$ as the variables, in place of $x$ and $t$):
 
-# ╔═╡ 7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# solves for the system of equation with initial conditions x(0) = 2, y(0) = 0, z(0) = 0. That is, start with only x in the system
-eq4 = dsolve([eq1, eq2, eq3], ics = Dict(x(0) => 2, y(0) => 0, z(0) => 0))
 
-# ╔═╡ aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# This extracts the solution and evaluates it for t = 0:10.
-# Be careful not to use t, a, b as variables as it will conflict with the symbol 
-# definition. Hence the use of t1, c1, c2
-# asols is an array of solutions for x, y, and z
+```math
+y'(x) = f(x), \quad y(x_0) = y_0.
+```
+
+This is called a first-order, ordinary differential equation, as there is only the first derivative involved. This is called an initial-value problem, as the value at the initial point $x_0$ is specified as part of the problem.
+
+Equations of the form $y'(x) = f(x)$ and $y'(x) = g(y)$ both solved by integrating. The same tricks will work for equations of the form $y'(x) = f(x) \cdot g(y)$. Such equations are called *separable*.
+
+
+Basically, we equate up to constants
+
+
+```math
+\int \frac{dy}{g(y)} = \int f(x) dx.
+```
+
+For example, suppose we have the equation
+
+
+```math
+\frac{dy}{dx} = x \cdot y(x), \quad y(x_0) = y_0.
+```
+
+Then we can find a solution, $y(x)$ through:
+
+```math
+\int \frac{dy}{y} = \int x dx,
+```
+
+or
+
+
+```math
+\log(y) = \frac{x^2}{2} + C
+```
+
+Which yields:
+
+```math
+y(x) = e^C e^{\frac{1}{2}x^2}.
+```
+
+Substituting in $x_0$ yields a value for $C$ in terms of the initial information $y_0$ and $x_0$.
+"""
+
+# ╔═╡ ca041540-036a-478e-8c04-a11a48ad8414
+md"""
+## Symbolic Solvers
+
+Many simple ODEs can, and have been, solved through analytical techniques. Solutions to these problems are widely available. Symbolic solvers for differential equations are available, e.g. [SymPy](https://www.sympy.org/en/index.html), [Maple](https://www.maplesoft.com/), [Mathematica](https://www.wolfram.com/mathematica/), or [Matlab](https://www.mathworks.com/help/symbolic/dsolve.html). Using these tools is a very valid *practical* approach to solve a given ODE or systems of ODEs.
+
+Consider the differential equation:
+
+```math
+y'(x) = y(x) \cdot  x, \quad y(1)=1
+```
+
+This can be solved directly using SymPy (using the Julia bindings here):
+"""
+
+# ╔═╡ 9967faf7-3f0f-4c64-bbcb-945070d4ca07
 begin
-	function eval_solution(eq, t1, c1, c2)
-		es(f, time) = f(Dict(t => time, a => c1, b => c2) )
-		map(eq) do y
-    		map(x -> es(y.rhs(), x), t1)
-		end
-	end
-	myt = 0:0.1:10
-	asols = eval_solution(eq4, myt, 1.0, 0.5)
+	@syms x, a, y()
+	D = Differential(x)
+	D(y)(x) - y(x)*x 
 end
 
-# ╔═╡ 1ce7feed-5a14-44cf-ab07-470e71368a5e
-begin
-	plot(myt, asols[1,:], size = (500, 300), xlabel = "t", 
-		legend = :outertopright, 	label = "x", color = :black)
-	plot!(myt, asols[2,:], label = "y", color = :darkred)
-	plot!(myt, asols[3,:], label = "z", color = :steelblue3)
+# ╔═╡ 85c37f4a-02a3-46d1-b2cf-4889a42fc837
+# Solve the equation
+dsolve(D(y)(x) - y(x)*x, y(x))
+
+# ╔═╡ f95190ae-8ee7-49ea-ad80-ea2d269a5b95
+# With the given initial condition y(1) = a, the solution becomes:
+solution = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => a))
+
+# ╔═╡ 3af142b1-2dc3-48ac-8250-07345c9b36cb
+md""" 
+## Numerical Approach
+
+Many differential equations that are encountered in science and engineering cannot be solved, or not easily be solved, by any of the techniques taught in the regular engineering/applied math curriculum. Thus for all practical purposes, numerical integration is standard approach to solve ODEs in science and engineering applications. Numerical ODE solvers are widely available in all major computer languages. The [DifferentialEquations.jl](https://docs.sciml.ai/DiffEqDocs/stable/) suite in Julia is one of the most advanced libraries for numerical modeling of differential equations. 
+"""
+
+# ╔═╡ eef1792a-a688-42c0-af80-af81c588d39a
+md"""
+# Analyzing ODEs
+
+The solution, $y(x)$, is known through its derivative. A useful tool to visualize the solution to a first-order differential equation is the [slope field](http://tinyurl.com/jspzfok), or direction field plot, or phase space, which at different values of $(x,y)$, plots a vector with slope given through $y'(x)$.
+
+For example, if the first-order equation is written as $y'(x) = F(y,x)$, then we plot a "function" that takes $(x,y)$ and returns an $x$ value of $1$ and a $y$ value of $F(y,x)$, so the slope is $F(y,x)$.
+"""
+
+# ╔═╡ b09d6552-4f4c-4d3f-8a0e-d0037b4c1e5a
+let
+	F(y, x) = y*x
+	x0, y0 = 1,1
+	p = plot()
+	vectorfieldplot!((x,y) -> [1, F(y,x)], xlims=(x0, 2.5), ylims=(y0-12, y0+10), 
+		color = "black", label = "phase space")
+	sol1 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 1))
+	f1(x) =  1*exp(-x0^2/2) * exp(x^2/2)
+	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y'(x)", 
+		color = :steelblue3)
+	sol2 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 2))
+	f2(x) =  2*exp(-x0^2/2) * exp(x^2/2)
+	plot!(f2,  linewidth=3, label = "$(sol2)", title = "y'(x) = x*y'(x)", 
+		color = :darkred)
+
+	sol3 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => -1))
+	f3(x) =  -1*exp(-x0^2/2) * exp(x^2/2)
+	plot!(f3,  linewidth=3, label = "$(sol3)", title = "y'(x) = x*y'(x)", 
+		color = :darkgoldenrod)
+	plot(p, size = (600,300), xlabel = "x", ylabel = "y", 
+		legend = :outertopright, bottom_margin = 20px)
 end
 
-# ╔═╡ 3157d7f2-fc5c-452b-8137-a9e03c181135
+
+
+# ╔═╡ 741a844f-b549-4f94-b326-e4882f01017f
 md"""
-The solution is as expected: x decays exponentially, y first increases and then decays, z increases over time.
+Such solutions are called [integral curves](https://en.wikipedia.org/wiki/Integral_curve). These graphs illustrate the fact that the slope field is tangent to the graph of any integral curve.
 """
 
-# ╔═╡ 258556db-42ff-43c5-84f5-0d70d0f882ff
+# ╔═╡ 6d51519f-9b1f-462a-acaa-a11b564e040d
 md"""
-# 3. ODE Solver
 
-## a. Define the Problem
+# Numerical Solutions
 
-A few notes about the setup of the ODEProblem:
-- There are 3 equations so the are 3 elements in the u array
-- There are three initial conditions in u0
+##  Euler's Method
+The tangent lines to integral curves are in the direction of the slope field. What if the graph of the solution were not there, could we use this fact to *approximately* reconstruct the solution? That is, if we stitched together pieces of the slope field, would we get a curve that was close to the actual answer?
+
+[The Euler method](https://en.wikipedia.org/wiki/Euler_method) uses linearization. Each "step" is just an approximation of the function value $y(x_{n+1})$ with the value from the tangent line tangent to the point $(x_n, y_n)$. The name of our metod is from the [mathematician](https://en.wikipedia.org/wiki/Leonhard_Euler) associated with the iteration:
+
+```math
+x_{n+1} = x_n + h, \quad y_{n+1} = y_n + h \cdot F(y_n, x_n),
+```
+
+to approximate a solution to the first-order, ordinary differential equation with initial values: $y'(x) = F(y,x)$. A simple implementation is below.
 """
 
-# ╔═╡ 89110eba-fa8b-49e6-8bf9-24b8acece074
-begin
-	function f!(du, u, p, t)  
-		du[1] = -p[1]*u[1]                # x equation
-		du[2] = p[1]*u[1] - p[2]*u[2]     # y equation
-		du[3] = p[2]*u[2]                 # z equation
-	end
-	u0 = [2, 0, 0]                # initial concentrations for x, y, and z
-	tspan = [0.0, 10.0]           # integrate from 0 to 10s
-	problem = ODEProblem(f!, u0, tspan, [1.0, 0.5]) # initialize the ODE problem
+# ╔═╡ cff4074e-a0c1-4c4e-b19d-7665d3edb353
+# F: Function, x0 is the ics in x, xn is the upper limit of integration, y0 us the ics in y, n is the number of points
+function euler(F, x0, xn, y0, n)
+	h = (xn - x0)/n
+	xs = zeros(n+1)
+	ys = zeros(n+1)
+  	xs[1] = x0
+  	ys[1] = y0
+  	for i in 1:n
+    	xs[i + 1] = xs[i] + h
+    	ys[i + 1] = ys[i] + h * F(ys[i], xs[i])
+  	end
+  	xs[end] = xn
+	(xs, ys)
 end
 
-# ╔═╡ 4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
-md"""
-## b. Run the Solver
+# ╔═╡ 42428795-d698-4c9e-9f47-67cdb8453c57
+# Example for F = y*x, ics = y(1) = 1, integration to x = 3, n = 10 points
+euler((y,x) -> y*x, 1.0, 3, 1.0, 10)
 
+# ╔═╡ 358ee0cf-c710-437d-8473-eb8c0b04235e
+let
+	F(y, x) = y*x
+	x0, y0 = 1,1
+	p = plot()
+	vectorfieldplot!((x,y) -> [1, F(y,x)], xlims=(x0, 2.5), ylims=(0, y0+15), 
+		color = "black", label = "phase space")
+	sol1 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 1))
+	f1(x) =  1*exp(-x0^2/2) * exp(x^2/2)
+	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y'(x)", 
+		color = :black)
+	xs, ys = euler(F, 1.0, 3, 1.0, 10)
+	plot!(xs, ys, color = :darkgoldenrod, label = "Euler: n = 10")
+	xs, ys = euler(F, 1.0, 3, 1.0, 100)
+	plot!(xs, ys, color = :darkred, label = "Euler: n = 100")
+	xs, ys = euler(F, 1.0, 3, 1.0, 1000)
+	plot!(xs, ys, color = :lightgray, label = "Euler: n = 1000")
+	plot(p, size = (600,300), xlabel = "x", ylabel = "y", 
+		legend = :outertopright, bottom_margin = 20px)
+end
+
+# ╔═╡ fd762ce1-4cd6-4c3b-b023-6cf913aa92c8
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concepts", [md"
+- Each step introduces an error. The error in one step is known as the *local truncation error* and can be shown to be about equal to $1/2 \cdot h^2 \cdot f''(x_{n})$ assuming $y$ has $3$ or more derivatives.
+- For large ``n`` (or small ``h``) the solution converges.
+- The total error, or more commonly, *global truncation error*, is the error between the actual answer and the approximate answer at the end of the process. It reflects an accumulation of these local errors. This error is *bounded* by a constant times $h$. Since it gets smaller as $h$ gets smaller in direct proportion, the Euler method is called *first order*.
+"]))
+
+# ╔═╡ 9c346abb-eda6-487c-b8cd-345dc1a233cb
+md"""
+##### Example
+
+The equation $y'(x) = \sin(x \cdot y)$ is not separable, so need not have an easy solution. The default method will fail. Looking at the available methods with `sympy.classify_ode(eqn, u(x))` shows a power series method which can return a power series *approximation* (a Taylor polynomial). Let's look at comparing an approximate answer given by the Euler method to that one returned by `SymPy`.
 """
 
-# ╔═╡ 83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-solution = solve(problem, RK4(), reltol = 1e-8, abstol = 1e-8)
 
-# ╔═╡ 24c7963c-cb1e-43cf-b0bb-fd383fde3c05
+# ╔═╡ 7eef67ed-b8e9-4e2c-9ce4-4fb188a51393
+out = let 
+	@syms x u()
+	F(y,x) = sin(x*y)
+	eqn = D(u)(x) - F(u(x), x)
+	out = dsolve(eqn, u(x), ics=Dict(u(0) => 1), hint="1st_power_series", n = 8)
+end
+
+# ╔═╡ 258e8fe9-3d3c-4c3d-9cfe-3dbfaebe3d30
+let 
+	F(y,x) = sin(x*y)
+	x0, xn, y0 = 0, 3, 1
+
+	plot()
+	vectorfieldplot!((x,y) -> [1, F(y,x)], xlims=(x0, xn), ylims=(0,5), 
+		color = :black, nx=10)
+	plot!(rhs(out).removeO(),  linewidth=5, label = "SymPy approximation", 
+		color = :steelblue3)
+
+	u = euler(F, x0, xn, y0, 100)
+	plot!(u, linewidth=5, color = :darkred, label = "Euler, n = 100", 
+		legend = :outertopright, size = (600, 300))
+end
+
+# ╔═╡ 72a797f9-cebe-4a55-95f7-39e6832fef47
 md"""
-## c. Unpacking the Solution
-
-- As with the second order equation, there are multiple elements returned at each time step. 
-- In this case it is x, y, and z concentrations
+The answer found from using a polynomial series matches that of Euler's method for a bit, but as time evolves, the approximate solution given by Euler's method more closely tracks the slope field.
 """
 
-# ╔═╡ 72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-
-
-# ╔═╡ bd4878a2-27cd-4b74-af3e-1061de5886e5
-solution.u
-
-# ╔═╡ 4ad58d78-22f4-4716-a0db-ac533b53cecf
+# ╔═╡ 7994d143-28ad-4649-bc4e-d0b378b03a4e
 md"""
-## d. Visualizing the Solution
+## Stiff Equations
+
+The Euler method is *convergent*, in that as $h$ goes to $0$, the approximate solution will converge to the actual answer. However, this does not say that for a fixed size $h$, the approximate value will be good. For example, consider the differential equation $y'(x) = -5y$. This has solution $y(x)=y_0 e^{-5x}$. However, if we try the Euler method to get an answer over $[0,2]$ with $h=0.5$ we don't see this:
 """
 
-# ╔═╡ 36065129-50b3-465a-b6a2-052c5a9e0339
+# ╔═╡ 2a9b3f4b-06b5-470e-b8c0-5318694db7fd
+let
+	F(y,x) = -5y
+	x0, xn, y0 = 0, 2, 1
+	u = euler(F, x0, xn, y0, 4)     # n = 4 
+	u1 = euler(F, x0, xn, y0, 50)   # n = 50 
+	p = vectorfieldplot((x,y) -> [1, F(y,x)], xlims=(0, 2), ylims=(-5, 5), 
+		color = :black)
+	p = plot!(x -> y0 * exp(-5x), 0, 2, linewidth=5, color = :black, 
+		label = "Analytical Solution")
+	p = plot!(u[1], u[2], linewidth=5, label = "Euler n = 4", color = :darkred)
+	p = plot!(u1[1], u1[2], linewidth=2, label = "Euler n = 50", 
+		color = :darkgoldenrod)
+	plot(p, size = (700, 300), legend = :outertopright)
+end
+
+# ╔═╡ 6104397e-05c3-4a50-954d-4daa41cb9306
+md"""
+This is an example of a [stiff equation](https://en.wikipedia.org/wiki/Stiff_equation). Such equations cause explicit methods like the Euler one problems, as small $h$s are needed to good results.
+"""
+
+# ╔═╡ 56585376-ebe7-4c2d-8c65-8bf1a178d276
+md"""
+## Numerical Solvers
+
+The [DifferentialEquations.jl](https://github.com/SciML) package is an entry point to a suite of `Julia` packages for numerically solving differential equations in `Julia`. A common interface is implemented that flexibly adjusts to the many different problems and algorithms covered by this suite of packages. 
+
+Similar solvers exist for [Python](https://pythonnumericalmethods.berkeley.edu/notebooks/chapter22.06-Python-ODE-Solvers.html), [Matlab](https://www.mathworks.com/help/matlab/math/choose-an-ode-solver.html), [Fortran](https://people.sc.fsu.edu/~jburkardt/f77_src/odepack/odepack.html), or [R](https://kinglab.eeb.lsa.umich.edu/480/nls/de.html). The examples here are obviously tied to Julia, but the general concepts should be the same in other langauges.
+
+## Example: Radioactive Decay:
+
+The amount ``u`` of a radioactive material changes in time as follows
+
+```math
+\frac{du(t)}{dt} = -k u(t)
+```
+
+where ``k`` is a positive constant representing radioactive properties of the material.
+
+### SymPy Solution
+"""
+
+
+# ╔═╡ 5e0ac040-00bd-4c36-a1aa-636a1ab61b7e
 begin
-	xeq = map(x -> x[1], solution.u)
-	yeq = map(x -> x[2], solution.u)
-	zeq = map(x -> x[3], solution.u)
-	ts = solution.t
-	plot(ts, xeq, color = :black, label = "x RK4 Solution", lw = 3)
-	plot!(ts, yeq, color = :darkred, label = "y  RK4 Solution", lw = 3)
-	plot!(ts, zeq, color = :steelblue3, label = "z  RK4 Solution", lw = 3)
-	plot!(myt, asols[1,:], xlabel = "t", 
-		legend = :outertopright, label = "x - analytical", color = :lightgray)
-	plot!(myt, asols[2,:], label = "y - analytical", color = :navajowhite)
-	plot!(myt, asols[3,:], label = "z - analytical", color = :darkgray)
+	@syms k t u()
+	radDecay = D(u)(t) + k*u(t)
+end
+
+# ╔═╡ 4095227f-c1b7-4134-bb25-c6aebbbb5fd9
+dsolve(radDecay, u(t), ics=Dict(u(0) => 1))
+
+# ╔═╡ 555ae0a8-5933-4d66-b767-82ffdcef3757
+md"""
+### Numerical Solution
+
+#### 1. Define the ODE Problem
+To solve the problem with `DifferentialEquations.jl` we must first define the ODEProblem. 
+"""
+
+# ╔═╡ 3a91fea9-fad2-429e-997b-ef14af8de6b3
+begin
+	f(u, p, t) = - p[1] * u  # f is the derivative, p are parameters t is time
+	u0 = 1.0                 # Initial concentration/activity
+	tspan = (0.0, 5.0)       # bounds for the time interval from 0 to 1
+	param = [1.0]            # array parameters: p[1] = decay constant "k" 
+	prob = ODEProblem(f, u0, tspan, [1.0]) # initialize the ODE problem
+end
+
+# ╔═╡ 782f0314-1e52-418e-961f-528133719166
+md"""
+#### 2. Solve for the solution
+
+This calls the solver to
+
+```julia
+solve(prob, Euler(), dt = 0.1, reltol = 1e-8, abstol = 1e-8)
+```
+
+- prob: ODEProblem
+- Euler(): Specifies the numerical algorithm
+- dt: Specifies the time step (this is not necessary for many methods)
+- reltol: relative tolerance
+- abstol: absolute tolerance
+"""
+
+# ╔═╡ ff298db2-d9ae-4b73-a2e5-a76748ea7881
+Markdown.MD(
+	Markdown.Admonition("warning", "Numerical Error", [md"
+The most useful options are the tolerances abstol and reltol. These tell the internal adaptive time stepping engine how precise of a solution you want. Generally, reltol is the relative accuracy while abstol is the accuracy when u is near zero. These tolerances are local tolerances and thus are not global guarantees. However, a good rule of thumb is that the total solution accuracy is 1-2 digits less than the relative tolerances. Thus, for the defaults abstol=1e-6 and reltol=1e-3, you can expect a global accuracy of about 1-2 digits. This is standard across the board and applies to the native Julia methods, the wrapped Fortran and C++ methods, the calls to MATLAB/Python/R, etc.
+"]))
+
+# ╔═╡ 8d37df6d-cae0-482f-babe-a0156d91f2dd
+odeSolution = solve(prob, Euler(), dt = 0.2, reltol = 1e-8, abstol = 1e-8)
+
+# ╔═╡ 5d39406a-c81f-4ede-8cea-fd731f98d98a
+md"""
+#### 3. Parsing the Solution
+
+The solution type has a lot of built-in functionality to help analysis. For example, it has an array interface for accessing the values. Internally, the solution type has two important fields:
+
+    u which holds the Vector of values at each timestep
+    t which holds the times of each timestep.
+
+Different solution types may add extra information as necessary, such as the derivative at each timestep du or the spatial discretization x, y, etc.
+
+The solution is computed for the `tspan` given in the `ODEProblem`.
+
+The `.t` notation gives the timearray
+
+```julia
+time_array = odeSolution.t
+```
+
+The `.u` notation gives the solution values
+
+```julia
+solution_array = odeSolution.u
+```
+
+Calling the solution with an intermediate number gives an interpolated result
+
+```julia
+sol_at_t = odeSolution(0.12)
+```
+"""
+
+# ╔═╡ 7227d5f7-7787-4d6f-968f-41e6d9d222c8
+odeSolution
+
+# ╔═╡ 7929bede-1d25-4bf3-8713-896e228b3536
+odeSolution.t
+
+# ╔═╡ 5699ad7a-cf22-4f40-b0bf-277ac4dafc15
+odeSolution.u
+
+# ╔═╡ 906c03c3-54bb-431a-96c4-2016e50763c5
+odeSolution(0.5)
+
+
+# ╔═╡ 50b56d96-7257-49e0-832c-9644194d2647
+md"""
+#### 4. Visualizing Results
+
+The solution can be visualized. Initially we will work on problems with known solutions that we can compare to.
+
+"""
+
+# ╔═╡ 209530e9-e019-4c3e-b581-2300446e3ad6
+let 
+	t = odeSolution.t
+	p = plot(t, odeSolution.u, color = :black, lw = 3, label = "Euler Method")
+	plot!(t, exp.(-1.0.*t), color = :darkred, lw = 2, label = "Analytical Solution")
+	plot(p, size = (400,300), xlabel = "t", ylabel = "Activity")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -165,6 +484,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CalculusWithJulia = "a2e0e22d-7d4c-5312-9169-8b992201a882"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 PlotThemes = "ccf2f8ad-2431-5c83-bf29-c5338b663b6a"
@@ -175,21 +495,22 @@ SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
 [compat]
 CalculusWithJulia = "~0.1.2"
 DifferentialEquations = "~7.9.0"
+ForwardDiff = "~0.10.36"
 HypertextLiteral = "~0.9.4"
 LaTeXStrings = "~1.3.0"
 PlotThemes = "~3.1.0"
 Plots = "~1.38.17"
 PlutoUI = "~0.7.52"
-SymPy = "~1.1.12"
+SymPy = "~1.1.10"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "eb2038fe600b382d42dc31d65e5354a29a9577fd"
+project_hash = "7d7a19f8c2df7b72558ee7b692761895fd2fea0b"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f5c25e8a5b29b5e941b7408bc8cc79fea4d9ef9a"
@@ -404,7 +725,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.0.2+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -480,9 +801,9 @@ version = "0.3.25"
 
 [[deps.DiffEqBase]]
 deps = ["ArrayInterface", "ChainRulesCore", "DataStructures", "DocStringExtensions", "EnumX", "FastBroadcast", "ForwardDiff", "FunctionWrappers", "FunctionWrappersWrappers", "LinearAlgebra", "Logging", "Markdown", "MuladdMacro", "Parameters", "PreallocationTools", "Printf", "RecursiveArrayTools", "Reexport", "Requires", "SciMLBase", "SciMLOperators", "Setfield", "SparseArrays", "Static", "StaticArraysCore", "Statistics", "Tricks", "TruncatedStacktraces", "ZygoteRules"]
-git-tree-sha1 = "df8638dbfa03d1b336c410e23a9dfbf89cb53937"
+git-tree-sha1 = "5f9126d4fb0a114ef122610a902f23736e90e93c"
 uuid = "2b5f629d-d688-5b77-993f-72d75c75574e"
-version = "6.128.2"
+version = "6.128.1"
 
     [deps.DiffEqBase.extensions]
     DiffEqBaseDistributionsExt = "Distributions"
@@ -508,9 +829,9 @@ version = "6.128.2"
 
 [[deps.DiffEqCallbacks]]
 deps = ["DataStructures", "DiffEqBase", "ForwardDiff", "LinearAlgebra", "Markdown", "NLsolve", "Parameters", "RecipesBase", "RecursiveArrayTools", "SciMLBase", "StaticArraysCore"]
-git-tree-sha1 = "b93afdf0f82246e75a5d65750eca6b275df08e1c"
+git-tree-sha1 = "2afa3ca067b78cad118ede8736e475bc0a08724a"
 uuid = "459566f4-90b8-5000-8ac3-15dfb0a30def"
-version = "2.29.0"
+version = "2.28.0"
 weakdeps = ["OrdinaryDiffEq", "Sundials"]
 
 [[deps.DiffEqNoiseProcess]]
@@ -649,15 +970,10 @@ version = "2.0.0"
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
-deps = ["LinearAlgebra", "Random"]
-git-tree-sha1 = "a20eaa3ad64254c61eeb5f230d9306e937405434"
+deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
+git-tree-sha1 = "048dd3d82558759476cff9cff999219216932a08"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.6.1"
-weakdeps = ["SparseArrays", "Statistics"]
-
-    [deps.FillArrays.extensions]
-    FillArraysSparseArraysExt = "SparseArrays"
-    FillArraysStatisticsExt = "Statistics"
+version = "1.6.0"
 
 [[deps.FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays"]
@@ -1061,9 +1377,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearSolve]]
 deps = ["ArrayInterface", "DocStringExtensions", "EnumX", "FastLapackInterface", "GPUArraysCore", "InteractiveUtils", "KLU", "Krylov", "Libdl", "LinearAlgebra", "PrecompileTools", "Preferences", "RecursiveFactorization", "Reexport", "Requires", "SciMLBase", "SciMLOperators", "Setfield", "SparseArrays", "Sparspak", "SuiteSparse", "UnPack"]
-git-tree-sha1 = "69cbd612e6e67ba2f8121bc8725bc9d04d803599"
+git-tree-sha1 = "f746a5b9522815bf098049f9cbfbfcae53f29450"
 uuid = "7ed4a6bd-45f5-4d41-b270-4a48e9bafcae"
-version = "2.5.1"
+version = "2.5.0"
 
     [deps.LinearSolve.extensions]
     LinearSolveCUDAExt = "CUDA"
@@ -1071,7 +1387,6 @@ version = "2.5.1"
     LinearSolveIterativeSolversExt = "IterativeSolvers"
     LinearSolveKrylovKitExt = "KrylovKit"
     LinearSolveMKLExt = "MKL_jll"
-    LinearSolveMetalExt = "Metal"
     LinearSolvePardisoExt = "Pardiso"
 
     [deps.LinearSolve.weakdeps]
@@ -1080,7 +1395,6 @@ version = "2.5.1"
     IterativeSolvers = "42fd0dbc-a981-5370-80f2-aaf504508153"
     KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
     MKL_jll = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-    Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
     Pardiso = "46dd5b70-b6fb-5a00-ae2d-e8fea33afaf2"
 
 [[deps.LogExpFunctions]]
@@ -1307,7 +1621,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.9.0"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1771,15 +2085,15 @@ version = "5.2.1+0"
 
 [[deps.SymPy]]
 deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
-git-tree-sha1 = "ed1605d9415cccb50e614b8fe0035753877b5303"
+git-tree-sha1 = "c24256a64ccce99a360050af5a037500f6a024d9"
 uuid = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
-version = "1.1.12"
+version = "1.1.10"
 
     [deps.SymPy.extensions]
-    SymPySymbolicUtilsExt = "SymbolicUtils"
+    SymPyTermInterfaceExt = "TermInterface"
 
     [deps.SymPy.weakdeps]
-    SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
+    TermInterface = "8ea1fca8-c5ef-4a55-8b96-4e9afe9c9a3c"
 
 [[deps.SymbolicIndexingInterface]]
 deps = ["DocStringExtensions"]
@@ -1879,9 +2193,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "a72d22c7e13fe2de562feda8645aa134712a87ee"
+git-tree-sha1 = "607c142139151faa591b5e80d8055a15e487095b"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.17.0"
+version = "1.16.3"
 
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"
@@ -2163,25 +2477,45 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─22f50c78-4371-11ee-0998-3f4adc43bebe
-# ╟─c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-# ╟─6d5d7138-6ab0-4ad8-9562-4364750d9081
-# ╠═15e7e493-2b04-4fb4-8554-40494ef2a3c0
-# ╠═5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# ╠═fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# ╠═8be795f6-c566-433e-9f67-8d0482f3c279
-# ╠═7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# ╠═aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# ╠═1ce7feed-5a14-44cf-ab07-470e71368a5e
-# ╟─3157d7f2-fc5c-452b-8137-a9e03c181135
-# ╟─258556db-42ff-43c5-84f5-0d70d0f882ff
-# ╠═89110eba-fa8b-49e6-8bf9-24b8acece074
-# ╟─4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
-# ╠═83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-# ╟─24c7963c-cb1e-43cf-b0bb-fd383fde3c05
-# ╠═72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-# ╠═bd4878a2-27cd-4b74-af3e-1061de5886e5
-# ╟─4ad58d78-22f4-4716-a0db-ac533b53cecf
-# ╟─36065129-50b3-465a-b6a2-052c5a9e0339
+# ╟─f2d91da6-421a-11ee-13bf-b97463cb98e2
+# ╟─f0d9268c-f71c-42a7-b363-bd15b016b0c3
+# ╟─9037d73b-51fe-4e9f-8545-e5bf13d45f9c
+# ╟─cdb8c029-9324-402c-9319-f91cfeb36d1d
+# ╟─1440a399-e391-4930-ad03-15bdce8c56d3
+# ╟─ca041540-036a-478e-8c04-a11a48ad8414
+# ╠═9967faf7-3f0f-4c64-bbcb-945070d4ca07
+# ╠═85c37f4a-02a3-46d1-b2cf-4889a42fc837
+# ╠═f95190ae-8ee7-49ea-ad80-ea2d269a5b95
+# ╟─3af142b1-2dc3-48ac-8250-07345c9b36cb
+# ╟─eef1792a-a688-42c0-af80-af81c588d39a
+# ╟─b09d6552-4f4c-4d3f-8a0e-d0037b4c1e5a
+# ╟─741a844f-b549-4f94-b326-e4882f01017f
+# ╟─6d51519f-9b1f-462a-acaa-a11b564e040d
+# ╠═cff4074e-a0c1-4c4e-b19d-7665d3edb353
+# ╠═42428795-d698-4c9e-9f47-67cdb8453c57
+# ╟─358ee0cf-c710-437d-8473-eb8c0b04235e
+# ╟─fd762ce1-4cd6-4c3b-b023-6cf913aa92c8
+# ╟─9c346abb-eda6-487c-b8cd-345dc1a233cb
+# ╠═7eef67ed-b8e9-4e2c-9ce4-4fb188a51393
+# ╟─258e8fe9-3d3c-4c3d-9cfe-3dbfaebe3d30
+# ╟─72a797f9-cebe-4a55-95f7-39e6832fef47
+# ╟─7994d143-28ad-4649-bc4e-d0b378b03a4e
+# ╟─2a9b3f4b-06b5-470e-b8c0-5318694db7fd
+# ╟─6104397e-05c3-4a50-954d-4daa41cb9306
+# ╟─56585376-ebe7-4c2d-8c65-8bf1a178d276
+# ╠═5e0ac040-00bd-4c36-a1aa-636a1ab61b7e
+# ╠═4095227f-c1b7-4134-bb25-c6aebbbb5fd9
+# ╟─555ae0a8-5933-4d66-b767-82ffdcef3757
+# ╠═3a91fea9-fad2-429e-997b-ef14af8de6b3
+# ╟─782f0314-1e52-418e-961f-528133719166
+# ╟─ff298db2-d9ae-4b73-a2e5-a76748ea7881
+# ╠═8d37df6d-cae0-482f-babe-a0156d91f2dd
+# ╟─5d39406a-c81f-4ede-8cea-fd731f98d98a
+# ╠═7227d5f7-7787-4d6f-968f-41e6d9d222c8
+# ╠═7929bede-1d25-4bf3-8713-896e228b3536
+# ╠═5699ad7a-cf22-4f40-b0bf-277ac4dafc15
+# ╠═906c03c3-54bb-431a-96c4-2016e50763c5
+# ╟─50b56d96-7257-49e0-832c-9644194d2647
+# ╟─209530e9-e019-4c3e-b581-2300446e3ad6
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

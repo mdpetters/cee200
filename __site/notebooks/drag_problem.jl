@@ -1,10 +1,10 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.17.7
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 22f50c78-4371-11ee-0998-3f4adc43bebe
+# ╔═╡ 65592a06-42cf-11ee-2a8d-abb8697019a1
 begin
 	using PlutoUI, LaTeXStrings
 	using HypertextLiteral
@@ -16,148 +16,128 @@ begin
 
 	md"""
 $(TableOfContents(depth=4))
-# Example ODEs: Systems of Equations
+# Example ODEs: Drag Equation
 	"""
 end
 
-# ╔═╡ c001e7fe-4fcd-4e6f-b188-a41d849a9a74
+# ╔═╡ e3f8f755-ef0b-416c-8210-00d1970f89ad
 md"""
+# 1. Governing Equation
 
-Consider a simple reaction mechamism involving species ``x``, ``y``, and ``z``
+We seek to find the velocity of an object -- initially at rest -- falling through a resistive medium. The governing differential equation is a linear first order differential equation of the form:
 
 ```math
-\begin{array}
-& x \rightarrow y & \;\;\; \frac{dx}{dt} = -ax \\
-y \rightarrow z & \quad \quad \; \frac{dy}{dt} = ax - by \\
- & \frac{dz}{dt} = by \\
-\end{array}
+\frac{dv(t)}{dt} + \frac{1}{τ} v(t) = g \quad v(0) = 0
 ```
 
-In this reaction ``x`` decays into ``y``, ``y`` decays into ``z``.  All reactions are first order. An example would be a [radiatioactive decay chain](https://en.wikipedia.org/wiki/Decay_chain).
-	
-"""
+where ``v(t)`` is the velocity as a function of time, ``τ`` is the relaxation time, and  ``g`` is the acceleration due to gravity.
 
-# ╔═╡ 6d5d7138-6ab0-4ad8-9562-4364750d9081
-md"""
 # 2. SymPy Solution
-
-Notes on the solution:
-- SymPy can solve systems of equations. 
-- It is possible to use `Julia` metaprograming to extract the analytical solution from SymPy and evaluate it without having to retype the equation. 
 """ 
 
-# ╔═╡ 15e7e493-2b04-4fb4-8554-40494ef2a3c0
-@syms a b t x() y() z()
-
-# ╔═╡ 5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# x -> y reaction
-eq1 = diff(x(t), t) + a*x(t)
-
-# ╔═╡ fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# y -> z reaction
-eq2 = diff(y(t), t) - a*x(t) + b*y(t)
-
-# ╔═╡ 8be795f6-c566-433e-9f67-8d0482f3c279
-# buildup of z
-eq3 = diff(z(t), t) - b*y(t) 
-
-# ╔═╡ 7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# solves for the system of equation with initial conditions x(0) = 2, y(0) = 0, z(0) = 0. That is, start with only x in the system
-eq4 = dsolve([eq1, eq2, eq3], ics = Dict(x(0) => 2, y(0) => 0, z(0) => 0))
-
-# ╔═╡ aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# This extracts the solution and evaluates it for t = 0:10.
-# Be careful not to use t, a, b as variables as it will conflict with the symbol 
-# definition. Hence the use of t1, c1, c2
-# asols is an array of solutions for x, y, and z
+# ╔═╡ 068075b2-7957-40ae-b41e-ef4a99ff48df
 begin
-	function eval_solution(eq, t1, c1, c2)
-		es(f, time) = f(Dict(t => time, a => c1, b => c2) )
-		map(eq) do y
-    		map(x -> es(y.rhs(), x), t1)
-		end
-	end
-	myt = 0:0.1:10
-	asols = eval_solution(eq4, myt, 1.0, 0.5)
+	@syms g τ t v()
+	eq = diff(v(t), t, 1) + 1/τ*v(t) - g
 end
 
-# ╔═╡ 1ce7feed-5a14-44cf-ab07-470e71368a5e
-begin
-	plot(myt, asols[1,:], size = (500, 300), xlabel = "t", 
-		legend = :outertopright, 	label = "x", color = :black)
-	plot!(myt, asols[2,:], label = "y", color = :darkred)
-	plot!(myt, asols[3,:], label = "z", color = :steelblue3)
-end
+# ╔═╡ f428ecbe-aabe-41bb-b095-44fa1d306ce6
+ODE = dsolve(eq, v(t), ics=Dict(v(0) => 0))
 
-# ╔═╡ 3157d7f2-fc5c-452b-8137-a9e03c181135
-md"""
-The solution is as expected: x decays exponentially, y first increases and then decays, z increases over time.
-"""
-
-# ╔═╡ 258556db-42ff-43c5-84f5-0d70d0f882ff
+# ╔═╡ 7ee59801-cfcc-4d0c-a8e7-958adea4cef5
 md"""
 # 3. ODE Solver
 
 ## a. Define the Problem
 
 A few notes about the setup of the ODEProblem:
-- There are 3 equations so the are 3 elements in the u array
-- There are three initial conditions in u0
+
+- The function `f!` updates the solution in place. By convention these functions get an explamation point behind the definition.
+- The du values are the derivatives, the u values are the function values, p are the parameters, and t is time.
+- Although this is a single differential equation we are setting up the problem as an array. Thus we have du[1] = ...
+- There are two parameters, gravity and relaxation time. These are passed as parameters.
+- Be mindfult that parameters have units, and the units have to be self-consistent for correct results.
+
 """
 
-# ╔═╡ 89110eba-fa8b-49e6-8bf9-24b8acece074
+# ╔═╡ 011e29dc-fb25-45c5-bbb2-0db74b927ca5
 begin
-	function f!(du, u, p, t)  
-		du[1] = -p[1]*u[1]                # x equation
-		du[2] = p[1]*u[1] - p[2]*u[2]     # y equation
-		du[3] = p[2]*u[2]                 # z equation
+	function f!(du, u, p, t) 
+		g = p[1]                     # m/s2 note that g has units
+		τ = p[2]                     # s note that tau has units
+		du[1] = @. g - 1.0/τ * u[1]  # du[1] is the derivative t 
 	end
-	u0 = [2, 0, 0]                # initial concentrations for x, y, and z
-	tspan = [0.0, 10.0]           # integrate from 0 to 10s
-	problem = ODEProblem(f!, u0, tspan, [1.0, 0.5]) # initialize the ODE problem
+	u0 =  [0.0]                 # initial velocity
+	param = [9.81, 1e-4]        # array parameters: p[1] = g, p[2] = τ 
+	tspan = (0.0, param[2]*5)   # integrate from 0 to 5τ
+	problem = ODEProblem(f!, u0, tspan, param) # initialize the ODE problem
 end
 
-# ╔═╡ 4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
+# ╔═╡ ec3d6ec9-8647-432f-ac8a-12dd59e47771
 md"""
 ## b. Run the Solver
 
+Notes on running this solver:
+
+- The solution method is ``RK4()``, which corresponds to the [classic Runge–Kutta method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods).
+- Note that we are not specifying a time step, nor is the time step constant. The method sets the time-step adaptively as needed for accuracy. 
 """
 
-# ╔═╡ 83257d8a-4a12-4e28-b4b2-4bd4accfa54c
+# ╔═╡ cb6388de-3cef-44b1-b3f3-5cac0f00f897
 solution = solve(problem, RK4(), reltol = 1e-8, abstol = 1e-8)
 
-# ╔═╡ 24c7963c-cb1e-43cf-b0bb-fd383fde3c05
+# ╔═╡ 2374e925-4844-4a62-9418-8a9376860141
 md"""
 ## c. Unpacking the Solution
 
-- As with the second order equation, there are multiple elements returned at each time step. 
-- In this case it is x, y, and z concentrations
+Notes on Solution
+- Because we specified "u" as an array, the solution is an array of arrays, that is, at each time step the result is a 1D array.
+- To extract the solution we are using the [`map` function](https://en.wikipedia.org/wiki/Map_(higher-order_function). The map function applies a given function to each element of a collection. For example
+
+```julia
+map(x -> x + 1, [1, 2, 3, 4])
+```
+
+evaluates to `[2, 3, 4, 5]`
+
+```julia
+map(x -> x[1], solution.u)
+```
+
+extracts the first element of the array for each array in the solution array.
 """
 
-# ╔═╡ 72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
+# ╔═╡ 29e530c8-8c77-4a5f-9930-785ab343aa2e
+solution.u                  # Note that this is an array of arrays
 
+# ╔═╡ d73c976f-71e5-49f5-9944-da3c3469f5c4
+map(x -> x[1], solution.u)  # Note that this reduces the solution to a single array
 
-# ╔═╡ bd4878a2-27cd-4b74-af3e-1061de5886e5
-solution.u
-
-# ╔═╡ 4ad58d78-22f4-4716-a0db-ac533b53cecf
+# ╔═╡ cd7c2b68-cb0f-4f7f-9bcf-68c278022c07
 md"""
 ## d. Visualizing the Solution
+
+Notes on visualization:
+- We are comparing against the known analytical solution to test accuracy. The numerical solution is indistinguishable from the analytical solution.
+- The visualization is tuned to illustrate the physics of the problem.
+- After 1τ, the signal reaches ~63%, (1-exp(-1)), of terminal velocity.
+- After 5τ, the object has reached terminal velocity.
 """
 
-# ╔═╡ 36065129-50b3-465a-b6a2-052c5a9e0339
+# ╔═╡ f8bf3bbd-55f7-4e92-8a3a-588f6897efb2
 begin
-	xeq = map(x -> x[1], solution.u)
-	yeq = map(x -> x[2], solution.u)
-	zeq = map(x -> x[3], solution.u)
-	ts = solution.t
-	plot(ts, xeq, color = :black, label = "x RK4 Solution", lw = 3)
-	plot!(ts, yeq, color = :darkred, label = "y  RK4 Solution", lw = 3)
-	plot!(ts, zeq, color = :steelblue3, label = "z  RK4 Solution", lw = 3)
-	plot!(myt, asols[1,:], xlabel = "t", 
-		legend = :outertopright, label = "x - analytical", color = :lightgray)
-	plot!(myt, asols[2,:], label = "y - analytical", color = :navajowhite)
-	plot!(myt, asols[3,:], label = "z - analytical", color = :darkgray)
+	u = map(x -> x[1], solution.u)
+	rt = param[2]       # relaxation time
+	p = plot(solution.t, u, color = :black, lw = 3, label = "RK4 Method", 
+		xlabel = "Time (s)", ylabel = "v (m/s)")
+	analytical = @. param[1]*param[2]*(1.0 - exp(-solution.t/param[2]))
+	plot!(solution.t, analytical, color = :lightgray, lw = 1, 
+		label = "Analytical Solution")
+	plot!([0, 5.0*param[2]], param[1]*param[2].*[1.0, 1.0], color = :darkred, 
+		label = "Terminal velocity", lw = 3)
+	plot!(param[2].*[1.0], 0.63*[param[1]*param[2]], line = :stem, 
+		marker = :circle, label = "τ = 1, y = τ*g*(1-exp(-1))", 
+		color = :steelblue3, lw = 2)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -180,16 +160,16 @@ LaTeXStrings = "~1.3.0"
 PlotThemes = "~3.1.0"
 Plots = "~1.38.17"
 PlutoUI = "~0.7.52"
-SymPy = "~1.1.12"
+SymPy = "~1.1.10"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "eb2038fe600b382d42dc31d65e5354a29a9577fd"
+project_hash = "0e5c970ac256dbc048d0e70c70100bf82dafbf33"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f5c25e8a5b29b5e941b7408bc8cc79fea4d9ef9a"
@@ -404,7 +384,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.0.2+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -480,9 +460,9 @@ version = "0.3.25"
 
 [[deps.DiffEqBase]]
 deps = ["ArrayInterface", "ChainRulesCore", "DataStructures", "DocStringExtensions", "EnumX", "FastBroadcast", "ForwardDiff", "FunctionWrappers", "FunctionWrappersWrappers", "LinearAlgebra", "Logging", "Markdown", "MuladdMacro", "Parameters", "PreallocationTools", "Printf", "RecursiveArrayTools", "Reexport", "Requires", "SciMLBase", "SciMLOperators", "Setfield", "SparseArrays", "Static", "StaticArraysCore", "Statistics", "Tricks", "TruncatedStacktraces", "ZygoteRules"]
-git-tree-sha1 = "df8638dbfa03d1b336c410e23a9dfbf89cb53937"
+git-tree-sha1 = "5f9126d4fb0a114ef122610a902f23736e90e93c"
 uuid = "2b5f629d-d688-5b77-993f-72d75c75574e"
-version = "6.128.2"
+version = "6.128.1"
 
     [deps.DiffEqBase.extensions]
     DiffEqBaseDistributionsExt = "Distributions"
@@ -508,9 +488,9 @@ version = "6.128.2"
 
 [[deps.DiffEqCallbacks]]
 deps = ["DataStructures", "DiffEqBase", "ForwardDiff", "LinearAlgebra", "Markdown", "NLsolve", "Parameters", "RecipesBase", "RecursiveArrayTools", "SciMLBase", "StaticArraysCore"]
-git-tree-sha1 = "b93afdf0f82246e75a5d65750eca6b275df08e1c"
+git-tree-sha1 = "2afa3ca067b78cad118ede8736e475bc0a08724a"
 uuid = "459566f4-90b8-5000-8ac3-15dfb0a30def"
-version = "2.29.0"
+version = "2.28.0"
 weakdeps = ["OrdinaryDiffEq", "Sundials"]
 
 [[deps.DiffEqNoiseProcess]]
@@ -649,15 +629,10 @@ version = "2.0.0"
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
-deps = ["LinearAlgebra", "Random"]
-git-tree-sha1 = "a20eaa3ad64254c61eeb5f230d9306e937405434"
+deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
+git-tree-sha1 = "048dd3d82558759476cff9cff999219216932a08"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.6.1"
-weakdeps = ["SparseArrays", "Statistics"]
-
-    [deps.FillArrays.extensions]
-    FillArraysSparseArraysExt = "SparseArrays"
-    FillArraysStatisticsExt = "Statistics"
+version = "1.6.0"
 
 [[deps.FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays"]
@@ -1061,9 +1036,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearSolve]]
 deps = ["ArrayInterface", "DocStringExtensions", "EnumX", "FastLapackInterface", "GPUArraysCore", "InteractiveUtils", "KLU", "Krylov", "Libdl", "LinearAlgebra", "PrecompileTools", "Preferences", "RecursiveFactorization", "Reexport", "Requires", "SciMLBase", "SciMLOperators", "Setfield", "SparseArrays", "Sparspak", "SuiteSparse", "UnPack"]
-git-tree-sha1 = "69cbd612e6e67ba2f8121bc8725bc9d04d803599"
+git-tree-sha1 = "f746a5b9522815bf098049f9cbfbfcae53f29450"
 uuid = "7ed4a6bd-45f5-4d41-b270-4a48e9bafcae"
-version = "2.5.1"
+version = "2.5.0"
 
     [deps.LinearSolve.extensions]
     LinearSolveCUDAExt = "CUDA"
@@ -1071,7 +1046,6 @@ version = "2.5.1"
     LinearSolveIterativeSolversExt = "IterativeSolvers"
     LinearSolveKrylovKitExt = "KrylovKit"
     LinearSolveMKLExt = "MKL_jll"
-    LinearSolveMetalExt = "Metal"
     LinearSolvePardisoExt = "Pardiso"
 
     [deps.LinearSolve.weakdeps]
@@ -1080,7 +1054,6 @@ version = "2.5.1"
     IterativeSolvers = "42fd0dbc-a981-5370-80f2-aaf504508153"
     KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
     MKL_jll = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-    Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
     Pardiso = "46dd5b70-b6fb-5a00-ae2d-e8fea33afaf2"
 
 [[deps.LogExpFunctions]]
@@ -1307,7 +1280,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.9.0"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1771,15 +1744,15 @@ version = "5.2.1+0"
 
 [[deps.SymPy]]
 deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
-git-tree-sha1 = "ed1605d9415cccb50e614b8fe0035753877b5303"
+git-tree-sha1 = "c24256a64ccce99a360050af5a037500f6a024d9"
 uuid = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
-version = "1.1.12"
+version = "1.1.10"
 
     [deps.SymPy.extensions]
-    SymPySymbolicUtilsExt = "SymbolicUtils"
+    SymPyTermInterfaceExt = "TermInterface"
 
     [deps.SymPy.weakdeps]
-    SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
+    TermInterface = "8ea1fca8-c5ef-4a55-8b96-4e9afe9c9a3c"
 
 [[deps.SymbolicIndexingInterface]]
 deps = ["DocStringExtensions"]
@@ -1879,9 +1852,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "a72d22c7e13fe2de562feda8645aa134712a87ee"
+git-tree-sha1 = "607c142139151faa591b5e80d8055a15e487095b"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.17.0"
+version = "1.16.3"
 
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"
@@ -2163,25 +2136,18 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─22f50c78-4371-11ee-0998-3f4adc43bebe
-# ╟─c001e7fe-4fcd-4e6f-b188-a41d849a9a74
-# ╟─6d5d7138-6ab0-4ad8-9562-4364750d9081
-# ╠═15e7e493-2b04-4fb4-8554-40494ef2a3c0
-# ╠═5bfe6991-ae4a-4617-b1e2-f3c00cae001b
-# ╠═fdaf2a94-cfff-4176-a1bc-0bc7f053d25f
-# ╠═8be795f6-c566-433e-9f67-8d0482f3c279
-# ╠═7c7c01b7-7b2c-4387-8004-cf7305ec1c22
-# ╠═aa273b2d-827f-419b-b8a4-f6e909fc72b2
-# ╠═1ce7feed-5a14-44cf-ab07-470e71368a5e
-# ╟─3157d7f2-fc5c-452b-8137-a9e03c181135
-# ╟─258556db-42ff-43c5-84f5-0d70d0f882ff
-# ╠═89110eba-fa8b-49e6-8bf9-24b8acece074
-# ╟─4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
-# ╠═83257d8a-4a12-4e28-b4b2-4bd4accfa54c
-# ╟─24c7963c-cb1e-43cf-b0bb-fd383fde3c05
-# ╠═72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-# ╠═bd4878a2-27cd-4b74-af3e-1061de5886e5
-# ╟─4ad58d78-22f4-4716-a0db-ac533b53cecf
-# ╟─36065129-50b3-465a-b6a2-052c5a9e0339
+# ╟─65592a06-42cf-11ee-2a8d-abb8697019a1
+# ╟─e3f8f755-ef0b-416c-8210-00d1970f89ad
+# ╠═068075b2-7957-40ae-b41e-ef4a99ff48df
+# ╠═f428ecbe-aabe-41bb-b095-44fa1d306ce6
+# ╟─7ee59801-cfcc-4d0c-a8e7-958adea4cef5
+# ╠═011e29dc-fb25-45c5-bbb2-0db74b927ca5
+# ╟─ec3d6ec9-8647-432f-ac8a-12dd59e47771
+# ╠═cb6388de-3cef-44b1-b3f3-5cac0f00f897
+# ╟─2374e925-4844-4a62-9418-8a9376860141
+# ╠═29e530c8-8c77-4a5f-9930-785ab343aa2e
+# ╠═d73c976f-71e5-49f5-9944-da3c3469f5c4
+# ╟─cd7c2b68-cb0f-4f7f-9bcf-68c278022c07
+# ╠═f8bf3bbd-55f7-4e92-8a3a-588f6897efb2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

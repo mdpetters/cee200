@@ -18,7 +18,7 @@ Develops problem-solving techniques for basic engineering systems including heat
 
 #### Meeting Time/Location
 Lecture: Tu/Th 12:30 PM - 01:50 PM \\
-Discussion: 03:00 PM - 03:50 PM \\
+Discussion: F 03:00 PM - 03:50 PM \\
 Riverside Campus | Materials Sci and Engineering | Room 011 \\
 
 #### Course Materials
@@ -47,8 +47,10 @@ Assessment of learning objectives will be through homework assignments and frequ
 | Component | Weight | Details |
 | ----------|--------|---------|
 | Homework      | 20% | Homework will be collected via GitHub Classroom. |
-| Midterm Exams | 40% | Two midterm exams are scheduled. \\ The exams mimic the homework assignments. |
+| Midterm Exams | 40% | Two midterm exams are scheduled.  |
 | Final Exam    | 40% | The final exam is cumulative. |
+
+Exams will mimic the homework assignments and be assigned via GitHub Classroom.
 
 **Curve Policy:**
 
@@ -141,3 +143,12 @@ The use of laptop computers to follow the notebooks during lectures is permitted
 | Nov 28 | Lecture 16 | Nov 30 | Lecture 17 | Dec 1   | **Midterm 2**  |
 | Dec 5  | Lecture 18 | Dec 7  | Final Review | Dec 8 | No Meeting |
 | Dec 12 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; Reading Week   | Dec 17 | **Final Exam, 7-11 pm**  | Dec 8 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No Meeting |
+
+
+#### Survey
+
+Please fill out the survey to provide initial feedback on the course. 
+
+~~~
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScpICUDyQmRoahfC_ZQcl2aONhNhjtIcoMxZG1YZLhTqqlE3w/viewform?embedded=true" width="640" height="1599" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+~~~

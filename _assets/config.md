@@ -7,7 +7,7 @@ mintoclevel = 2
 # these files might be copied and, if markdown, processed by Franklin which
 # you might not want. Indicate directories by ending the name with a `/`.
 # Base files such as LICENSE.md and README.md are ignored by default.
-ignore = ["notebooks/", "data/"]
+ignore = ["", ""]
 
 # RSS (the website_{title, descr, url} must be defined to get RSS)
 generate_rss = false
@@ -15,8 +15,6 @@ website_title = "CEE-200"
 website_descr = "Course Website"
 website_url   = "https://mdpetters.github.io/cee200/"
 +++
-
-
 
 \newcommand{\R}{\mathbb R}
 \newcommand{\scal}[1]{\langle #1 \rangle}
