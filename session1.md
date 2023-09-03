@@ -1,7 +1,7 @@
 
-# Tools for Scientific Computing
+# Introduction
 
-This session introduces some important tools used in this class, including `git`, `GitHub`, `GitHub Classroom`, `Julia`, and `Pluto` notebooks.   
+This session introduces some important tools used in this class, including `git`, `GitHub`, `GitHub Classroom`, `Julia`, and `Pluto` notebooks.    
 
 \learning{
 **By the end of this lesson you have learned**
@@ -17,12 +17,7 @@ This session introduces some important tools used in this class, including `git`
 ~~~
 Slides: <a href="" target="_blank"> Slides</a> <br><br>
 ~~~
-
-~~~
-Notes: <a href="" target="_blank"> Notes</a>
-~~~
-
-
+\
 ## Notebooks
 
 ~~~
@@ -32,5 +27,5 @@ Notebook1: <a href="" target="_blank"> Example Pluto Notebook</a>
 ## Homework
 
 \exercise{
-Due Oct 1 10, 2023: 
+Due Oct 9, 2023: 
 }

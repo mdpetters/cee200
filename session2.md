@@ -1,7 +1,7 @@
 
-# Review of Vector Calculus
+# Vector Calculus
 
-This session introduces symbolic solvers and reviews review over key concepts in vector calculus with the objective to apply these operators in a computational context.  
+This session introduces symbolic solvers and reviews key concepts in vector calculus with the objective to apply these operators in a computational context.  
 
 \learning{
 **By the end of this lesson you have learned**
