@@ -48,12 +48,6 @@ md"""
 ## Disabled Cells
 """
 
-# ╔═╡ 3a31b805-d1cd-4478-849b-17bb533d07bd
-# ╠═╡ disabled = true
-#=╠═╡
-x = 1
-  ╠═╡ =#
-
 # ╔═╡ 04624d22-a9b5-4a83-a11d-18c4a54b4f0e
 x = 2
 
@@ -115,11 +109,11 @@ md"""
 # ╔═╡ a5228cf6-5cb7-4abb-9df9-6211337e1a5d
 plot(rand(10), x = "Hello", y = "Workd", color = :black, label = "random")
 
-# ╔═╡ 41b24afa-c315-4c30-83e4-18cc7e6b8ea5
-y = y + 1
-
 # ╔═╡ 08369bf3-729c-472d-9da4-664ae71c66ed
 y = 1
+
+# ╔═╡ 41b24afa-c315-4c30-83e4-18cc7e6b8ea5
+y = y + 1
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
