@@ -25,7 +25,9 @@ begin
 	using PlutoUI
 	using ColorSchemes
 	using SymPy
+	using HTTP
 	using PlutoUI: combine
+	using Random
 	
 	SSE(y,X,β) = (y-X*β)'*(y-X*β)
 	linfit(x, y) = [ones(length(x), 1) x] \ y 
@@ -252,7 +254,7 @@ R^2 = 1 - \frac{SSE}{SSTotal}
 
 where ``SSTotal = \sum_i \left ( \vec{y_i} - \bar{\vec{y}} \right )^2 = || \vec{y} - \bar{\vec{y}} ||_2^2`` 
 
-A concise definition for ``R^2`` is that ``R^2 \times 100`` percent of the variation in y is reduced by taking into account predictor x.
+A concise definition for ``R^2`` is that ``R^2 \times 100`` percent of the variation in y is reduced by taking into account predictor.
 
 If ``R^2 = 1`` all of the variation is explained by the model. If ``R^2 = 0`` none of the variation is explained by the model.
 """
@@ -302,10 +304,11 @@ The dataset below shows the fuel efficiency alongside a number of parameter for 
 
 # ╔═╡ 9b6ddee1-54cb-4b87-b10c-0d2b13a7ebdb
 begin
-	l = open("../data/auto.txt", "r") do f
-		readlines(f)
-	end
-	function splitit(x)
+	fptr = HTTP.get("https://mdpetters.github.io/cee200/assets/auto.txt")
+	l = split(String(fptr.body), "\n")
+	
+	function splitit(line)
+		x = string(line)
 		m = split(x, "\t")
 		n = split(m[1])
 
@@ -321,9 +324,8 @@ begin
 			displacement = displacement, hp = hp, 
 			weight = weight, acceleration = acceleration, year = year, model = o)
 	end
-	l[1]
-	split(l[1], "\t")
-	df1 = mapfoldl(splitit, vcat, l)
+	
+	df1 = mapfoldl(i -> splitit(l[i]), vcat, 1:length(l)-1)
 end
 
 # ╔═╡ 5a2d4a7b-a0eb-4e8d-b7e9-198976745cd2
@@ -472,12 +474,12 @@ where the integration limits ``a`` and ``b`` do not depend on ``x``. Note that t
 
 ```math
 \begin{array}
-a & & \displaystyle\mathcal{F}\{f(x)\} =& \int_{-\infty}^{\infty} f(x)e^{i\alpha x} dx = F(\alpha) \\
-& & \displaystyle\mathcal{F}\{f(x)\} =& \int_{-\infty}^{\infty} K(\alpha, x) f(x) dx = F(\alpha)
+a & & \displaystyle\mathcal{F}\{f(t)\} =& \int_{-\infty}^{\infty} f(t)e^{ix t} dt = F(x) \\
+& & \displaystyle\mathcal{F}\{f(t)\} =& \int_{-\infty}^{\infty} K(x, t) f(t) dt = F(x)
 \end{array}
 ```
 
-where ``K(\alpha, x) = e^{i\alpha x}``
+where ``K(x, t) = e^{ix t}``, where ``x`` is the frequency. Thus another way to think about integral equations is that they are *domain transformations* from the $t$-domain to the $x$-domain. 
 
 
 ## Volterra Integral Equation 
@@ -513,7 +515,6 @@ md"""
 
 # Data Inversion of Integral Equations
 
-## Illustrative Example
 
 The general Fredholm integral equation is
 
@@ -554,54 +555,96 @@ md"""
 The Fredholm integral equation 
 
 ```math
-\int_a^b K(x,t) u(t) dt = y(x)
+\int_a^b K(x,t) u(t) dt = y(x) \quad t \in [a, b] \;\; x \in [d, e]
 ```
 
 can be discretized into a system of linear equations such that
 
 $\mathbf{A}\vec{u}=\vec{y}$
 
-where $\vec{u}=<u_{1},\dots,u_{n}>$ is a discrete vector representing ``u(t)``, $\vec{y}= <y_{1},\dots,y_{n}>$ is a vector representing $y(x)$ and $\mathrm{\mathbf{A}}$ is the $n\times n$ design matrix.
+where $\vec{u}=<u_{1},\dots,u_{n}>$ is a discrete vector representing ``u(t)``, $\vec{y}= <y_{1},\dots,y_{m}>$ is a vector representing $y(x)$ and $\mathrm{\mathbf{A}}$ is the design matrix.
 
 Using the quadrature method, the integral is approximated by a weighted sum such that
 
-$\int_{a}^{b}K(x,t)u(t)dt \approx\sum_{j=1}^{n}wK(x_{i},t_{j})u(t_{j})$
+$\int_{a}^{b}K(x,t)u(t)dt \rightarrow y_j \approx\sum_{i=1}^{n}w_nK(x_{j},t_{i})u(t_{i})$
 
-where $w=\frac{b-a}{n}$, and $t_{j}=(j-\frac{1}{2})w$. The elements comprising the design matrix $\mathrm{\mathbf{A}}$ are $a_{i,j}=wK(x_{i},t_{j})$.
+where $w_n=\frac{b-a}{n}$, $w_m = \frac{c-d}{m}$, $t_{i}=(i-\frac{1}{2})w_1$, and $x_{j} = (j - \frac{1}{2})w_m$. The elements comprising the design matrix $\mathrm{\mathbf{A}}$ are $a_{j,i}=w_nK(x_{i},t_{j})$. The matrix $\mathbf{A}$ is $\mathbb{R}^{m\times n}. $ If $n = m$, the matrix is square.
 
 Below is an example how to calculate the matrix ``\mathbf{A}\vec{u}``. The discrete solution ``\mathbf{A}\vec{u}`` and ``\vec{y}`` are close, but not identical due to discretization errors.
-
 """
+
+# ╔═╡ 97567bbc-f652-4d54-81ae-028bb4b27b6b
+function discretize_baart(n, m)
+	A = zeros(m,n)
+	a, b = 0.0, π
+	c, d = 1e-20, π/2
+	wₙ = (b-a)/n
+	wₘ = (d-c)/m
+	K(x,t) = exp(x*cos(t))
+	
+	for i = 1:n
+	    for j = 1:m
+	        A[j,i] = wₙ*K((j-0.5)*wₘ, (i-0.5)*wₙ)
+	    end
+	end
+
+	t = [(i-0.5)*wₙ for i = 1:n]
+	x = [(j-0.5)*wₘ for j = 1:m]
+
+	u = sin.(t)
+	y = 2.0*sinh.(x)./x
+	A, u, A*u, y, t, x
+end
 
 # ╔═╡ 3ab8590a-bb4e-4e6b-9b53-3603c23aaeeb
 @bind sv combine() do Child
 	md"""
 	n  $(
-		Child(Slider(10:1:100, default = 10))
+		Child(Slider(5:1:100, default = 15))
+	) 
+	"""
+end
+
+# ╔═╡ 59733493-4be0-4650-a83a-e4279b0174ae
+@bind svm combine() do Child
+	md"""
+	m $(
+		Child(Slider(15:1:100, default = 15))
 	) 
 	"""
 end
 
 # ╔═╡ 5cd36360-bd59-44c9-850e-79e5de8a21e8
-myA, myu, myAu, myy = let
-	a, b = 0.0, π
-	n, m = sv[1],sv[1]
-	c, d = 1e-20, π/2
-	A = zeros(n,m)
-	w = (b-a)/n
-	baart(x,y) = exp(x*cos(y))
-	x = range(c, stop = d, length = n)
-	
-	for i = 1:n
-	    for j = 1:m
-	        A[i,j] = w*baart(x[i], (j-0.5)*w)
-	    end
-	end
-	t = [(j-0.5)*w for j = 1:m]
-	u = sin.(t)
+myA, myu, myAu, myy, myt, myx = discretize_baart(sv[1],svm[1])
+
+# ╔═╡ 3fa1bdd3-3fd0-43d4-b450-467fe636e9dc
+md"""
+##### Visualize
+"""
+
+# ╔═╡ 408f9681-325d-4d6f-89be-2ec8b518eac9
+let
+	t = 0.0:0.01:π
+	x = 1e-10:0.001:(π/2)
 	y = 2.0*sinh.(x)./x
-	A, u, A*u, y
+	p1 = plot(t, sin.(t), xlabel = "t", ylabel = "u", label = L"u(t) = sin(t)", 
+		color = :black)
+	p1 = scatter!(myt, myu, label = L"\vec{u}", title = "t-domain")
+	p2 = plot(x, y, xlabel = "x", ylabel = "y", label = L"y(x) = \frac{2sinh(x)}{x}", 
+		color = :black)
+	p2 = scatter!(myx, myA*myu, label = L"\vec{y} = \mathbf{A}\vec{u}", 
+		title = "x-domain")
+	plot(p1, p2, layout = grid(1,2), size = (700,300), bottom_margin = 15px)
 end
+
+# ╔═╡ 507d1240-a0a2-4979-8856-2790c3c34eca
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concepts", [md"
+
+- Note that the matrix $\mathbf{A}$ need not be square. That is we can map from m points in $u(t)$ space to n points in $y(x)$ space. 
+- Typically we observe $y(x)$ and then apply the inversion to find the true $u(t)$
+	
+	"]))
 
 # ╔═╡ 17bcf2c6-5b89-4703-be18-c7c6c0433508
 md"""
@@ -628,13 +671,28 @@ where ``\hat{\vec{u}}`` is the estimated inverted solution
 """
 
 
-# ╔═╡ 20147eab-eb85-4b3b-a1fd-9451994c8942
-uhat = myA \ myy
+# ╔═╡ 151dc9af-5099-42be-86a9-f0ab59646b67
+@bind sn2 combine() do Child
+	md"""
+	n  $(
+		Child(Slider(5:1:100, default = 8))
+	) 
+	"""
+end
 
 # ╔═╡ f52780fe-14d6-476c-9cfc-a656c09a7a01
-begin
-	plot(myu, xlabel = "Sample # (n)", color = :black, label = "true u(t)")
-	plot!(uhat, color = :darkred, label = "u from inversion")
+let
+	A, u, Au, y, t, x = discretize_baart(sn2[1],sn2[1])
+    uhat = (A'*A)^(-1)*A'*y
+
+	p1 = plot(y, xlabel = "Sample # (n)", ylabel = "Observation y", 
+		marker = :circle, color = :black, label = L"\vec{y}") 
+	p2 = plot(u, xlabel = "Sample # (n)", color = :black, label = L"u(t)")
+	p2 = plot!(uhat, color = :darkred, 
+		label = 
+			L"(\mathbf{A}^{\intercal}\mathbf{A})^{-1}\mathbf{A}^{\intercal} \vec{y}", 
+		marker = :circle)
+	plot(p1, p2, layout = grid(1,2), size = (700, 300), left_margin = 10px, bottom_margin = 15px)
 end
 
 # ╔═╡ f8918afb-d4cd-4d6e-b030-955a9434c2ff
@@ -803,18 +861,66 @@ As shown in the plot below for the singular values decay near exponentially. As 
 A consequence of near-zero singular values is that the matrix is **effectively rank-deficient** (and thus not invertible, and thus the problem is ill-posed) though it will appear as full rank. 
 """
 
+# ╔═╡ d02b8d90-24e8-420f-934c-f3bc4d62554f
+Markdown.MD(
+	Markdown.Admonition("danger", "Random Error", [md"
+So far the only error in $\vec{y}$ are discretization errors from our forward calculation. In practice, additional measurement errors will be superimposed on y such that 
+
+```math
+\vec{y} = \vec{y}_{ideal} + \vec{\epsilon}
+```
+
+where $\epsilon$ is a random perturbation on the observation $\vec{y}$. 
+"]))
+
+# ╔═╡ 3ad80698-f495-4740-9ece-dbf908bd9734
+@bind sn3 combine() do Child
+	md"""
+	n  $(
+		Child(Slider(5:1:100, default = 8))
+	) 
+	"""
+end
+
+# ╔═╡ 0d399316-d9b9-4980-bff0-d60d8c3fdb94
+@bind sn4 combine() do Child
+	md"""
+	Random error (fraction): ϵ  $(
+		Child(Slider(0:0.001:0.01, default = 0))
+	) 
+	"""
+end
+
 # ╔═╡ aabdeb85-2ca7-43ae-b413-92cc73c5fff1
-begin
-	U, Σ, V = svd(myA)
-	plot(Σ, yscale = :log10, color = :black, ylabel = "σᵢ", xlabel = "Sample # (m)", 
+let
+	A, u, Au, y, t, x = discretize_baart(sn3[1],sn3[1])
+	y1 = y + sn4[1]*(rand(length(y)) .- 0.5)
+    uhat = A \ y1 
+	#(A'*A)^(-1)*A'*y # Use A \ y to solve for better numerical resilience
+
+	p1 = plot(y1, xlabel = "Sample # (n)", ylabel = "Observation y", 
+		marker = :circle, color = :black, label = L"\vec{y}") 
+	p1 = plot!(y, label = "Noise free")
+	p2 = plot(u, xlabel = "Sample # (n)", color = :black, label = L"u(t)")
+	p2 = plot!(uhat, color = :darkred, 
+		label = 
+			L"\mathbf{A} \backslash \vec{y}", 
+		marker = :circle)
+
+	U, Σ, V = svd(A)
+	p3 = plot(Σ, yscale = :log10, color = :black, ylabel = "σᵢ", 
+		xlabel = "Sample # (m)", 
 		ylim = [1e-20, 10], label = :none)
+	p12 = plot(p1, p2, layout = grid(1,2))
+	plot(p12, p3, layout = grid(2,1), size = (700, 500), left_margin = 10px, bottom_margin = 15px)
 end
 
 # ╔═╡ 46a31a35-e5f9-4e71-8d44-7093c6feb6a1
 Markdown.MD(
 	Markdown.Admonition("info", "Exercise", [md"
-- Change the number of smaples n using the slider above.
+- Change the number of samples n using the slider above.
 - As you increase n, observe how the ordindary least squares inversion becomes noisy, and eventually useless. At the same time, observe how the singular values decay into the machine precision (~2e-16) for a Float64.
+- Even imperceptible noise superimposed on the observation can *destroy* the solution
 "]))
 
 # ╔═╡ 42bd1e5f-25ea-4375-8a9c-3c5e8ded2867
@@ -847,16 +953,16 @@ md"""
 Tikhonov regularization is a means to filter this noise by solving the minimization problem 
 
 ```math
-{ {\vec{u_{\lambda}}}}=\mathrm{minimize}\left\{ \left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}\right\} 
+{ {\vec{u}_{\lambda}}}=\mathrm{minimize}\left\{ \left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u}_{0}})}\right\rVert _{2}^{2}\right\} 
 ```
 
-where ``\vec{u_{\lambda}}`` is the regularized estimate of ``\vec{u}``,
-``\left\lVert \cdot\right\rVert _{2}`` is the Euclidean norm, ``{\rm {\bf L}}`` is the Tikhonov filter matrix, ``\lambda`` is the regularization parameter, and ``\vec{u_{0}}`` is a vector of an *a priori* guess of the solution. The initial guess can be taken to be ``\vec{u_{0}}=0`` if no *a priori* information is known. The matrix ``{\mathbf{A}}`` does not need to be square. 
+where ``\vec{u}_{\lambda}`` is the regularized estimate of ``\vec{u}``,
+``\left\lVert \cdot\right\rVert _{2}`` is the Euclidean norm, ``{\rm {\bf L}}`` is the Tikhonov filter matrix, ``\lambda`` is the regularization parameter, and ``\vec{u}_{0}`` is a vector of an *a priori* guess of the solution. The initial guess can be taken to be ``\vec{u}_{0}=0`` if no *a priori* information is known. The matrix ``{\mathbf{A}}`` does not need to be square. 
 
 For ``\lambda=0`` the Tikhonov problem reverts to the ordinary least
 squares solution. If ``\mathbf{A}`` is square and ``\lambda=0``,
-the least-squares solution is ``\vec{u_\lambda}={{\mathbf{A}}^{+}\vec{y}}``. For large ``\lambda`` the solution reverts to the initial guess,
-i.e. ``\lim_{\lambda\rightarrow\infty}{\vec{u_{\lambda}}}={\vec{u_{0}}}``.
+the least-squares solution is ``\vec{u}_\lambda={{\mathbf{A}}^{+}\vec{y}}``. For large ``\lambda`` the solution reverts to the initial guess,
+i.e. ``\lim_{\lambda\rightarrow\infty}{\vec{u}_{\lambda}}={\vec{u}_{0}}``.
 Therefore, the regularization parameter ``\lambda`` interpolates between
 the initial guess and the noisy ordinary least squares solution. The
 filter matrix ``{{\mathbf{L}}}`` provides additional smoothness constraints on the solution. The simplest form is to use the identity matrix, ``{\mathbf{L}} =\mathbf{I}``.
@@ -864,10 +970,10 @@ filter matrix ``{{\mathbf{L}}}`` provides additional smoothness constraints on t
 The formal solution to the Tikhonov problem is given by
 
 ```math
-\vec{u_{\lambda}}=\left({\rm {\bf A}^{T}}{\rm {\bf A}}+\lambda^{2}{{\bf L}^{T}{\rm {\bf L}}}\right)^{-1}\left({\rm {\bf A}^{T}}{\vec{u}}+\lambda^{2}{{\mathbf{L}}^{T}{{\mathbf{L}}}\vec{u_{0}}}\right)
+\vec{u}_{\lambda}=\left({\rm {\bf A}^{T}}{\rm {\bf A}}+\lambda^{2}{{\bf L}^{T}{\rm {\bf L}}}\right)^{-1}\left({\rm {\bf A}^{T}}{\vec{y}}+\lambda^{2}{{\mathbf{L}}^{T}{{\mathbf{L}}}\vec{u}_{0}}\right)
 ```
 
-The equation is readily derived by writing ``f=\left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert {{\mathbf{L}}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}``,
+The equation is readily derived by writing ``f=\left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert {{\mathbf{L}}({\vec{u}}-{\vec{u}_{0}})}\right\rVert _{2}^{2}``,
 take ``\frac{df}{d{\rm {\rm x}}}=0``, and solve for ``\vec{u}``. Use
 [http://www.matrixcalculus.org/](http://www.matrixcalculus.org/)
 to validate symbolic matrix derivatives.
@@ -885,16 +991,102 @@ Markdown.MD(
 	\left(\mathbf{A}^\intercal \mathbf{A}\right)^{-1}\mathbf{A}^\intercal \vec{y} = \mathbf{A}^+  \vec{y}
 ```
 
-2. Show that ``{\vec{u_{\lambda}}} = \mathrm{minimize}\left\{ \lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}\right\}`` implies 
+2. Show that ``{\vec{u}_{\lambda}} = \mathrm{minimize}\left\{ \lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u_{0}}})}\right\rVert _{2}^{2}\right\}`` implies 
 	
 $\vec{u_{\lambda}} = \vec{u_0}$
 
-3. Show that ``\mathbf{L} = \mathbf{I}`` and ``\vec{u_0} = 0`` implies 
+3. Show that ``\mathbf{L} = \mathbf{I}`` and ``\vec{u_0} = <0, \dots, 0>`` implies 
 	
 ```math
-\vec{u_{\lambda}} = \left({\rm {\bf A}^{T}}{\rm {\bf A}}+\lambda^{2} \mathbf{I}\right)^{-1}\left({\rm {\bf A}^{T}}{\vec{u}}\right)
+\vec{u}_{\lambda} = \left({\rm {\bf A}^{T}}{\rm {\bf A}}+\lambda^{2} \mathbf{I}\right)^{-1}{\rm {\bf A}^{T}}{\vec{y}}
 ```
+
+This simplified version of Tikhonov regularization is also known as *Ridge Regression*
 "]))
+
+# ╔═╡ 018e7cba-d12c-4b9d-999a-98f4908d308f
+md"""
+Number of samples: $(@bind sv1 Slider(5:1:100, default = 10))
+"""
+
+# ╔═╡ b3ed3084-b382-47b5-94d1-939afde61036
+md"""
+Regularization Parameter λ: $(@bind λ Slider([0; 1e-9:1e-9:1e-7;1e-7:1e-7:1e-5; 1e-5:1e-5:1e-3; 1e-3:1e-3:1e-1; 1e-1:1e-1:10; 10:10:1000], default = 1e-6))
+"""
+
+# ╔═╡ 4c2bbd0c-fa7a-4892-9a00-3ed740b5450a
+let
+	A, u, Au, y, t, x = discretize_baart(sv1[1],sv1[1])
+	
+	uhat = ((A'*A)^-1 * A') * y
+	
+	p0 = plot(y, xlabel = "Sample # (n)", ylabel = "Observation y", 
+		marker = :circle, color = :black, label = L"\vec{y}") 
+
+	p1 = plot(u, xlabel = "Sample # (n)", color = :black, label = L"u(t)")
+	ymax = 1.5*maximum(uhat)
+	ymin = minimum(uhat)
+	p1 = plot!(uhat, color = :darkred, ylim = [ymin, ymax], label = 
+		L"\vec{u} = (\mathbf{A}^\intercal \mathbf{A})^{-1} \mathbf{A}^\intercal \vec{y}")
+
+	Id = Matrix(I, sv1[1], sv1[1])
+	uhat2 =  ((A'*A + λ^2.0*Id)) \ (A' * y)
+	p2 = plot(u, xlabel = "Sample # (n)", color = :black, label = L"u(t)")
+	p2 = plot!(uhat2, color = :darkred, label = L"\vec{u}_{\lambda} = \left({\rm \mathbf{A}^{\intercal}}{\rm \mathbf{A}}+\lambda^{2} \mathbf{I}\right)^{-1}{\rm \mathbf{A}^{\intercal}}{\vec{y}}", ylim = [0,1.5], title = "λ = $(λ)")
+
+	plot(p0, p1, p2, layout = grid(1,3), size = (700, 300), 
+		left_margin = 10px, bottom_margin = 15px)
+end
+
+# ╔═╡ 6f24d102-3b91-440e-aeb7-2a8e1abf7558
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concepts", [md"
+- Note that even the simplest form of regularization is excellent at removing noise.
+- Note how the solution converges to the initial guess or zero for $\lambda = 0$ and $\lambda = \infty$, respectively.
+- However, there is no obvious choice for the best regularization parameter.
+"]))
+
+# ╔═╡ 0a784c5f-bc9b-4a9f-9ae8-9c7aa82f7192
+md"""
+## Selecting the Regularization Parameter
+
+### Residual and Solution Norm
+
+The regularized inverse contains two terms:
+
+```math
+{ {\vec{u}_{\lambda}}}=\mathrm{minimize}\left\{ \left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert _{2}^{2}+\lambda^{2}\left\lVert { {\bf L}({\vec{u}}-{\vec{u}_{0}})}\right\rVert _{2}^{2}\right\} 
+```
+
+The first term is called the *residual norm*:
+
+```math
+R = \left\lVert {{{\mathbf{A}}{\vec{ u}}-{\vec{y}}}}\right\rVert
+```
+
+The second term is called the *solution norm*
+
+```math
+S = \left\lVert { {\bf L}({\vec{u}}-{\vec{u}_{0}})}\right\rVert
+```
+
+### Morozov's Discrepancy Principle
+
+The discrepancy principle, due to Morozov, chooses the regularization parameter to be the largest value of $\lambda$
+
+such that the residual norm is bounded by the noise level in the data, i.e.,
+
+```math
+\left\lVert {{{\mathbf{A}}{\vec{u}_\lambda}-{\vec{y}}}}\right\rVert  < \delta
+```
+
+where $\delta$ is the noise level. Here, $\vec{u}_\lambda$ denotes the parameter found minimizing the Tikhonov regularized minimization problem with parameter $\lambda$. This choice aims to avoid overfitting of the data, i.e., fitting the noise. The main shortcoming of the approach is that the noise level in the data must be known.
+"""
+
+# ╔═╡ 771b2e05-d6bc-4a27-a4c1-930332535d06
+md"""
+Other metrics like generalized cross validation or the L-curve criterion are available to automate the search for the optimal λ. In general, the approach selected may depend on how \"bad\" the matrix is, or how ill-conditioned the problem is. Plotting the behavior of the residual and solution norm may help decide on the criterion.
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -902,10 +1094,12 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
 
@@ -913,6 +1107,7 @@ SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
 CSV = "~0.10.11"
 ColorSchemes = "~3.23.0"
 DataFrames = "~1.6.1"
+HTTP = "~1.9.14"
 LaTeXStrings = "~1.3.0"
 Plots = "~1.38.17"
 PlutoUI = "~0.7.52"
@@ -926,7 +1121,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "16b7d3f7cfceedbf28e8144c3f2773a8306c531a"
+project_hash = "1bb3a28e34f82aac50484e87577840821859f0ad"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -2124,13 +2319,18 @@ version = "1.4.1+0"
 # ╟─6497be76-a639-430f-963b-0486e14151b2
 # ╟─4cfff7c9-de08-43d2-8551-c166d22df965
 # ╟─341081cc-a36b-4cdb-99e7-9ac34730b254
-# ╠═d415e3d4-3034-4bab-8ee0-e2645e6daa8f
+# ╟─d415e3d4-3034-4bab-8ee0-e2645e6daa8f
 # ╠═90e078ad-088a-4415-bcc5-44fc01dc8406
 # ╟─ec5da1c6-3952-4576-b09d-b84af7b14bb2
+# ╠═97567bbc-f652-4d54-81ae-028bb4b27b6b
 # ╟─3ab8590a-bb4e-4e6b-9b53-3603c23aaeeb
+# ╟─59733493-4be0-4650-a83a-e4279b0174ae
 # ╠═5cd36360-bd59-44c9-850e-79e5de8a21e8
+# ╟─3fa1bdd3-3fd0-43d4-b450-467fe636e9dc
+# ╟─408f9681-325d-4d6f-89be-2ec8b518eac9
+# ╟─507d1240-a0a2-4979-8856-2790c3c34eca
 # ╟─17bcf2c6-5b89-4703-be18-c7c6c0433508
-# ╠═20147eab-eb85-4b3b-a1fd-9451994c8942
+# ╟─151dc9af-5099-42be-86a9-f0ab59646b67
 # ╟─f52780fe-14d6-476c-9cfc-a656c09a7a01
 # ╟─f8918afb-d4cd-4d6e-b030-955a9434c2ff
 # ╟─d26edc69-bd85-451d-99cc-5c0eee4aed40
@@ -2145,6 +2345,9 @@ version = "1.4.1+0"
 # ╟─6ad8f345-fd60-40fa-a61c-dff02137171a
 # ╠═6900e0ed-615e-4ede-87ca-0ba44382438b
 # ╟─83fc9f05-12ac-4c93-8d92-3590e892dd1e
+# ╟─d02b8d90-24e8-420f-934c-f3bc4d62554f
+# ╟─3ad80698-f495-4740-9ece-dbf908bd9734
+# ╟─0d399316-d9b9-4980-bff0-d60d8c3fdb94
 # ╠═aabdeb85-2ca7-43ae-b413-92cc73c5fff1
 # ╟─46a31a35-e5f9-4e71-8d44-7093c6feb6a1
 # ╟─42bd1e5f-25ea-4375-8a9c-3c5e8ded2867
@@ -2153,5 +2356,11 @@ version = "1.4.1+0"
 # ╟─e386f4ba-3cce-44e1-b289-082afb765e37
 # ╟─da679600-4485-47c1-9999-6d4392a0e6f2
 # ╟─45835413-d81b-4816-8f9b-ef7060efa272
+# ╟─018e7cba-d12c-4b9d-999a-98f4908d308f
+# ╟─b3ed3084-b382-47b5-94d1-939afde61036
+# ╟─4c2bbd0c-fa7a-4892-9a00-3ed740b5450a
+# ╟─6f24d102-3b91-440e-aeb7-2a8e1abf7558
+# ╟─0a784c5f-bc9b-4a9f-9ae8-9c7aa82f7192
+# ╟─771b2e05-d6bc-4a27-a4c1-930332535d06
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

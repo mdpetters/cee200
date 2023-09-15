@@ -1,6 +1,9 @@
 ### A Pluto.jl notebook ###
 # v0.19.27
 
+#> [frontmatter]
+#> title = "Fourier Transform"
+
 using Markdown
 using InteractiveUtils
 
@@ -31,26 +34,12 @@ begin
 	import PlutoUI: combine
 
 	md"""
-	# Integral Transforms
+	# Fourier Transform
 
 	This notebook introduces mathematical descriptions of the wave equation and, the discrete Fourier transform, and important applications of the discrete Fourier transform including amplitude spectra, phase spectra, power spectra, and frequency filtering.
 	$(TableOfContents(depth=4))
 	"""
 end
-
-# ╔═╡ b441a938-aaca-493a-b0d1-b2dffe3d56a4
-md"""# Learning Objectives
-"""
-
-# ╔═╡ 84c4777c-a759-4947-817e-ef7504ffec93
-
-Markdown.MD(
-	Markdown.Admonition("tip", "Learning Objectives", [md"
-- Apply the Discrete Fourier Transfor (DFT) to represent a time series.
-- Evaluate amplitude spectra, phase spectra, and power spectra from a time series.
-- Apply the Fourier transform to filter datasets.
-"]))
-
 
 # ╔═╡ 7fb213ec-4168-405b-9ccd-3d209412f320
 md"""# Mathematical Description of Waves
@@ -658,13 +647,14 @@ Markdown.MD(
 # ╔═╡ f44e4292-97bc-4372-b28e-6868f8e64449
 begin
 	sonic_url = "https://upload.wikimedia.org/wikipedia/commons/8/87/WindMaster.jpg"
-	bdl_url = "../data/boundary_layer.png"
+	bdl_url = "https://mdpetters.github.io/cee200/assets/boundary_layer.png"
+	
 	md"""
 	### Example 4: Power spectra of vertical velocity 
 
 	Pollution dispersion occurs within the atmospheric boundary layer. The dynamics of the boundary layer are complex due to the presence of turbulent motions. 
 	
-	$(LocalResource(bdl_url)) 
+	$(Resource(bdl_url)) 
 
 	**Figure.** Schematic of the atmopspheric boundary layer, adapted from  Kadivar et al. (2021), https://doi.org/10.1016/j.ijft.2021.100077.**
 
@@ -683,7 +673,8 @@ end
 
 # ╔═╡ c72f0b73-75ca-4e42-b73d-eb573081fca0
 begin
-	turbulence_data = CSV.read("../data/velocity_data.csv", DataFrame)
+	data = HTTP.get("https://mdpetters.github.io/cee200/assets/velocity_data.csv")
+	turbulence_data = CSV.read(data.body, DataFrame)
 	turbulence_data
 end
 
@@ -830,7 +821,8 @@ end
 # ╔═╡ de2e72fc-a747-40b7-903b-24e5480f3441
 begin
 	function get_sun(c)
-		sun2 = CSV.read("../data/SN_d_tot_V2_clean.csv", DataFrame, header = false)
+		sundata = HTTP.get("https://mdpetters.github.io/cee200/assets/SN_d_tot_V2_clean.csv")
+		sun2 = CSV.read(sundata.body, DataFrame, header = false)
 		d = Matrix(sun2)
 		n,m = size(d)
 		t = map(i -> Date(d[i,1], d[i,2], d[i,3]), 1:n)
@@ -2265,8 +2257,6 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╟─c6b0dc22-2f17-11ee-3378-4d9f003bef9e
-# ╟─b441a938-aaca-493a-b0d1-b2dffe3d56a4
-# ╟─84c4777c-a759-4947-817e-ef7504ffec93
 # ╟─7fb213ec-4168-405b-9ccd-3d209412f320
 # ╟─7bdac999-3fb8-4956-8fe8-d8e3da626f8b
 # ╟─65b1e136-a659-4cb0-83a1-d7d5711ee4f4
@@ -2306,7 +2296,7 @@ version = "1.4.1+0"
 # ╟─e9ea80d2-48c2-4ce6-8f2d-d12c4d8a7a7d
 # ╟─1dd0225b-c974-49ae-99b2-b98d2360f0c5
 # ╟─9826982f-0d7c-43e2-8328-9b686612eaf5
-# ╠═f0a64881-805a-459d-9e8a-31efa787af7a
+# ╟─f0a64881-805a-459d-9e8a-31efa787af7a
 # ╟─c698ffa3-db8b-4920-b6ff-00416dc99094
 # ╟─09d0aa06-b1bd-4793-a08b-fa4cb4fa08c8
 # ╟─0605a57f-7cb2-4d83-ae54-ae1b65756efc
@@ -2316,7 +2306,7 @@ version = "1.4.1+0"
 # ╟─d410fc70-565e-46d9-af87-6585c74cdda3
 # ╠═f1c3da44-e3f2-4249-a194-28c1caf1b82a
 # ╟─5e046263-ff18-40b4-9810-f32b89316e3d
-# ╠═f44e4292-97bc-4372-b28e-6868f8e64449
+# ╟─f44e4292-97bc-4372-b28e-6868f8e64449
 # ╟─c72f0b73-75ca-4e42-b73d-eb573081fca0
 # ╟─45114e1c-baac-4334-bff8-6b019a16b11c
 # ╟─c0072a98-ddb5-4ac7-9d10-37bcf460b8e3

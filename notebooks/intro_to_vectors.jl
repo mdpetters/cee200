@@ -2,8 +2,7 @@
 # v0.19.27
 
 #> [frontmatter]
-#> title = "Review of Numeric Differentiation, Vectors, Matrices, Vector Calculus"
-#> date = "2023-08-31"
+#> title = "Review of Vector Calculus"
 
 using Markdown
 using InteractiveUtils
@@ -28,10 +27,21 @@ begin
 
 	md"""
 	$(TableOfContents(depth=4))
-	# A Review of Numeric Differentiation, Vectors, Matrices, and Vector Calculus
+	# Review of Numeric Differentiation, Vectors, Matrices, Vector Calculus
 	This notebook provides an illustrated review over key concepts in vector calculus with the objective to apply these operators in a computational context.
+	# Learning Objectives
 	"""
 end
+
+# ╔═╡ 8cba9988-b750-448e-9b94-df412c4af5a3
+
+Markdown.MD(
+	Markdown.Admonition("tip", "Learning Objectives", [md"
+- Perform finite difference and automatic differentiation methods on functions.
+- Provide a geometeric explanation of standard vector operations (dot product, cross product).
+- Fluently work with vectors and matrices in a computational environment
+"]))
+
 
 # ╔═╡ 52f31447-9fb3-4c43-91ac-9cb27f209e04
 md"""
@@ -374,10 +384,10 @@ In `Julia`, the unicode operator entered by `\cdot[tab]` can also be used to mir
 (u ⋅ v) == (v ⋅ u) # test communtative property
 
 # ╔═╡ bd349f83-58a1-4965-9750-18cec4ab2542
-(u ⋅ v)*w # Note (u ⋅ v) is a scalar thus (u ⋅ v)*w ≠ u*(v ⋅ w)
+(u ⋅ v) * w # Note (u ⋅ v) is a scalar thus (u ⋅ v)*w ≠ u*(v ⋅ w)
 
 # ╔═╡ fa153793-fcc2-43e5-bebb-96ccaa1094d2
-u*(v ⋅ w) # Note (u ⋅ v) is a scalar thus (u ⋅ v)*w ≠ u*(v ⋅ w)
+u * (v ⋅ w) # Note (u ⋅ v) is a scalar thus (u ⋅ v)*w ≠ u*(v ⋅ w)
 
 # ╔═╡ 811c3176-2dc2-4d7d-87d7-320d0e0ce4b9
 u ⋅ (v + w) == u ⋅ v + u ⋅ w # Test distributive
@@ -614,7 +624,6 @@ Matrices of the same size, like vectors, have addition defined for them. As with
 
 # ╔═╡ d7f6c238-3fe2-4a18-aff5-11c6324edd67
 M1 = [[1, 2] [3, 4]] 
-
 
 # ╔═╡ 342e5e8f-455b-44de-9f67-9ee27717cf3c
 M2 = [[1, 1] [1, 2]]
@@ -1396,8 +1405,7 @@ The cross product of two vector fields is a vector field for which the divergenc
 ```math
 \begin{align*}
 \nabla\cdot(F \times G) &= (\nabla\times{F})\cdot G - F \cdot (\nabla\times{G})\\
-\nabla\times(F \times G) &= F(\nabla\cdot{G}) - G(\nabla\cdot{F}) + (G\cdot\nabla)F-(F\cdot\nabla)G\\
-&= \nabla\cdot(BA^t - AB^t).
+\nabla\times(F \times G) &= F(\nabla\cdot{G}) - G(\nabla\cdot{F}) + (G\cdot\nabla)F-(F\cdot\nabla)G
 \end{align*}
 ```
 
@@ -3295,6 +3303,7 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╟─9cb51ec8-40ff-11ee-0ddd-3335291342a5
+# ╟─8cba9988-b750-448e-9b94-df412c4af5a3
 # ╟─52f31447-9fb3-4c43-91ac-9cb27f209e04
 # ╠═0348024a-027a-4ac2-9530-44803c6a6289
 # ╠═1a994a91-bcb2-4df6-9862-3f6eb696eb21
@@ -3396,7 +3405,7 @@ version = "1.4.1+0"
 # ╟─ee144366-3888-4511-859d-73894596c48c
 # ╠═8cc764ce-147d-45d7-ae0e-19aafd34bba2
 # ╟─1b8fa2fd-d0a1-4c5d-8d79-c9d3d26f38b0
-# ╠═7ff231b1-a054-446c-8188-5e4111d03741
+# ╟─7ff231b1-a054-446c-8188-5e4111d03741
 # ╟─92c5d7db-00ad-4d14-ad76-39deae233357
 # ╟─4ffe6f6e-8b1a-4b99-b742-689951842be5
 # ╟─935ef6ad-6f41-4074-ad24-5f1ad0de8869

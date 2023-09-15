@@ -4,505 +4,153 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ f2d91da6-421a-11ee-13bf-b97463cb98e2
+# ╔═╡ 1fc00de6-4c2c-11ee-1e34-1ddbb8ab765f
 begin
-	using LinearAlgebra
-	using PlutoUI, LaTeXStrings
-	using HypertextLiteral
-	using Plots,  PlotThemes
-	using ForwardDiff
-	using Plots.PlotMeasures: px
-	using CalculusWithJulia
-	using SymPy
 	using DifferentialEquations
-
-	md"""
-$(TableOfContents(depth=4))
-# Ordinary Differential Equations
-Analytical and numerical solutions of common ordinary differential equations. 
+	using Plots
+	using PlutoUI
+	using SymPy
 	
-# Learning Objectives
+	md"""
+	$(TableOfContents(depth=4))
+	#  Control Systems
 	"""
 end
 
-# ╔═╡ f0d9268c-f71c-42a7-b363-bd15b016b0c3
-Markdown.MD(
-	Markdown.Admonition("tip", "Learning Objectives", [md"
-- Classify differential equations by their order
-- Set up and execute symbolic solver to find the analytical solution
-- Explain how Euler's method numerically integrates ODEs
-- Visualize ODEs in phase space
-- Set up and execute a numerical ODE solver to compute the numerical solution of an ODE.
-	"]))
-
-# ╔═╡ 9037d73b-51fe-4e9f-8545-e5bf13d45f9c
-md"""
-# Introduction
-
-## Definition of Differential Equations
-
-A differential equation is an equation, where the unknown is a function and both the function and its derivatives may appear in the equation. Differential equations are essential for a mathematical description of nature—they lie at the core of many physical theories. Here are a few important differential equations:
-
-**(a) Newton's law**: Mass times acceleration equals force, ``ma = f`` , where ``m`` is the particle mass, ``a = \frac{d^2x}{dt^2}`` is the particle acceleration, and ``f`` is the force acting on the particle. The unknown is ``\vec{x}(t)``, the position of the particle in space and time. 
-
-
-```math
-m \frac{d \vec{x}(t)}{dt^2} = f \left ( t,\vec{x(t)},\frac{\vec{x}(t)}{t} \right )
-```
-**(b) Radioactive Decay:** The amount ``u`` of a radioactive material changes in time as follows
-
-```math
-\frac{du(t)}{dt} = -k u(t)
-```
-
-where k is a positive constant representing radioactive properties of the material.
-
-**(c) The Heat Equation:** The temperature ``T`` in a solid material changes in time and in three space dimensions, labeled by ``x = (x, y, z)``, according to the equation
-
-```math
-\frac{T(t, \vec{x})}{t} = k \left (\frac{\partial^2 T(t, \vec{x})}{\partial x^2} + \frac{\partial^2 T(t, \vec{x})}{\partial y^2} + \frac{\partial^2 T(t, \vec{x})}{\partial z^2} \right )
-```
-
-where ``k`` is a positive constant representing thermal properties of the material.
-
-"""
-
-# ╔═╡ cdb8c029-9324-402c-9319-f91cfeb36d1d
-Markdown.MD(
-	Markdown.Admonition("warning", "Key Concepts", [md"
-- The equations in examples (a) and (b) are called ordinary differential equations (ODE). The unknown function depends on a single independent variable, ``t``. 
-
-- The equation in examples (c) is a partial differential equation (PDE) the unknown function depends on two or more independent variables, t, x, y, and z, and their partial derivatives appear in the equations.
-- The order of a differential equation is the highest derivative order that appears in the equation. Newton’s equation in example (a) is second order, the time decay equation in example (b) is first order, the wave equation in example and the heat equation in example (c) is first order in time and second order in space variables.
-"]))
-
-# ╔═╡ 1440a399-e391-4930-ad03-15bdce8c56d3
-md"""
-## Brute Force Approach
-
-When all other methods for solving an ODE fail, or in the cases where we have some intuition about what the solution to a DE might look like, it is sometimes possible to solve a DE simply by guessing the solution and validating it is correct. To use this method, we simply guess a solution to the differential equation, and then plug the solution into the differential equation to validate if it satisfies the equation. If it does then we have a particular solution to the DE, otherwise we start over again and try another guess. 
-
-This, to some extent, sets us free to simply accept that a solution is correct, even if it wasn't possible to derive the solution, or to prove that this is the only correct solution.
-
-## Analytical Approach
-
-##### Example: First-order initial-value problems
-
-We are looking for solutions to an equation of the form (taking $y$ and $x$ as the variables, in place of $x$ and $t$):
-
-
-```math
-y'(x) = f(x), \quad y(x_0) = y_0.
-```
-
-This is called a first-order, ordinary differential equation, as there is only the first derivative involved. This is called an initial-value problem, as the value at the initial point $x_0$ is specified as part of the problem.
-
-Equations of the form $y'(x) = f(x)$ and $y'(x) = g(y)$ both solved by integrating. The same tricks will work for equations of the form $y'(x) = f(x) \cdot g(y)$. Such equations are called *separable*.
-
-
-Basically, we equate up to constants
-
-
-```math
-\int \frac{dy}{g(y)} = \int f(x) dx.
-```
-
-For example, suppose we have the equation
-
-
-```math
-\frac{dy}{dx} = x \cdot y(x), \quad y(x_0) = y_0.
-```
-
-Then we can find a solution, $y(x)$ through:
-
-```math
-\int \frac{dy}{y} = \int x dx,
-```
-
-or
-
-
-```math
-\log(y) = \frac{x^2}{2} + C
-```
-
-Which yields:
-
-```math
-y(x) = e^C e^{\frac{1}{2}x^2}.
-```
-
-Substituting in $x_0$ yields a value for $C$ in terms of the initial information $y_0$ and $x_0$.
-"""
-
-# ╔═╡ ca041540-036a-478e-8c04-a11a48ad8414
-md"""
-## Symbolic Solvers
-
-Many simple ODEs can, and have been, solved through analytical techniques. Solutions to these problems are widely available. Symbolic solvers for differential equations are available, e.g. [SymPy](https://www.sympy.org/en/index.html), [Maple](https://www.maplesoft.com/), [Mathematica](https://www.wolfram.com/mathematica/), or [Matlab](https://www.mathworks.com/help/symbolic/dsolve.html). Using these tools is a very valid *practical* approach to solve a given ODE or systems of ODEs.
-
-Consider the differential equation:
-
-```math
-y'(x) = y(x) \cdot  x, \quad y(1)=1
-```
-
-This can be solved directly using SymPy (using the Julia bindings here):
-"""
-
-# ╔═╡ 9967faf7-3f0f-4c64-bbcb-945070d4ca07
+# ╔═╡ 5e0e0693-248f-4fa0-8d83-a3399b16b3c7
 begin
-	@syms x, a, y()
-	D = Differential(x)
-	D(y)(x) - y(x)*x 
-end
-
-# ╔═╡ 85c37f4a-02a3-46d1-b2cf-4889a42fc837
-# Solve the equation
-dsolve(D(y)(x) - y(x)*x, y(x))
-
-# ╔═╡ f95190ae-8ee7-49ea-ad80-ea2d269a5b95
-# With the given initial condition y(1) = a, the solution becomes:
-solution = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => a))
-
-# ╔═╡ 3af142b1-2dc3-48ac-8250-07345c9b36cb
-md""" 
-## Numerical Approach
-
-Many differential equations that are encountered in science and engineering cannot be solved, or not easily be solved, by any of the techniques taught in the regular engineering/applied math curriculum. Thus for all practical purposes, numerical integration is standard approach to solve ODEs in science and engineering applications. Numerical ODE solvers are widely available in all major computer languages. The [DifferentialEquations.jl](https://docs.sciml.ai/DiffEqDocs/stable/) suite in Julia is one of the most advanced libraries for numerical modeling of differential equations. 
-"""
-
-# ╔═╡ eef1792a-a688-42c0-af80-af81c588d39a
-md"""
-# Analyzing ODEs
-
-The solution, $y(x)$, is known through its derivative. A useful tool to visualize the solution to a first-order differential equation is the [slope field](http://tinyurl.com/jspzfok), or direction field plot, or phase space, which at different values of $(x,y)$, plots a vector with slope given through $y'(x)$.
-
-For example, if the first-order equation is written as $y'(x) = F(y,x)$, then we plot a "function" that takes $(x,y)$ and returns an $x$ value of $1$ and a $y$ value of $F(y,x)$, so the slope is $F(y,x)$.
-"""
-
-# ╔═╡ b09d6552-4f4c-4d3f-8a0e-d0037b4c1e5a
-let
-	F(y, x) = y*x
-	x0, y0 = 1,1
-	p = plot()
-	vectorfieldplot!((x,y) -> [1, F(y,x)], xlims=(x0, 2.5), ylims=(y0-12, y0+10), 
-		color = "black", label = "phase space")
-	sol1 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 1))
-	f1(x) =  1*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y'(x)", 
-		color = :steelblue3)
-	sol2 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 2))
-	f2(x) =  2*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f2,  linewidth=3, label = "$(sol2)", title = "y'(x) = x*y'(x)", 
-		color = :darkred)
-
-	sol3 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => -1))
-	f3(x) =  -1*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f3,  linewidth=3, label = "$(sol3)", title = "y'(x) = x*y'(x)", 
-		color = :darkgoldenrod)
-	plot(p, size = (600,300), xlabel = "x", ylabel = "y", 
-		legend = :outertopright, bottom_margin = 20px)
-end
-
-
-
-# ╔═╡ 741a844f-b549-4f94-b326-e4882f01017f
-md"""
-Such solutions are called [integral curves](https://en.wikipedia.org/wiki/Integral_curve). These graphs illustrate the fact that the slope field is tangent to the graph of any integral curve.
-"""
-
-# ╔═╡ 6d51519f-9b1f-462a-acaa-a11b564e040d
+	cstr_url = "../_assets/cstr.png"
 md"""
 
-# Numerical Solutions
+# Continuous Stirred Tank Reactor
 
-##  Euler's Method
-The tangent lines to integral curves are in the direction of the slope field. What if the graph of the solution were not there, could we use this fact to *approximately* reconstruct the solution? That is, if we stitched together pieces of the slope field, would we get a curve that was close to the actual answer?
+A continuous stirred tank reactor (CSTR) is a type of chemical reactor that is widely used in industrial processes to produce chemicals, pharmaceuticals, and other products. In a CSTR, reactants are continuously fed into the reactor vessel, where they are mixed and allowed to react, producing the desired products.
+The CSTR consists of a large tank or vessel, typically made of stainless steel, which is equipped with a stirring mechanism, such as a mechanical stirrer or an agitator, that keeps the reactants in motion and ensures that they are well-mixed. The reactants are introduced into the tank through inlet ports, and the products are continuously removed through outlet ports.
 
-[The Euler method](https://en.wikipedia.org/wiki/Euler_method) uses linearization. Each "step" is just an approximation of the function value $y(x_{n+1})$ with the value from the tangent line tangent to the point $(x_n, y_n)$. The name of our metod is from the [mathematician](https://en.wikipedia.org/wiki/Leonhard_Euler) associated with the iteration:
+## Example
+
+$(LocalResource(cstr_url, :width => 300))
+
+A reactor is used to convert a hazardous chemical ``A`` to an acceptable chemical ``B`` in waste stream before entering a nearby lake. The feed flow rate ``q_f``, the feed temperature is ``T_f`` and the feed concentration of chemical ``A`` is  ``C_{Af}``. The reactor volume is ``V``. The exit flow rate is ``q`` (same as ``q_f`` due to mass balance).
 
 ```math
-x_{n+1} = x_n + h, \quad y_{n+1} = y_n + h \cdot F(y_n, x_n),
+A \rightarrow B \quad\quad \frac{dC_A}{dt} = -kC_a \quad \textrm{and} \quad \Delta H = \Delta H_{AB}
 ```
 
-to approximate a solution to the first-order, ordinary differential equation with initial values: $y'(x) = F(y,x)$. A simple implementation is below.
-"""
-
-# ╔═╡ cff4074e-a0c1-4c4e-b19d-7665d3edb353
-# F: Function, x0 is the ics in x, xn is the upper limit of integration, y0 us the ics in y, n is the number of points
-function euler(F, x0, xn, y0, n)
-	h = (xn - x0)/n
-	xs = zeros(n+1)
-	ys = zeros(n+1)
-  	xs[1] = x0
-  	ys[1] = y0
-  	for i in 1:n
-    	xs[i + 1] = xs[i] + h
-    	ys[i + 1] = ys[i] + h * F(ys[i], xs[i])
-  	end
-  	xs[end] = xn
-	(xs, ys)
-end
-
-# ╔═╡ 42428795-d698-4c9e-9f47-67cdb8453c57
-# Example for F = y*x, ics = y(1) = 1, integration to x = 3, n = 10 points
-euler((y,x) -> y*x, 1.0, 3, 1.0, 10)
-
-# ╔═╡ 358ee0cf-c710-437d-8473-eb8c0b04235e
-let
-	F(y, x) = y*x
-	x0, y0 = 1,1
-	p = plot()
-	vectorfieldplot!((x,y) -> [1, F(y,x)], xlims=(x0, 2.5), ylims=(0, y0+15), 
-		color = "black", label = "phase space")
-	sol1 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 1))
-	f1(x) =  1*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y'(x)", 
-		color = :black)
-	xs, ys = euler(F, 1.0, 3, 1.0, 10)
-	plot!(xs, ys, color = :darkgoldenrod, label = "Euler: n = 10")
-	xs, ys = euler(F, 1.0, 3, 1.0, 100)
-	plot!(xs, ys, color = :darkred, label = "Euler: n = 100")
-	xs, ys = euler(F, 1.0, 3, 1.0, 1000)
-	plot!(xs, ys, color = :lightgray, label = "Euler: n = 1000")
-	plot(p, size = (600,300), xlabel = "x", ylabel = "y", 
-		legend = :outertopright, bottom_margin = 20px)
-end
-
-# ╔═╡ fd762ce1-4cd6-4c3b-b023-6cf913aa92c8
-Markdown.MD(
-	Markdown.Admonition("warning", "Key Concepts", [md"
-- Each step introduces an error. The error in one step is known as the *local truncation error* and can be shown to be about equal to $1/2 \cdot h^2 \cdot f''(x_{n})$ assuming $y$ has $3$ or more derivatives.
-- For large ``n`` (or small ``h``) the solution converges.
-- The total error, or more commonly, *global truncation error*, is the error between the actual answer and the approximate answer at the end of the process. It reflects an accumulation of these local errors. This error is *bounded* by a constant times $h$. Since it gets smaller as $h$ gets smaller in direct proportion, the Euler method is called *first order*.
-"]))
-
-# ╔═╡ 9c346abb-eda6-487c-b8cd-345dc1a233cb
-md"""
-##### Example
-
-The equation $y'(x) = \sin(x \cdot y)$ is not separable, so need not have an easy solution. The default method will fail. Looking at the available methods with `sympy.classify_ode(eqn, u(x))` shows a power series method which can return a power series *approximation* (a Taylor polynomial). Let's look at comparing an approximate answer given by the Euler method to that one returned by `SymPy`.
-"""
-
-
-# ╔═╡ 7eef67ed-b8e9-4e2c-9ce4-4fb188a51393
-out = let 
-	@syms x u()
-	F(y,x) = sin(x*y)
-	eqn = D(u)(x) - F(u(x), x)
-	out = dsolve(eqn, u(x), ics=Dict(u(0) => 1), hint="1st_power_series", n = 8)
-end
-
-# ╔═╡ 258e8fe9-3d3c-4c3d-9cfe-3dbfaebe3d30
-let 
-	F(y,x) = sin(x*y)
-	x0, xn, y0 = 0, 3, 1
-
-	plot()
-	vectorfieldplot!((x,y) -> [1, F(y,x)], xlims=(x0, xn), ylims=(0,5), 
-		color = :black, nx=10)
-	plot!(rhs(out).removeO(),  linewidth=5, label = "SymPy approximation", 
-		color = :steelblue3)
-
-	u = euler(F, x0, xn, y0, 100)
-	plot!(u, linewidth=5, color = :darkred, label = "Euler, n = 100", 
-		legend = :outertopright, size = (600, 300))
-end
-
-# ╔═╡ 72a797f9-cebe-4a55-95f7-39e6832fef47
-md"""
-The answer found from using a polynomial series matches that of Euler's method for a bit, but as time evolves, the approximate solution given by Euler's method more closely tracks the slope field.
-"""
-
-# ╔═╡ 7994d143-28ad-4649-bc4e-d0b378b03a4e
-md"""
-## Stiff Equations
-
-The Euler method is *convergent*, in that as $h$ goes to $0$, the approximate solution will converge to the actual answer. However, this does not say that for a fixed size $h$, the approximate value will be good. For example, consider the differential equation $y'(x) = -5y$. This has solution $y(x)=y_0 e^{-5x}$. However, if we try the Euler method to get an answer over $[0,2]$ with $h=0.5$ we don't see this:
-"""
-
-# ╔═╡ 2a9b3f4b-06b5-470e-b8c0-5318694db7fd
-let
-	F(y,x) = -5y
-	x0, xn, y0 = 0, 2, 1
-	u = euler(F, x0, xn, y0, 4)     # n = 4 
-	u1 = euler(F, x0, xn, y0, 50)   # n = 50 
-	p = vectorfieldplot((x,y) -> [1, F(y,x)], xlims=(0, 2), ylims=(-5, 5), 
-		color = :black)
-	p = plot!(x -> y0 * exp(-5x), 0, 2, linewidth=5, color = :black, 
-		label = "Analytical Solution")
-	p = plot!(u[1], u[2], linewidth=5, label = "Euler n = 4", color = :darkred)
-	p = plot!(u1[1], u1[2], linewidth=2, label = "Euler n = 50", 
-		color = :darkgoldenrod)
-	plot(p, size = (700, 300), legend = :outertopright)
-end
-
-# ╔═╡ 6104397e-05c3-4a50-954d-4daa41cb9306
-md"""
-This is an example of a [stiff equation](https://en.wikipedia.org/wiki/Stiff_equation). Such equations cause explicit methods like the Euler one problems, as small $h$s are needed to good results.
-"""
-
-# ╔═╡ 56585376-ebe7-4c2d-8c65-8bf1a178d276
-md"""
-## Numerical Solvers
-
-The [DifferentialEquations.jl](https://github.com/SciML) package is an entry point to a suite of `Julia` packages for numerically solving differential equations in `Julia`. A common interface is implemented that flexibly adjusts to the many different problems and algorithms covered by this suite of packages. 
-
-Similar solvers exist for [Python](https://pythonnumericalmethods.berkeley.edu/notebooks/chapter22.06-Python-ODE-Solvers.html), [Matlab](https://www.mathworks.com/help/matlab/math/choose-an-ode-solver.html), [Fortran](https://people.sc.fsu.edu/~jburkardt/f77_src/odepack/odepack.html), or [R](https://kinglab.eeb.lsa.umich.edu/480/nls/de.html). The examples here are obviously tied to Julia, but the general concepts should be the same in other langauges.
-
-## Example: Radioactive Decay:
-
-The amount ``u`` of a radioactive material changes in time as follows
+The reaction from ``A`` to ``B`` is irreversible and has first order chemical kinetics with reaction rate ``k``. The reaction also produces heat (is exothermic) with enthalpy ``\Delta H_{AB}\; [J\;mol^{-1}]``. The temperature change is given by ``dT = \frac{\Delta H_{AB}}{c} dC_A``, where ``c \; [J\;K^{-1}\;mol^{-1}]`` is the heat capacity of the reactor liquid. Thus, the following species and energy balances represent the reactor concentration and temperature.
 
 ```math
-\frac{du(t)}{dt} = -k u(t)
+\begin{eqnarray}
+& \frac{dC_A}{dt} &= \frac{q}{V}(C_{Af} - C_A) + k_A C_A \\
+& \frac{dT}{dt}   &= \frac{q}{V}(T_f - T) - \frac{\Delta H_{AB}}{c} k_A C_a
+\end{eqnarray}
 ```
 
-where ``k`` is a positive constant representing radioactive properties of the material.
+There equations can be simpflied to carry fewer constants
 
-### SymPy Solution
+```math
+\begin{eqnarray}
+& \frac{dC_A}{dt} &= c_1 (C_{Af} - C_A) + c_2 C_A \\
+& \frac{dT}{dt}   &= c_1 (T_f - T) + c_3 C_a
+\end{eqnarray}
+```
+
+where ``c_1 = \frac{q}{V}``, ``c_2 = k_A``, and ``c_3 = -\frac{\Delta H_{AB}}{c} k_A``.
+
+## Analytical Solution
+
+These equations are readily solved to find the analytical solution:
+
+"""
+end
+
+# ╔═╡ 69d1697f-99c5-41a0-8a52-28043d421136
+@syms CA() T() c1::positive c2 c3 CAf::positive Tf::positive t
+
+# ╔═╡ 48060e70-6529-4b8c-96cb-c1e1de9403eb
+eq1 = diff(CA(t), t) - c2*CA(t) - c1*(CAf - CA(t))
+
+# ╔═╡ abdadf81-ffb3-455c-90c0-bf23be9edad5
+eq2 = diff(T(t), t) - c3*CA(t) - c1*(Tf - T(t))
+
+# ╔═╡ c01b3bf7-ce6f-4f88-9050-1ae2d7b7d6f4
+eq4 = dsolve([eq1, eq2])
+
+# ╔═╡ d946f077-ffed-4409-bb62-4ea6efde1fd5
+md"""
+### Intial values
+
+Let's solve this for a concrete system:
+
+``q = 5 \; [m^3\; min^{-1}]``, ``V = 10\; [m^3]``, ``T_f = 305\;[K]``, ``C_{Af} = 0.5\;[mol\;L^{-1}]``, ``k_A = 0.5\; [min^{-1}]``, ``\Delta H_{AB} = 752\; [J\; mol^{-1}]``, ``c = 75.2\; [J\;K^{-1}\; mol^{-1}]``
+
+Therefore the constants are
+
+```math
+\begin{eqnarray}
+c_1 &= \frac{q}{V} &= 0.5 \; min^{-1} \\
+c_2 &= k_A &= -0.5 \; min^{-1} \\
+c_3 &= -\frac{\Delta H_{AB}}{c} k_A &= 5 \; min^{-1} \\
+T_f & &= 305 \; K \\
+C_{Af} & &= 0.5 \; mol \; L^{-1}
+\end{eqnarray}
+```
+
+The initial conditions are ``T(0) = T_f`` and ``C_{A}(0) = C_{Af}``
 """
 
+# ╔═╡ 9ba6535a-1378-40a4-bc5a-1bdd03f1a6ec
+eq6 = let
+	q = 5.0
+	V = 10.0
+	ka = -0.5
+	ΔHAB = 752.0
+	Tfeed = 305.0
+	CAfeed = 0.5
+	CAinit = 0.5
+	Tinit = 305.0
+	eq5 = dsolve([eq1, eq2], ics = Dict(CA(0) => CAinit, T(0) => Tinit))
+ 	eq5.subs(Dict(c1 => q/V, c2 => ka, c3 => -ΔHAB/75.2*ka, Tf => Tfeed, 
+		CAf => CAfeed))
+end
 
-# ╔═╡ 5e0ac040-00bd-4c36-a1aa-636a1ab61b7e
+# ╔═╡ 3ac8cbbb-59d6-4fbb-a447-0e4b9755e190
 begin
-	@syms k t u()
-	radDecay = D(u)(t) + k*u(t)
+	function eval_solution(eq, t1)
+		es(f, time) = f(Dict(t => time))
+		map(eq) do y
+			map(x -> es(y.rhs(), x), t1)
+		end
+	end
+	ts = 0:0.1:10
+	y1, y2 = eval_solution(eq6, ts)
+	p1 = plot(ts, y1, color = :black, label = "CA", 
+		ylabel = "C [mol L⁻¹]")
+	p2 = plot(ts, y2, color = :black, label = "T", 
+		ylabel = "T [K]", xlabel = "Time [min]")
+	plot(p1, p2, size = (600, 400), layout = grid(2,1))
 end
 
-# ╔═╡ 4095227f-c1b7-4134-bb25-c6aebbbb5fd9
-dsolve(radDecay, u(t), ics=Dict(u(0) => 1))
-
-# ╔═╡ 555ae0a8-5933-4d66-b767-82ffdcef3757
+# ╔═╡ 8d2a7258-54d7-4aca-bf69-8d9b9f5eda13
 md"""
-### Numerical Solution
+## ODE Solver Solution
 
-#### 1. Define the ODE Problem
-To solve the problem with `DifferentialEquations.jl` we must first define the ODEProblem. 
-"""
-
-# ╔═╡ 3a91fea9-fad2-429e-997b-ef14af8de6b3
-begin
-	f(u, p, t) = - p[1] * u  # f is the derivative, p are parameters t is time
-	u0 = 1.0                 # Initial concentration/activity
-	tspan = (0.0, 5.0)       # bounds for the time interval from 0 to 1
-	param = [1.0]            # array parameters: p[1] = decay constant "k" 
-	prob = ODEProblem(f, u0, tspan, [1.0]) # initialize the ODE problem
-end
-
-# ╔═╡ 782f0314-1e52-418e-961f-528133719166
-md"""
-#### 2. Solve for the solution
-
-This calls the solver to
-
-```julia
-solve(prob, Euler(), dt = 0.1, reltol = 1e-8, abstol = 1e-8)
-```
-
-- prob: ODEProblem
-- Euler(): Specifies the numerical algorithm
-- dt: Specifies the time step (this is not necessary for many methods)
-- reltol: relative tolerance
-- abstol: absolute tolerance
-"""
-
-# ╔═╡ ff298db2-d9ae-4b73-a2e5-a76748ea7881
-Markdown.MD(
-	Markdown.Admonition("warning", "Numerical Error", [md"
-The most useful options are the tolerances abstol and reltol. These tell the internal adaptive time stepping engine how precise of a solution you want. Generally, reltol is the relative accuracy while abstol is the accuracy when u is near zero. These tolerances are local tolerances and thus are not global guarantees. However, a good rule of thumb is that the total solution accuracy is 1-2 digits less than the relative tolerances. Thus, for the defaults abstol=1e-6 and reltol=1e-3, you can expect a global accuracy of about 1-2 digits. This is standard across the board and applies to the native Julia methods, the wrapped Fortran and C++ methods, the calls to MATLAB/Python/R, etc.
-"]))
-
-# ╔═╡ 8d37df6d-cae0-482f-babe-a0156d91f2dd
-odeSolution = solve(prob, Euler(), dt = 0.2, reltol = 1e-8, abstol = 1e-8)
-
-# ╔═╡ 5d39406a-c81f-4ede-8cea-fd731f98d98a
-md"""
-#### 3. Parsing the Solution
-
-The solution type has a lot of built-in functionality to help analysis. For example, it has an array interface for accessing the values. Internally, the solution type has two important fields:
-
-    u which holds the Vector of values at each timestep
-    t which holds the times of each timestep.
-
-Different solution types may add extra information as necessary, such as the derivative at each timestep du or the spatial discretization x, y, etc.
-
-The solution is computed for the `tspan` given in the `ODEProblem`.
-
-The `.t` notation gives the timearray
-
-```julia
-time_array = odeSolution.t
-```
-
-The `.u` notation gives the solution values
-
-```julia
-solution_array = odeSolution.u
-```
-
-Calling the solution with an intermediate number gives an interpolated result
-
-```julia
-sol_at_t = odeSolution(0.12)
-```
-"""
-
-# ╔═╡ 7227d5f7-7787-4d6f-968f-41e6d9d222c8
-odeSolution
-
-# ╔═╡ 7929bede-1d25-4bf3-8713-896e228b3536
-odeSolution.t
-
-# ╔═╡ 5699ad7a-cf22-4f40-b0bf-277ac4dafc15
-odeSolution.u
-
-# ╔═╡ 906c03c3-54bb-431a-96c4-2016e50763c5
-odeSolution(0.5)
-
-
-# ╔═╡ 50b56d96-7257-49e0-832c-9644194d2647
-md"""
-#### 4. Visualizing Results
-
-The solution can be visualized. Initially we will work on problems with known solutions that we can compare to.
 
 """
-
-# ╔═╡ 209530e9-e019-4c3e-b581-2300446e3ad6
-let 
-	t = odeSolution.t
-	p = plot(t, odeSolution.u, color = :black, lw = 3, label = "Euler Method")
-	plot!(t, exp.(-1.0.*t), color = :darkred, lw = 2, label = "Analytical Solution")
-	plot(p, size = (400,300), xlabel = "t", ylabel = "Activity")
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-CalculusWithJulia = "a2e0e22d-7d4c-5312-9169-8b992201a882"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
-ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-PlotThemes = "ccf2f8ad-2431-5c83-bf29-c5338b663b6a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
 
 [compat]
-CalculusWithJulia = "~0.1.2"
-DifferentialEquations = "~7.9.0"
-ForwardDiff = "~0.10.36"
-HypertextLiteral = "~0.9.4"
-LaTeXStrings = "~1.3.0"
-PlotThemes = "~3.1.0"
-Plots = "~1.38.17"
+DifferentialEquations = "~7.9.1"
+Plots = "~1.39.0"
 PlutoUI = "~0.7.52"
-SymPy = "~1.1.10"
+SymPy = "~1.1.12"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -511,12 +159,12 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "d49aac1e36a4265ca648a003f6956814ce667106"
+project_hash = "b79a323e77e55d0c5529a7430059e8749c559c2a"
 
 [[deps.ADTypes]]
-git-tree-sha1 = "f5c25e8a5b29b5e941b7408bc8cc79fea4d9ef9a"
+git-tree-sha1 = "a4c8e0f8c09d4aa708289c1a5fc23e2d1970017a"
 uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
-version = "0.1.6"
+version = "0.2.1"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -573,19 +221,23 @@ uuid = "30b0a656-2188-435a-8636-2ec0e6a096e2"
 version = "0.1.29"
 
 [[deps.ArrayLayouts]]
-deps = ["FillArrays", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "609e6019f91369149556628d90345a1316f8dbd3"
+deps = ["FillArrays", "LinearAlgebra"]
+git-tree-sha1 = "dcda7e0ac618210eabf43751d5cafde100dd539b"
 uuid = "4c555306-a7a7-4459-81d9-ec55ddd5c99a"
-version = "1.2.1"
+version = "1.3.0"
+weakdeps = ["SparseArrays"]
+
+    [deps.ArrayLayouts.extensions]
+    ArrayLayoutsSparseArraysExt = "SparseArrays"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.BandedMatrices]]
 deps = ["ArrayLayouts", "FillArrays", "LinearAlgebra", "PrecompileTools"]
-git-tree-sha1 = "106122bad983acd8e21aef3f7a7f91a3ac739077"
+git-tree-sha1 = "0b816941273b5b162be122a6c94d706e3b3125ca"
 uuid = "aae01518-5342-5314-be14-df237901396f"
-version = "0.17.36"
+version = "0.17.38"
 weakdeps = ["SparseArrays"]
 
     [deps.BandedMatrices.extensions]
@@ -606,10 +258,10 @@ uuid = "62783981-4cbd-42fc-bca8-16325de8dc4b"
 version = "0.1.5"
 
 [[deps.BoundaryValueDiffEq]]
-deps = ["BandedMatrices", "DiffEqBase", "FiniteDiff", "ForwardDiff", "LinearAlgebra", "NonlinearSolve", "Reexport", "SciMLBase", "Setfield", "SparseArrays", "TruncatedStacktraces"]
-git-tree-sha1 = "039775034259dfc1f106b195f69af7741f90ef10"
+deps = ["ArrayInterface", "BandedMatrices", "DiffEqBase", "FiniteDiff", "ForwardDiff", "LinearAlgebra", "NonlinearSolve", "Reexport", "SciMLBase", "Setfield", "SparseArrays", "TruncatedStacktraces", "UnPack"]
+git-tree-sha1 = "f7392ce20e6dafa8fee406142b1764de7d7cd911"
 uuid = "764a87c0-6b3e-53db-9096-fe964310641d"
-version = "3.0.0"
+version = "4.0.1"
 
 [[deps.Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -639,12 +291,6 @@ deps = ["LinearAlgebra"]
 git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.1"
-
-[[deps.CalculusWithJulia]]
-deps = ["Base64", "Contour", "ForwardDiff", "HCubature", "IntervalSets", "JSON", "LinearAlgebra", "PlotUtils", "Random", "RecipesBase", "Reexport", "Requires", "Roots", "SpecialFunctions", "SplitApplyCombine", "Test"]
-git-tree-sha1 = "049194aa15becc95f65f2cf38ec0a221e486d1c3"
-uuid = "a2e0e22d-7d4c-5312-9169-8b992201a882"
-version = "0.1.2"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
@@ -691,11 +337,6 @@ deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
 git-tree-sha1 = "fc08e5930ee9a4e03f84bfb5211cb54e7769758a"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.10"
-
-[[deps.Combinatorics]]
-git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
-uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
-version = "1.0.2"
 
 [[deps.CommonEq]]
 git-tree-sha1 = "d1beba82ceee6dc0fce8cb6b80bf600bbde66381"
@@ -745,11 +386,14 @@ deps = ["LinearAlgebra"]
 git-tree-sha1 = "fe2838a593b5f776e1597e086dcd47560d94e816"
 uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
 version = "1.5.3"
-weakdeps = ["IntervalSets", "StaticArrays"]
 
     [deps.ConstructionBase.extensions]
     ConstructionBaseIntervalSetsExt = "IntervalSets"
     ConstructionBaseStaticArraysExt = "StaticArrays"
+
+    [deps.ConstructionBase.weakdeps]
+    IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
+    StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [[deps.Contour]]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
@@ -794,17 +438,11 @@ git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
 
-[[deps.Dictionaries]]
-deps = ["Indexing", "Random", "Serialization"]
-git-tree-sha1 = "e82c3c97b5b4ec111f3c1b55228cebc7510525a2"
-uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
-version = "0.3.25"
-
 [[deps.DiffEqBase]]
 deps = ["ArrayInterface", "ChainRulesCore", "DataStructures", "DocStringExtensions", "EnumX", "FastBroadcast", "ForwardDiff", "FunctionWrappers", "FunctionWrappersWrappers", "LinearAlgebra", "Logging", "Markdown", "MuladdMacro", "Parameters", "PreallocationTools", "Printf", "RecursiveArrayTools", "Reexport", "Requires", "SciMLBase", "SciMLOperators", "Setfield", "SparseArrays", "Static", "StaticArraysCore", "Statistics", "Tricks", "TruncatedStacktraces", "ZygoteRules"]
-git-tree-sha1 = "5f9126d4fb0a114ef122610a902f23736e90e93c"
+git-tree-sha1 = "df8638dbfa03d1b336c410e23a9dfbf89cb53937"
 uuid = "2b5f629d-d688-5b77-993f-72d75c75574e"
-version = "6.128.1"
+version = "6.128.2"
 
     [deps.DiffEqBase.extensions]
     DiffEqBaseDistributionsExt = "Distributions"
@@ -830,9 +468,9 @@ version = "6.128.1"
 
 [[deps.DiffEqCallbacks]]
 deps = ["DataStructures", "DiffEqBase", "ForwardDiff", "LinearAlgebra", "Markdown", "NLsolve", "Parameters", "RecipesBase", "RecursiveArrayTools", "SciMLBase", "StaticArraysCore"]
-git-tree-sha1 = "2afa3ca067b78cad118ede8736e475bc0a08724a"
+git-tree-sha1 = "9c7d3a84264d935f6981504388b202a770113faa"
 uuid = "459566f4-90b8-5000-8ac3-15dfb0a30def"
-version = "2.28.0"
+version = "2.29.1"
 weakdeps = ["OrdinaryDiffEq", "Sundials"]
 
 [[deps.DiffEqNoiseProcess]]
@@ -861,9 +499,9 @@ version = "1.15.1"
 
 [[deps.DifferentialEquations]]
 deps = ["BoundaryValueDiffEq", "DelayDiffEq", "DiffEqBase", "DiffEqCallbacks", "DiffEqNoiseProcess", "JumpProcesses", "LinearAlgebra", "LinearSolve", "NonlinearSolve", "OrdinaryDiffEq", "Random", "RecursiveArrayTools", "Reexport", "SciMLBase", "SteadyStateDiffEq", "StochasticDiffEq", "Sundials"]
-git-tree-sha1 = "9b2fef0d520066196dbd6761bbc15da5e6282d9e"
+git-tree-sha1 = "c3d11164d1b08c379bc3c6abae45fcd7250e8e35"
 uuid = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
-version = "7.9.0"
+version = "7.9.1"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
@@ -971,10 +609,15 @@ version = "2.0.0"
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
-deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "048dd3d82558759476cff9cff999219216932a08"
+deps = ["LinearAlgebra", "Random"]
+git-tree-sha1 = "a20eaa3ad64254c61eeb5f230d9306e937405434"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.6.0"
+version = "1.6.1"
+weakdeps = ["SparseArrays", "Statistics"]
+
+    [deps.FillArrays.extensions]
+    FillArraysSparseArraysExt = "SparseArrays"
+    FillArraysStatisticsExt = "Statistics"
 
 [[deps.FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays"]
@@ -1106,12 +749,6 @@ git-tree-sha1 = "53bb909d1151e57e2484c3d1b53e19552b887fb2"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
 version = "1.0.2"
 
-[[deps.HCubature]]
-deps = ["Combinatorics", "DataStructures", "LinearAlgebra", "QuadGK", "StaticArrays"]
-git-tree-sha1 = "e95b36755023def6ebc3d269e6483efa8b2f7f65"
-uuid = "19dc6840-f33b-545b-b366-655c7e3ffd49"
-version = "1.5.1"
-
 [[deps.HTTP]]
 deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "ExceptionUnwrapping", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
 git-tree-sha1 = "cb56ccdd481c0dd7f975ad2b3b62d9eda088f7e2"
@@ -1159,11 +796,6 @@ git-tree-sha1 = "debdd00ffef04665ccbb3e150747a77560e8fad1"
 uuid = "615f187c-cbe4-4ef1-ba3b-2fcf58d6d173"
 version = "0.1.1"
 
-[[deps.Indexing]]
-git-tree-sha1 = "ce1566720fd6b19ff3411404d4b977acd4814f9f"
-uuid = "313cdc1a-70c2-5d6a-ae34-0150d3930a38"
-version = "1.1.1"
-
 [[deps.Inflate]]
 git-tree-sha1 = "5cd07aab533df5170988219191dfad0519391428"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
@@ -1172,16 +804,6 @@ version = "0.1.3"
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-
-[[deps.IntervalSets]]
-deps = ["Dates", "Random"]
-git-tree-sha1 = "8e59ea773deee525c99a8018409f64f19fb719e6"
-uuid = "8197267c-284f-5f27-9208-e0e47529a953"
-version = "0.7.7"
-weakdeps = ["Statistics"]
-
-    [deps.IntervalSets.extensions]
-    IntervalSetsStatisticsExt = "Statistics"
 
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -1219,9 +841,13 @@ version = "2.1.91+0"
 
 [[deps.JumpProcesses]]
 deps = ["ArrayInterface", "DataStructures", "DiffEqBase", "DocStringExtensions", "FunctionWrappers", "Graphs", "LinearAlgebra", "Markdown", "PoissonRandom", "Random", "RandomNumbers", "RecursiveArrayTools", "Reexport", "SciMLBase", "StaticArrays", "TreeViews", "UnPack"]
-git-tree-sha1 = "add0bfe9091a0148a358dc8c52d5ac60806da76c"
+git-tree-sha1 = "61068b4df1e434c26ff8b876fbaf2be3e3e44d27"
 uuid = "ccbc3e58-028d-4f4c-8cd5-9ae44345cda5"
-version = "9.7.2"
+version = "9.7.3"
+weakdeps = ["FastBroadcast"]
+
+    [deps.JumpProcesses.extensions]
+    JumpProcessFastBroadcastExt = "FastBroadcast"
 
 [[deps.KLU]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse_jll"]
@@ -1231,9 +857,9 @@ version = "0.4.0"
 
 [[deps.Krylov]]
 deps = ["LinearAlgebra", "Printf", "SparseArrays"]
-git-tree-sha1 = "fbda7c58464204d92f3b158578fb0b3d4224cea5"
+git-tree-sha1 = "17e462054b42dcdda73e9a9ba0c67754170c88ae"
 uuid = "ba0b0d4f-ebba-5204-a429-3ac8c609bfb7"
-version = "0.9.3"
+version = "0.9.4"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1343,10 +969,10 @@ uuid = "7add5ba3-2f88-524e-9cd5-f83b8a55f7b8"
 version = "1.42.0+0"
 
 [[deps.Libiconv_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "c7cb1f5d892775ba13767a87c7ada0b980ea0a71"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "f9557a255370125b405568f9767d6d195822a175"
 uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
-version = "1.16.1+2"
+version = "1.17.0+0"
 
 [[deps.Libmount_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1378,9 +1004,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearSolve]]
 deps = ["ArrayInterface", "DocStringExtensions", "EnumX", "FastLapackInterface", "GPUArraysCore", "InteractiveUtils", "KLU", "Krylov", "Libdl", "LinearAlgebra", "PrecompileTools", "Preferences", "RecursiveFactorization", "Reexport", "Requires", "SciMLBase", "SciMLOperators", "Setfield", "SparseArrays", "Sparspak", "SuiteSparse", "UnPack"]
-git-tree-sha1 = "f746a5b9522815bf098049f9cbfbfcae53f29450"
+git-tree-sha1 = "69cbd612e6e67ba2f8121bc8725bc9d04d803599"
 uuid = "7ed4a6bd-45f5-4d41-b270-4a48e9bafcae"
-version = "2.5.0"
+version = "2.5.1"
 
     [deps.LinearSolve.extensions]
     LinearSolveCUDAExt = "CUDA"
@@ -1388,6 +1014,7 @@ version = "2.5.0"
     LinearSolveIterativeSolversExt = "IterativeSolvers"
     LinearSolveKrylovKitExt = "KrylovKit"
     LinearSolveMKLExt = "MKL_jll"
+    LinearSolveMetalExt = "Metal"
     LinearSolvePardisoExt = "Pardiso"
 
     [deps.LinearSolve.weakdeps]
@@ -1396,6 +1023,7 @@ version = "2.5.0"
     IterativeSolvers = "42fd0dbc-a981-5370-80f2-aaf504508153"
     KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
     MKL_jll = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
+    Metal = "dde4c033-4e86-420c-a63e-0dd931031962"
     Pardiso = "46dd5b70-b6fb-5a00-ae2d-e8fea33afaf2"
 
 [[deps.LogExpFunctions]]
@@ -1419,9 +1047,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[deps.LoggingExtras]]
 deps = ["Dates", "Logging"]
-git-tree-sha1 = "a03c77519ab45eb9a34d3cfe2ca223d79c064323"
+git-tree-sha1 = "0d097476b6c381ab7906460ef1ef1638fbce1d91"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.LoopVectorization]]
 deps = ["ArrayInterface", "ArrayInterfaceCore", "CPUSummary", "CloseOpenIntervals", "DocStringExtensions", "HostCPUFeatures", "IfElse", "LayoutPointers", "LinearAlgebra", "OffsetArrays", "PolyesterWeave", "PrecompileTools", "SIMDTypes", "SLEEFPirates", "Static", "StaticArrayInterface", "ThreadingUtilities", "UnPack", "VectorizationBase"]
@@ -1512,9 +1140,9 @@ version = "1.2.0"
 
 [[deps.NonlinearSolve]]
 deps = ["ArrayInterface", "DiffEqBase", "EnumX", "FiniteDiff", "ForwardDiff", "LinearAlgebra", "LinearSolve", "PrecompileTools", "RecursiveArrayTools", "Reexport", "SciMLBase", "SimpleNonlinearSolve", "SparseArrays", "SparseDiffTools", "StaticArraysCore", "UnPack"]
-git-tree-sha1 = "23dabe80f8ebec9a68b0db4cd02f2d2cdbc4f653"
+git-tree-sha1 = "ee53089df81a6bdf3c06c17cf674e90931b10a73"
 uuid = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
-version = "1.9.0"
+version = "1.10.0"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
@@ -1575,9 +1203,9 @@ version = "1.6.2"
 
 [[deps.OrdinaryDiffEq]]
 deps = ["ADTypes", "Adapt", "ArrayInterface", "DataStructures", "DiffEqBase", "DocStringExtensions", "ExponentialUtilities", "FastBroadcast", "FastClosures", "FiniteDiff", "ForwardDiff", "FunctionWrappersWrappers", "IfElse", "InteractiveUtils", "LineSearches", "LinearAlgebra", "LinearSolve", "Logging", "LoopVectorization", "MacroTools", "MuladdMacro", "NLsolve", "NonlinearSolve", "Polyester", "PreallocationTools", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLNLSolve", "SciMLOperators", "SimpleNonlinearSolve", "SimpleUnPack", "SparseArrays", "SparseDiffTools", "StaticArrayInterface", "StaticArrays", "TruncatedStacktraces"]
-git-tree-sha1 = "2758190d4b01182e2278b772339daa83e209d45a"
+git-tree-sha1 = "ba3ed480f991b846cf9a8118d3370d9752e7166d"
 uuid = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
-version = "6.54.0"
+version = "6.55.0"
 
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1638,9 +1266,9 @@ version = "1.3.5"
 
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Preferences", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "9f8675a55b37a70aa23177ec110f6e3f4dd68466"
+git-tree-sha1 = "ccee59c6e48e6f2edf8a5b64dc817b6729f99eb5"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.38.17"
+version = "1.39.0"
 
     [deps.Plots.extensions]
     FileIOExt = "FileIO"
@@ -1821,22 +1449,6 @@ git-tree-sha1 = "6ed52fdd3382cf21947b15e8870ac0ddbff736da"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
 version = "0.4.0+0"
 
-[[deps.Roots]]
-deps = ["ChainRulesCore", "CommonSolve", "Printf", "Setfield"]
-git-tree-sha1 = "ff42754a57bb0d6dcfe302fd0d4272853190421f"
-uuid = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
-version = "2.0.19"
-
-    [deps.Roots.extensions]
-    RootsForwardDiffExt = "ForwardDiff"
-    RootsIntervalRootFindingExt = "IntervalRootFinding"
-    RootsSymPyExt = "SymPy"
-
-    [deps.Roots.weakdeps]
-    ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-    IntervalRootFinding = "d2bf35a9-74e0-55ec-b149-d360ff49b807"
-    SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
-
 [[deps.RuntimeGeneratedFunctions]]
 deps = ["ExprTools", "SHA", "Serialization"]
 git-tree-sha1 = "6aacc5eefe8415f47b3e34214c1d79d2674a0ba2"
@@ -1859,10 +1471,16 @@ uuid = "476501e8-09a2-5ece-8869-fb82de89a1fa"
 version = "0.6.39"
 
 [[deps.SciMLBase]]
-deps = ["ADTypes", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PrecompileTools", "Preferences", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables", "TruncatedStacktraces"]
-git-tree-sha1 = "04370090604cd399db5bebddb636d80ab9d338e9"
+deps = ["ADTypes", "ArrayInterface", "ChainRulesCore", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PrecompileTools", "Preferences", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables", "TruncatedStacktraces", "ZygoteRules"]
+git-tree-sha1 = "450de8c64c4f201bd56f74aa0c7cf6d66666aaee"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "1.94.0"
+version = "1.96.0"
+
+    [deps.SciMLBase.extensions]
+    ZygoteExt = "Zygote"
+
+    [deps.SciMLBase.weakdeps]
+    Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [[deps.SciMLNLSolve]]
 deps = ["DiffEqBase", "LineSearches", "NLsolve", "Reexport", "SciMLBase"]
@@ -1949,15 +1567,19 @@ deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.SparseDiffTools]]
-deps = ["ADTypes", "Adapt", "ArrayInterface", "Compat", "DataStructures", "FiniteDiff", "ForwardDiff", "Graphs", "LinearAlgebra", "Reexport", "Requires", "SciMLOperators", "Setfield", "SparseArrays", "StaticArrayInterface", "StaticArrays", "Tricks", "VertexSafeGraphs"]
-git-tree-sha1 = "4c1a57bcbc0b795fbfdc2009e70f9c2fd2815bfe"
+deps = ["ADTypes", "Adapt", "ArrayInterface", "Compat", "DataStructures", "FiniteDiff", "ForwardDiff", "Graphs", "LinearAlgebra", "PackageExtensionCompat", "Reexport", "SciMLOperators", "Setfield", "SparseArrays", "StaticArrayInterface", "StaticArrays", "Tricks", "UnPack", "VertexSafeGraphs"]
+git-tree-sha1 = "b3eb6747277d9919f5527ad9053f6d2fb1166516"
 uuid = "47a9eef4-7e08-11e9-0b38-333d64bd3804"
-version = "2.4.1"
+version = "2.5.1"
 
     [deps.SparseDiffTools.extensions]
+    SparseDiffToolsEnzymeExt = "Enzyme"
+    SparseDiffToolsSymbolicsExt = "Symbolics"
     SparseDiffToolsZygoteExt = "Zygote"
 
     [deps.SparseDiffTools.weakdeps]
+    Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
+    Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
     Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [[deps.Sparspak]]
@@ -1976,12 +1598,6 @@ weakdeps = ["ChainRulesCore"]
     [deps.SpecialFunctions.extensions]
     SpecialFunctionsChainRulesCoreExt = "ChainRulesCore"
 
-[[deps.SplitApplyCombine]]
-deps = ["Dictionaries", "Indexing"]
-git-tree-sha1 = "48f393b0231516850e39f6c756970e7ca8b77045"
-uuid = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
-version = "1.2.2"
-
 [[deps.Static]]
 deps = ["IfElse"]
 git-tree-sha1 = "f295e0a1da4ca425659c57441bcb59abb035a4bc"
@@ -1989,10 +1605,10 @@ uuid = "aedffcd0-7271-4cad-89d0-dc628f76c6d3"
 version = "0.8.8"
 
 [[deps.StaticArrayInterface]]
-deps = ["ArrayInterface", "Compat", "IfElse", "LinearAlgebra", "Requires", "SnoopPrecompile", "SparseArrays", "Static", "SuiteSparse"]
-git-tree-sha1 = "33040351d2403b84afce74dae2e22d3f5b18edcb"
+deps = ["ArrayInterface", "Compat", "IfElse", "LinearAlgebra", "PrecompileTools", "Requires", "SparseArrays", "Static", "SuiteSparse"]
+git-tree-sha1 = "03fec6800a986d191f64f5c0996b59ed526eda25"
 uuid = "0d7ed370-da01-4f52-bd93-41d350b8b718"
-version = "1.4.0"
+version = "1.4.1"
 weakdeps = ["OffsetArrays", "StaticArrays"]
 
     [deps.StaticArrayInterface.extensions]
@@ -2086,15 +1702,15 @@ version = "5.2.1+0"
 
 [[deps.SymPy]]
 deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
-git-tree-sha1 = "c24256a64ccce99a360050af5a037500f6a024d9"
+git-tree-sha1 = "ed1605d9415cccb50e614b8fe0035753877b5303"
 uuid = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
-version = "1.1.10"
+version = "1.1.12"
 
     [deps.SymPy.extensions]
-    SymPyTermInterfaceExt = "TermInterface"
+    SymPySymbolicUtilsExt = "SymbolicUtils"
 
     [deps.SymPy.weakdeps]
-    TermInterface = "8ea1fca8-c5ef-4a55-8b96-4e9afe9c9a3c"
+    SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
 
 [[deps.SymbolicIndexingInterface]]
 deps = ["DocStringExtensions"]
@@ -2194,9 +1810,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "607c142139151faa591b5e80d8055a15e487095b"
+git-tree-sha1 = "a72d22c7e13fe2de562feda8645aa134712a87ee"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.16.3"
+version = "1.17.0"
 
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"
@@ -2247,10 +1863,10 @@ uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.25.0+0"
 
 [[deps.XML2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "93c41695bc1c08c46c5899f4fe06d6ead504bb73"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
+git-tree-sha1 = "04a51d15436a572301b5abbb9d099713327e9fc4"
 uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
-version = "2.10.3+0"
+version = "2.10.4+0"
 
 [[deps.XSLT_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "Pkg", "XML2_jll", "Zlib_jll"]
@@ -2478,45 +2094,15 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─f2d91da6-421a-11ee-13bf-b97463cb98e2
-# ╟─f0d9268c-f71c-42a7-b363-bd15b016b0c3
-# ╟─9037d73b-51fe-4e9f-8545-e5bf13d45f9c
-# ╟─cdb8c029-9324-402c-9319-f91cfeb36d1d
-# ╟─1440a399-e391-4930-ad03-15bdce8c56d3
-# ╟─ca041540-036a-478e-8c04-a11a48ad8414
-# ╠═9967faf7-3f0f-4c64-bbcb-945070d4ca07
-# ╠═85c37f4a-02a3-46d1-b2cf-4889a42fc837
-# ╠═f95190ae-8ee7-49ea-ad80-ea2d269a5b95
-# ╟─3af142b1-2dc3-48ac-8250-07345c9b36cb
-# ╟─eef1792a-a688-42c0-af80-af81c588d39a
-# ╟─b09d6552-4f4c-4d3f-8a0e-d0037b4c1e5a
-# ╟─741a844f-b549-4f94-b326-e4882f01017f
-# ╟─6d51519f-9b1f-462a-acaa-a11b564e040d
-# ╠═cff4074e-a0c1-4c4e-b19d-7665d3edb353
-# ╠═42428795-d698-4c9e-9f47-67cdb8453c57
-# ╟─358ee0cf-c710-437d-8473-eb8c0b04235e
-# ╟─fd762ce1-4cd6-4c3b-b023-6cf913aa92c8
-# ╟─9c346abb-eda6-487c-b8cd-345dc1a233cb
-# ╠═7eef67ed-b8e9-4e2c-9ce4-4fb188a51393
-# ╟─258e8fe9-3d3c-4c3d-9cfe-3dbfaebe3d30
-# ╟─72a797f9-cebe-4a55-95f7-39e6832fef47
-# ╟─7994d143-28ad-4649-bc4e-d0b378b03a4e
-# ╟─2a9b3f4b-06b5-470e-b8c0-5318694db7fd
-# ╟─6104397e-05c3-4a50-954d-4daa41cb9306
-# ╟─56585376-ebe7-4c2d-8c65-8bf1a178d276
-# ╠═5e0ac040-00bd-4c36-a1aa-636a1ab61b7e
-# ╠═4095227f-c1b7-4134-bb25-c6aebbbb5fd9
-# ╟─555ae0a8-5933-4d66-b767-82ffdcef3757
-# ╠═3a91fea9-fad2-429e-997b-ef14af8de6b3
-# ╟─782f0314-1e52-418e-961f-528133719166
-# ╟─ff298db2-d9ae-4b73-a2e5-a76748ea7881
-# ╠═8d37df6d-cae0-482f-babe-a0156d91f2dd
-# ╟─5d39406a-c81f-4ede-8cea-fd731f98d98a
-# ╠═7227d5f7-7787-4d6f-968f-41e6d9d222c8
-# ╠═7929bede-1d25-4bf3-8713-896e228b3536
-# ╠═5699ad7a-cf22-4f40-b0bf-277ac4dafc15
-# ╠═906c03c3-54bb-431a-96c4-2016e50763c5
-# ╟─50b56d96-7257-49e0-832c-9644194d2647
-# ╟─209530e9-e019-4c3e-b581-2300446e3ad6
+# ╠═1fc00de6-4c2c-11ee-1e34-1ddbb8ab765f
+# ╟─5e0e0693-248f-4fa0-8d83-a3399b16b3c7
+# ╠═69d1697f-99c5-41a0-8a52-28043d421136
+# ╠═48060e70-6529-4b8c-96cb-c1e1de9403eb
+# ╠═abdadf81-ffb3-455c-90c0-bf23be9edad5
+# ╠═c01b3bf7-ce6f-4f88-9050-1ae2d7b7d6f4
+# ╟─d946f077-ffed-4409-bb62-4ea6efde1fd5
+# ╠═9ba6535a-1378-40a4-bc5a-1bdd03f1a6ec
+# ╟─3ac8cbbb-59d6-4fbb-a447-0e4b9755e190
+# ╠═8d2a7258-54d7-4aca-bf69-8d9b9f5eda13
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

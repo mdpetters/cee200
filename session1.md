@@ -17,7 +17,7 @@ This session introduces some important tools used in this class, including `git`
 Thus section will contain a link to slides and notes shown in class. 
 
 ~~~
-Slides: <a href="" target="_blank"> Slides</a> <br><br>
+Slides: <a href="https://docs.google.com/presentation/d/1IowVxPyuMRNh2Wj8edUgvpEHh7MwakLgR-pu3ccLpGc/edit?usp=sharing" target="_blank"> Slides</a> <br><br>
 ~~~
 
 ## Pluto Notebooks
@@ -131,7 +131,7 @@ Variables inside functions are, per usual, local scope. In the example below, `a
 
 #### Pluto Package Manager
 
-Each notebook has it's own package configuration. `Pluto.jl` will download the packages and manage dependencies. They are thus a mostly "one-click" deployment. In contrast, local installs require you to manually add the packages to the local environment. Packages are best declared at the beginning of the notebook in a `begin ... end` block. The checkmark indicates that the package is downloaded and compiled.  
+Each notebook has it's own package configuration. `Pluto.jl` will download the packages and manage dependencies. They are thus a mostly "one-click" deployment. In contrast, local installs require you to manually add the packages to the local environment. Packages are best declared at the beginning of the notebook in a `begin ... end` block. The check mark indicates that the package is downloaded and compiled.  
 
 
 ![](/assets/package.png)
@@ -139,6 +139,8 @@ Each notebook has it's own package configuration. `Pluto.jl` will download the p
 \concept{
 When you change the package configuration by adding or subtracting packages, the notebook resets and the configuration is recompiled. This can be slow and sometimes requires are restart of the notebook.  
 }
+
+You can learn more about Pluto's package management system [here](https://plutojl.org/docs/packages/).
 
 #### Documentation
 
@@ -162,6 +164,8 @@ The first time you run these notebooks it will be exceptionally slow (up to a fe
 }
 
 ## Homework
+
+This section contains links to homework assignments. The link is password protected to ensure that only students enrolled in the course submit homework. Once you accept, please associate your GitHub account with your name in GitHub classroom. You only need to do this once.  
 
 \exercise{
 Due Oct 9, 2023: 

@@ -44,9 +44,10 @@ The grade components in the class include:
 
 | Activity      | Weight | Details                                                        |
 | --------------|--------|----------------------------------------------------------------|
-| Homework      | 20%    | Each module will have one or more graded homework assignments. |
-| Midterm Exams | 40%    | Two midterm exams are scheduled.                               |
-| Final Exam    | 40%    | The final exam is cumulative.                                  |
+| Participation | 10%    | Attendance and in-class activities.                            |
+| Homework      | 30%    | Each module will have one or more graded homework assignments. |
+| Midterm Exams | 30%    | Two midterm exams are scheduled.                               |
+| Final Exam    | 30%    | The final exam is cumulative.                                  |
 
 Exams will mimic the homework assignments and are to be taken in person. They will be administered via GitHub Classroom. A laptop computer with appropriate software installed will be required for taking the exam.
 
@@ -97,26 +98,26 @@ At UCR we are committed to upholding and promoting the values of the Tartan Soul
 The use of generative AI software such as ChatGPT or GitHub Copilot is expressly forbidden in this course. Use of these tools will be treated as academic misconduct.
 }
 
-Cheating is the giving, taking, or presenting of information or material by a student that unethically or fraudulently aids oneself or another person on any work which is to be considered in the determination of a grade or the completion of academic requirements or the enhancement of that student’s record or academic career. Cheating includes, but is not limited, to the following actions:
+Cheating is the giving, taking, or presenting of information or material by a student that unethically or fraudulently aids oneself or another person on any work which is to be considered in the determination of a grade or the completion of academic requirements or the enhancement of that student’s record or academic career. Cheating includes, but is not limited to the following actions:
 
-1. Copying from someone else’s assignment, examination, or other academic exercise;
-2. Possessing, buying, selling, removing, receiving, or using, at any time or in any manner not prescribed by the faculty member, any information related to an instrument of academic evaluation;
-3. Using materials, equipment, or assistance in connection with an assignment, examination, or other academic exercise which have not been authorized by the faculty member, including but not limited to, notes, calculator, or other technology;
-4. Obtaining or attempting to obtain, in a dishonest manner, any material relating to a student’s academic work;
-5. Working with another or others in completing an assignment, examination, or other academic exercise when the faculty member has required independent and unaided action;
-6. Attempting to influence or change an academic evaluation, grade, or record by unfair means;
-7. Permitting another individual to substitute for one’s self in an academic evaluation;
-8. Marking or submitting an examination or evaluation material in a manner designed to deceive the grading system;
-9. Failing to comply with a specific condition of academic integrity which has been clearly announced in a particular course;
-10. Submitting, without prior permission of the faculty member, any work by a student which has at any time been submitted in identical or similar form by that student in fulfillment of any other academic requirement at any institution;
-11. Submitting of material in whole or part for academic evaluation that has been prepared by another individual(s);
-12. Submitting data which have been altered or contrived in such a way as to be deliberately misleading; or
+1. Copying from someone else’s assignment, examination, or other academic exercise.
+2. Possessing, buying, selling, removing, receiving, or using, at any time or in any manner not prescribed by the faculty member, any information related to an instrument of academic evaluation.
+3. Using materials, equipment, or assistance in connection with an assignment, examination, or other academic exercise which have not been authorized by the faculty member, including but not limited to, notes, calculator, or other technology.
+4. Obtaining or attempting to obtain, in a dishonest manner, any material relating to a student’s academic work.
+5. Working with another or others in completing an assignment, examination, or other academic exercise when the faculty member has required independent and unaided action.
+6. Attempting to influence or change an academic evaluation, grade, or record by unfair means.
+7. Permitting another individual to substitute for one’s self in an academic evaluation.
+8. Marking or submitting an examination or evaluation material in a manner designed to deceive the grading system,
+9. Failing to comply with a specific condition of academic integrity which has been clearly announced in a particular course,
+10. Submitting, without prior permission of the faculty member, any work by a student which has at any time been submitted in identical or similar form by that student in fulfillment of any other academic requirement at any institution.
+11. Submitting of material in whole or part for academic evaluation that has been prepared by another individual(s).
+12. Submitting data which have been altered or contrived in such a way as to be deliberately misleading. 
 13. Providing false information to the University in any manner to achieve an unfair advantage, enhance one’s record, or complete a requirement.
 
 #### Digital Course Components
 Students may be required to disclose personally identifiable information to other students in the course, via digital tools, such as email or web-postings, where relevant to the course. Examples include online discussions of class topics, and posting of student coursework. All students are expected to respect the privacy of each other by not sharing or using such information outside the course.
 
-*Digital Course Components:* Digital course components mayinclude the GitHub Classroom platform.
+*Digital Course Components:* Digital course components may include the GitHub Classroom platform.
 
 #### Non-Discrimination Policy
 It is the policy of the University of California Riverside not to engage in discrimination against or harassment of any person employed or seeking employment with the University of California on the basis of race, color, national origin, religion, sex, gender, gender expression, gender identity, pregnancy, physical or mental disability, medical condition, genetic information, ancestry, marital status, age, sexual orientation, citizenship, or service in the uniformed services. Furthermore, University policy prohibits retaliation against any member of the University community filing a complaint of discrimination or harassment. This policy is intended to be consistent with the provisions of applicable State and Federal laws and University policies. 

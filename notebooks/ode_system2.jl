@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.7
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -22,12 +22,12 @@ end
 
 # ╔═╡ 30aff398-cab1-4a6a-a47e-9a92a37da053
 begin
-img_url = "../data/ozone_hole.jpg"
+img_url = "https://mdpetters.github.io/cee200/assets/ozone_hole.jpg"
 
 	md"""
 Ozone depletion consists of two related events observed since the late 1970s: a steady lowering of about four percent in the total amount of ozone in Earth's atmosphere, and a much larger springtime decrease in stratospheric ozone (the ozone layer) around Earth's polar regions. 
 
-$(LocalResource(img_url, :width => 300))
+$(Resource(img_url, :width => 300))
 
 The [Ozone hole](https://ozonewatch.gsfc.nasa.gov/facts/hole_SH.html) has been an environmental problem of global concern related to the release of CFCs in the atmosphere. The Chapman cycle describes the main reactions that naturally determine, to first approximation, the concentration of ozone in the stratosphere.
 
@@ -232,9 +232,9 @@ SymPy = "~1.1.12"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "27973903f110d0c213c3d6e9f39291ddf55d945e"
+project_hash = "eb2038fe600b382d42dc31d65e5354a29a9577fd"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "f5c25e8a5b29b5e941b7408bc8cc79fea4d9ef9a"
@@ -449,7 +449,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -1352,7 +1352,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
