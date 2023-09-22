@@ -232,11 +232,11 @@ The function below is one of the key points of the state space solution: Because
 """
 
 # ╔═╡ 2b5d7fda-4091-4df5-90ba-2713a4e5bdb9
-function state_space_solver(A, B, C, D, u0, f, tspan)
-	h(u, p, t) = A*u + B*f(t)  # canonical equation 1
+function state_space_solver(A, B, C, D, q0, f, tspan)
+	h(q, p, t) = A*q + B*f(t)  # canonical equation 1
 	y(q, t) = C*q + D*f(t)     # canonical equation 2
 	
-	problem = ODEProblem(h, u0, tspan, Float64[]) 
+	problem = ODEProblem(h, q0, tspan, Float64[]) 
 	solution = solve(problem, RK4(), reltol = 1e-12, abstol = 1e-12)
 	return map(y, solution.u, solution.t), solution.t
 end
@@ -2194,8 +2194,8 @@ version = "1.4.1+0"
 # ╠═fa5fc3cd-c6e9-4df6-877d-bd2d6be9cb7f
 # ╠═6a23744f-89e0-4b3a-a33a-5c9089312efd
 # ╠═44f67c15-e66b-4171-b958-e92bce788308
-# ╠═07c08a7e-95d9-4cf5-ba8f-a0d14eebdc9a
-# ╠═672f7a56-5bfd-4192-a01f-7b7b1277b28f
+# ╟─07c08a7e-95d9-4cf5-ba8f-a0d14eebdc9a
+# ╟─672f7a56-5bfd-4192-a01f-7b7b1277b28f
 # ╟─33448f59-b0a7-4a31-af5a-9ff5c957eea8
 # ╠═2b5d7fda-4091-4df5-90ba-2713a4e5bdb9
 # ╠═605d0ab3-90c4-40a9-a7af-5631fc066913
