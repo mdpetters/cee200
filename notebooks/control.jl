@@ -4,234 +4,110 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 3deb3968-4c58-11ee-2350-eb87f8e1a936
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
+# ╔═╡ cc5fa8b8-4da3-11ee-28fd-7dacab544db3
 begin
-	using PlutoUI
-	using Plots
 	using DifferentialEquations
+	using Plots
+	using Plots.PlotMeasures
+	using PlutoUI
+	using SymPy
+	import PlutoUI:combine
+
+	#https://mdpetters.github.io/cee200/
+	cs_url = "../_assets/cold_stage.png"
+	tec_url = "../_assets/tec_performance.png"
+	control1_url = "../_assets/control1.svg"
+	control2_url = "../_assets/control2.svg"
+	control3_url = "../_assets/control3.svg"
+	control4_url = "../_assets/control4.svg"
+	control5_url = "../_assets/TC-36-25_RS232_02.jpg"
+
 	md"""
 	$(TableOfContents(depth=4))
-	# State Space Representation
-
-	This notebook intruduce the state-space representation of a physical model, using the forced dampened harmonic oscillator as an example.
+	#  Control Systems
 	"""
 end
 
-# ╔═╡ e49b4689-6f9c-4068-bd10-39330548ac70
-md"""
-
-# Dampened Harmonic Oscillator with Forcing
-
-## Second Order ODE Model 
-
-The [dampened harmonic oscillator](http://hyperphysics.phy-astr.gsu.edu/hbase/oscda.html) is a homogeneous second order differential equation. 
-
-```math
-m\frac{d^2x}{dt^2} + c \frac{dx}{dt} + kx = f_i(t)
-```
-
-In the previous example, the right hand side of this equation equaled zero. The oscillator returns to it's equilibrium position. Here we add an external forcing functions ``f_i(t)``. In the simplest case, ``i = 1`` and ``f_1 = 0`` corresponds to the previous notebook.
-
-## Second Order ODE Solver
-
-We can reuse our second order ODE solver solution before. The only change made is to add ``m`` into the initial condition, thus having three initial parameters. We can imagine arbitrarly complex ``f_i(t)``.
-"""
-
-# ╔═╡ b81966df-8038-4e4b-b290-3cc3aaa3115f
-begin
-	f(t) = 1.0/p[1]*(sin(4*t))^2
-	function f!(ddu, du, u, p, t)  
-		ddu[1] = -p[2]/p[1] * du[1] - p[3]/p[1] * u[1] + f(t)
-	end
-	u0_second =  [-1.0]                  # initial position
-	du0_second = [0.0]                   # initial velocity
-	tspan = [0.0, 30.0]           # integrate
-	p = [1.0, 1.0, 10.0]          # m, c, k 
-	problem = SecondOrderODEProblem(f!, du0_second, u0_second, tspan, p) 
-end
-
-# ╔═╡ be9c2f5f-6963-4d7d-8750-9c1aa63a099f
-begin
-	solution = solve(problem, DPRKN6(), reltol = 1e-12, abstol = 1e-12)
-	pos = map(x -> x[2], solution.u)
-	ts1 = solution.t
-	plot(ts1, pos, color = :black, label = "DPRKN6 Solution", lw = 1)
-end
-
-# ╔═╡ 2c75a9c3-dc0f-4db3-aa59-0db5702d74db
-md"""
-## Solve as System of Equations
-
-We can transform the second order problem in a system of first order ODEs
-
-```math
-\begin{eqnarray}
-& \frac{dq_1}{dt} &= q_2 \\
-& \frac{dq_2}{dt} &= \frac{1}{m}(f(t)-cq_2-kq_1)
-\end{eqnarray}
-```
-
-where ``q_1 = x`` (the position) and ``q_2 = \frac{dx}{dt}`` (the velocity). With this we can use the first order ODE system solver.
-"""
-
-# ╔═╡ ed9c8d7d-6990-456b-8b60-58a9cf218bbf
-begin
-	function g!(du, u, p, t)  
-		du[1] = u[2]
-		du[2] = 1.0/p[1] * (f(t) - p[2]/p[1]*u[2] - p[3]/p[1]*u[1])
-	end
-	u0 = [-1.0, 0.0] # Note that first is position, second is velocity
-	# Recall the definition of p
-	#p = [1.0, 1.0, 10.0]          # m, c, k 
-	problem2 = ODEProblem(g!, u0, tspan, p) 
-end
-
-# ╔═╡ 9b5a963d-c7ac-4d25-baaa-bc7a9b84bb03
-begin 
-	solution2 = solve(problem2, RK4(), reltol = 1e-12, abstol = 1e-12)
-	pos2 = map(x -> x[1], solution2.u)
-	ts2 = solution2.t
-	plot(ts2, pos2, color = :black, label = "RK4 Solution", lw = 1)
-end
-
-# ╔═╡ 8f0ed474-7dd0-4966-808f-7258f1d2acf7
-md"""
-# State Space Representation
-
-The state space representation of a system describes the system with single first order matrix differential equation. The state space representation of a system is given by two canonical equations:
-
-```math
-\begin{eqnarray}
-& (1) & \quad \vec{q}'(t) &= \mathbf{A}\vec{q}(t) + \mathbf{B} \vec{f}(t) \\
-& (2) & \quad \vec{y}(t) &=  \mathbf{C}\vec{q}(t) + \mathbf{D} \vec{f}(t) \\
-\end{eqnarray}
-```
-
-where 
-- ``\vec{q}(t)`` is  ``n \times 1`` (n rows by 1 column); ``\vec{q}(t)`` is the *state vector*, it is a function of time
-- ``\mathbf{A}`` is ``n\times n``; ``\mathbf{A}`` is the *state matrix*, a constant
-- ``\mathbf{B}`` is ``n \times r``; ``\mathbf{B}`` is the *input matrix*, a constant
-- ``\vec{f}(t)`` is  ``r\times 1``; ``\vec{f}(t)`` is the *input*, a function of time
-
-
-- ``\vec{y}(t)`` is ``m \times 1``; ``\vec{y}(t)`` is the output, a function of time
-- ``\mathbf{C}`` is ``m \times n``; ``\mathbf{C}`` is the output matrix, a constant
-- ``\mathbf{D}`` is ``m \times r``; ``\mathbf{D}`` is the direct transition (or feedthrough) matrix, a constant
-
-and ``n`` is the number of state variables, ``m`` is the number of outputs, and ``r`` is the number of inputs.
-"""
-
-
-# ╔═╡ 89e4f550-40a9-442c-a94f-693259c1e8d4
+# ╔═╡ aabae4cb-3912-408d-bacf-267f2440c047
 Markdown.MD(
 	Markdown.Admonition("warning", "Key Concept", [md"
-Advantages of this representation include:
-
-- The notation is very compact.  Even large systems can be represented by two simple equations.
-- Because all systems are represented by the same notation, it is very easy to develop general techniques to solve these systems.
-- Computers easily simulate first order equations.
+A control system consists of components and circuits that work together to maintain the process at a desired operating point. Every home or an industrial plant has a temperature control that maintains the temperature at the thermostat setting. In industry, a control system may be used to regulate some aspect of production of parts or to maintain the speed of a motor at a desired level.
 "]))
 
-# ╔═╡ c0a676a4-bdbe-47a1-985c-5ce80582334c
+# ╔═╡ 9db0e27f-32f5-4b03-9d70-5dea9f079ecb
 md"""
+# Thermolectric Cold-Stage
 
-For the dampened forced dampened harmonic oscillator one possible solution for 
-2 state state variables (``n = 2``, ``q_1`` is position, ``q_2`` is velocity), 3 outputs (``m = 3``, ``y_1`` is force, ``y_2`` is velocity, ``y_3`` is acceleration) and 1 input (``r = 1``, here the function ``f(t)``) is:
+## Introduction
+This module will develop the design and analysis of simple control systems using a simple example application: an enclolsed thermoelectrically cooled/heated plate surface whose temperature can be varied between −45 °C and +90 °C.  
+
+$(LocalResource(cs_url, :width => 2500px))
+
+**Figure.** A  thermoelectric cold plate with an enclousre cell. 1: heat sink, 2: barb connectors, 3: TEC module, 4: base block, 5: cold plate, 6: spacers, 7: M2.5 screw, 8: M4 screw, 9: glass lid, T: thermistor opening. Two thermistor openings are located on the left front facing side of the baseblock. (Source: Mahant et al., 2023).
+
+The purpose of the heat sink is the maintain one side of the TEC module at a constant temperature. 
+
+## Instrument Model
 
 ```math
-\mathbf{A} = 
-\begin{bmatrix}
-0 & 1 \\
--\frac{k}{m} & -\frac{c}{m}
-\end{bmatrix}
-\quad\quad 
-\mathbf{B} = 
-\begin{bmatrix}
-0 \\
--\frac{1}{m}
-\end{bmatrix} 
+\frac{dT}{dt} = -k(T_{env}-T) - \frac{Q(V,\Delta T)}{mc}
 ```
+
+where ``k`` is the coefficient of heat transfer, ``T_{env}`` is the temperature of the environment, ``T`` is the temperature of the place, ``Q`` is the heat transfer across the TEC, ``m`` is the mass of the metal stage, and ``c`` is the heat capacity of the metal. Recall from a previous homework assignment that the performance of the TEC can be modeled via the model
 
 ```math
-\mathbf{C} = 
-\begin{bmatrix}
--k & -c \\
-0 & 1\\
-1 & 0
-\end{bmatrix}
-\quad \quad
-\mathbf{D} = 
-\begin{bmatrix}
-1 \\
-0 \\
-0
-\end{bmatrix}
+Q(V,\Delta T) = a_1\sqrt{V} + a_2\Delta T + a_3 
 ```
-recall that 
 
-- ``\vec{q}(t)`` is  ``n \times 1``. Thus here a ``2 \times 1`` matrix.
-- ``\vec{y}(t)`` is  ``m \times 1``. Thus here a ``3 \times 1`` matrix.
+where  ``V`` is the voltage applied to the TEC module, ``\Delta T`` is the temperature difference between the hot and cold side, and ``a_i`` are fitted coefficients that determine the performance for a specific TEC model.  
 
+$(LocalResource(tec_url, :height => 900px))
 
-- ``\mathbf{A}`` is ``n \times n``. Thus here a ``2 \times 2`` matrix
-- ``\mathbf{B}`` is ``n \times r``. Thus here a ``2 \times 1`` matrix
-- ``\mathbf{C}`` is ``m \times n``. Thus here a ``3 \times 2`` matrix
-- ``\mathbf{D}`` is ``m \times r``. Thus here a ``3 \times 1`` matrix
-
-When the matrices are known, there is one generic solution algorithm: 
 """
 
-# ╔═╡ 2337d310-238b-4a49-9bde-6911b0eec605
-begin
-	# Recall the definition of p
-	#p = [1.0, 1.0, 10.0]          # m, c, k 
-	A = [0.0 1.0; -p[3]/p[1] -p[2]/p[1]]
-	B = [0.0, 1.0/p[1]]
-	C = [-p[3] -p[2]; 0.0 1.0; 1.0 0.0]
-	D = [1.0, 0.0, 0.0]
-	h(u, p, t) = A*u + B*f(t)  # canonical equation 1
-	y(q, t) = C*q + D*f(t)     # canonical equation 2
-	
-	problem3 = ODEProblem(h, u0, tspan, Float64[]) 
-	solution3 = solve(problem3, RK4(), reltol = 1e-12, abstol = 1e-12)
-	
-	outvec = map(y, solution3.u, solution3.t)
-	pos3 = map(x -> x[3], outvec)
-	ts3 = solution3.t
-	plot(ts3, pos3, color = :black, label = "RK4 Solution", lw = 1)
-end
+# ╔═╡ ba749db8-c015-4137-ac7e-92fc0bfbe7ce
+Markdown.MD(
+	Markdown.Admonition("info", "Exercise", [md"
+Based on the performance characteristic of the TEC module. Predict the coldest temperature that the stage can reach assuming that the heat sink temperature is 280K. 
+	"]))
 
-
-# ╔═╡ fa5fc3cd-c6e9-4df6-877d-bd2d6be9cb7f
-begin
-	accel = map(x -> x[1], outvec)
-	plot(ts3, accel, label = "acceleration", color = :black)
-end
-
-# ╔═╡ 6a23744f-89e0-4b3a-a33a-5c9089312efd
-q1 = map(x -> x[1], solution3.u)
-
-# ╔═╡ 44f67c15-e66b-4171-b958-e92bce788308
-q2 = map(x -> x[2], solution3.u)
-
-# ╔═╡ 07c08a7e-95d9-4cf5-ba8f-a0d14eebdc9a
+# ╔═╡ a25d1d5d-abc8-4ec4-80b2-ecdaea755a1c
 md"""
-## State Space Trajectory 
+## State Space Representation
 
-The system evolution can then be thought of as a trajectory in its state‐space. In this example, $q_1$ and $q_2$.
+The instrument performance can also be described by the canonical state-space model equations
+
+```math
+\begin{eqnarray}
+ & \quad \vec{q}'(t) &= \mathbf{A}\vec{q}(t) + \mathbf{B} \vec{f}(t) \\
+ & \quad \vec{y}(t) &=  \mathbf{C}\vec{q}(t) + \mathbf{D} \vec{f}(t) \\
+\end{eqnarray}
+```
+
+where ``\vec{q} = [T]``, ``\quad \vec{y} = [T]``, and  ``\quad\vec{f} = 
+\begin{bmatrix}
+\sqrt{V} & T_{hot} & 1 & T_{env}
+\end{bmatrix}
+``
+
+And the coefficients:
+
+``\quad A = [k + \frac{a_2}{mc}]``,  ``\quad B = \begin{bmatrix} -\frac{a_1}{mc} \\ -\frac{a_2}{mc} \\ -\frac{a_3}{mc} \\ k \end{bmatrix}``, ``\quad C = [1]``, and ``D = \begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \end{bmatrix}``
+
+Thus we can use our generic state space solver. 
 """
 
-# ╔═╡ 672f7a56-5bfd-4192-a01f-7b7b1277b28f
-plot(q1, q2, color = :black, label = :none, xlabel = "q₁", ylabel = "q₂")
-
-# ╔═╡ 33448f59-b0a7-4a31-af5a-9ff5c957eea8
-md"""
-# Generic State Space Solver
-
-The function below is one of the key points of the state space solution: Because all systems are represented by the same notation, it is very easy to develop general techniques to solve these systems. It means that we can write one generic solver function and feed it matrices A, B, C, D the intial condition, u0, and the forcing function f.
-"""
-
-# ╔═╡ 2b5d7fda-4091-4df5-90ba-2713a4e5bdb9
+# ╔═╡ be1a604c-6cf6-405f-9fa0-86e3b454315e
 function state_space_solver(A, B, C, D, q0, f, tspan)
 	h(q, p, t) = A*q + B*f(t)  # canonical equation 1
 	y(q, t) = C*q + D*f(t)     # canonical equation 2
@@ -241,24 +117,912 @@ function state_space_solver(A, B, C, D, q0, f, tspan)
 	return map(y, solution.u, solution.t), solution.t
 end
 
-# ╔═╡ 605d0ab3-90c4-40a9-a7af-5631fc066913
-let
-	p = [1.0, 1.0, 10.0]
-	u0 = -[1.0, 0.0]
-	tspan  = [0, 30]
-	f(t) = 1.0/p[1]*(sin(4*t))^2
-	
-	A = [0.0 1.0; -p[3]/p[1] -p[2]/p[1]]
-	B = [0.0, 1.0/p[1]]
-	C = [-p[3] -p[2]; 0.0 1.0; 1.0 0.0]
-	D = [1.0, 0.0, 0.0]
+# ╔═╡ 759f6f53-866c-4cc8-9bb5-41be3b43f1dc
+md"""
+## Solution for Constant V
 
-	outvec = state_space_solver(A, B, C, D, u0, f, tspan)
+The function below intializes the problem with known coefficients for a constant input voltage V. The stage cools and reaches an equilibrium temperature that is controlled by the heat sink temperature and the heat loss rate to the environment. 
+"""
+
+# ╔═╡ bdc5a009-c6c4-434d-a619-63081c6af32d
+function solve_const_v(V)
+	m = 0.3                          # kg
+	c = 502.0                        # J kg-1 K-1
+	k = 300.0*(0.025*0.025)/(m*c)    # s^-1
+	a1 =  11.07 				     # W V^-0.5 
+	a2 =  -0.352                     # W K^-1
+	a3 =  -8.29                      # W
+
+	u0 = [300.0]
+	tspan  = [0.0, 3000.0]                   # 0 to 1000 s
+	f(t) = [sqrt(V), 280.0, 1.0, 300.0] # V = 5V, Th = 280K, 1, Tenv = 300K
 	
-	pos = map(x -> x[3], outvec[1])
-	ts = outvec[2]
-	plot(ts, pos, color = :black, label = "RK4 Solution", lw = 1)
+	A = -k + a2/(m*c)
+	B = [-a1/(m*c) -a2/(m*c) -a3/(m*c) k]
+	C = 1.0
+	D = [0.0 0.0 0.0 0.0]
+	
+	state_space_solver(A, B, C, D, u0, f, tspan)	
 end
+
+# ╔═╡ b8fe4424-9eac-4011-85ba-f1bf5e72c718
+Markdown.MD(
+	Markdown.Admonition("info", "Exercise", [md"
+- Compare the model solution against your earlier prediction. 
+- Does the equilibration time depend on the voltage?
+- Using the same equipment, could you imaging a faster path to cool to the equilibrium temperature?
+	"]))
+
+# ╔═╡ 1b1dbf06-c67b-4447-9049-4ab1bf82ee8a
+@bind myV combine() do Child
+	md"""
+	Voltage:  $(
+		Child(Slider(0:1:12, default = 6, show_value = true))
+	) 
+	"""
+end
+
+# ╔═╡ f4c5f8dd-a66f-4b1a-8a6f-3e4ad9615999
+outvec = solve_const_v(myV[1])
+
+# ╔═╡ cf63fd31-4c00-46e5-8648-713b59080eba
+begin
+	pos3 = map(x -> x[1], outvec[1])
+	ts3 = outvec[2]
+	plot(ts3/60.0, pos3, color = :black, label = "RK4 Solution", lw = 1, 
+		xlabel = "Time (min)", ylabel = "T (K)", size = (700, 300), bottom_margin = 20px, left_margin = 10px, minorgrid = :true, framestyle = :box)
+end
+
+# ╔═╡ 451a1910-4ce9-4e15-bca3-c516e20e5bd5
+md"""
+## Solution for Time Varying V
+
+The function below intializes the problem with known coefficients for a time-varying input voltage V. Unsurprisingly, the changing voltage is mirrored in the changing temperature around some average temperature.
+"""
+
+# ╔═╡ c42f51a3-a02d-4c86-beee-7feedd378ad0
+function solve_variable_v(fv)
+	m = 0.3                          # kg
+	c = 502.0                        # J kg-1 K-1
+	k = 300.0*(0.025*0.025)/(m*c)    # s^-1
+	a1 =  11.07 				     # W V^-0.5 
+	a2 =  -0.352                     # W K^-1
+	a3 =  -8.29                      # W
+
+	
+	u0 = [300.0]
+	tspan  = [0.0, 3000.0]                   # 0 to 1000 s
+	f(t) = [fv(t), 280.0, 1.0, 300.0]    
+	
+	A = -k + a2/(m*c)
+	B = [-a1/(m*c) -a2/(m*c) -a3/(m*c) k]
+	C = 1.0
+	D = [0.0 0.0 0.0 0.0]
+	
+	state_space_solver(A, B, C, D, u0, f, tspan)	
+end
+
+# ╔═╡ 538e7d53-5cc3-4447-b1c7-3d02a0946f09
+begin
+	fex(t) = (sin(0.01*t) + 1.0)/2.0*sqrt(3) + 1
+	outvec1 = solve_variable_v(fex)
+	ts4 = outvec1[2]
+	p1 = plot(ts4./60, fex.(ts4), color = :black, label = :none,
+		ylabel = "V")
+	pos4 = map(x -> x[1], outvec1[1])
+	
+	p2 = plot(ts4/60.0, pos4, color = :black, label = "RK4 Solution", 
+		lw = 1, xlabel = "Time (min)", ylabel = "T (K)")
+	plot(p1, p2, layout = grid(2,1))
+end
+
+# ╔═╡ 6369c1ac-e52c-4d81-869d-77cbd483fd8b
+md"""
+## Block Diagram Representation
+
+Block diagrams consist of a single block or a combination of blocks. These are used to represent the control systems in pictorial form.
+
+Recall the state-space equations:
+
+```math
+\begin{eqnarray}
+ & \quad \vec{q}'(t) &= \mathbf{A}\vec{q}(t) + \mathbf{B} \vec{f}(t) \\
+ & \quad \vec{y}(t) &=  \mathbf{C}\vec{q}(t) + \mathbf{D} \vec{f}(t) \\
+\end{eqnarray}
+```
+
+We have the input vector ``\vec{f}``, the output vector ``\vec{y}``. The system is subject to initial conditions ``\vec{q_0}``. The `process` box solves for the evolution of the system over time ``t``.
+
+$(LocalResource(control1_url, :width => 1500px))
+
+For the cold stage, the inputs are ``\quad\vec{f} = 
+\begin{bmatrix}
+\sqrt{V} & T_{hot} & 1 & T_{env}
+\end{bmatrix}
+``, the process state variables are ``\vec{q} = [T]``, and the outputs are ``\quad \vec{y} = [T]``. Therefore the intial input ``\vec{q}_0`` is the intial temperature of the stage ``T_0``.
+"""
+
+# ╔═╡ 03a0fc10-9875-4248-8711-8a3887db30a5
+md"""
+# Discrete Event System Simulation
+
+## Introduction
+A discrete-event simulation (DES) models the operation of a system as a (discrete) sequence of events in time. Each event occurs at a particular instant in time and marks a change of state in the system. Between events, the system is allowed to evolve according to some set of rules. Here we simulate the system as a data acquisition system would perceive it. At each update event (determined by the sampling frequency), the data acquisition system reads the state using sensors, here the temperature of the cold stage, and perhaps other states such as the environmental temperature or the heat sink temperature. A typical data acquisition system would then write the data to file. The user may also change inputs to the system, for example the voltage supplied to the TEC module. 
+
+## Block Diagram
+
+Instead of solving for the evolution over the entire time domain, the discrete simulation soves for the evolution from time ``t \rightarrow t + \Delta t``.
+
+$(LocalResource(control2_url, :width => 1500px))
+
+To simulate the evolution of the system over longer times, the output of ``\vec{y}(t + \Delta t)`` is used to re-initialize the system. For the cold stage, the output is ``T`` and maps directly to the initial condition ``T_0``. This introduces: 
+
+- External Observer: Every ``\Delta t`` we observe the state of the system.
+- External Controller: Every ``\Delta t`` we can, in principle, update the system forcing vector ``\vec{f}``. 
+
+"""
+
+# ╔═╡ 8aa24500-d236-4e24-bf06-4db94e612a50
+md"""
+
+## Implementation
+
+### ODE Solution 
+The `update_system` function incrementally solves the differential equation in `dt` intervals, where `dt` is the time step. 
+"""
+
+
+# ╔═╡ 54a7e106-4537-4857-a9e7-fdc3e9bf4ba1
+function update_system(T, V, dt; Thot = 280.0, Tenv = 300.0)
+	m = 0.3                          # kg
+	c = 502.0                        # J kg-1 K-1
+	k = 200.0*(0.025*0.025)/(m*c)    # s^-1
+	a1 =  11.07 				     # W V^-0.5 
+	a2 =  -0.352                     # W K^-1
+	a3 =  -8.29                      # W
+
+	u0 = [T]
+	tspan  = [0.0, dt]               # 0 to 1 s
+	sig = sign(V)                    # Needed for negative V
+	f(t) = [sig.*sqrt(abs(V)), Thot, 1.0, Tenv]    
+	
+	A = -k + a2/(m*c)
+	B = [-a1/(m*c) -a2/(m*c) -a3/(m*c) k]
+	C = 1.0
+	D = [0.0 0.0 0.0 0.0]
+	
+	out = state_space_solver(A, B, C, D, u0, f, tspan)
+	return out[1][end][]
+end
+
+# ╔═╡ f0ecf625-53f3-4595-8764-ab0a95c5b6e3
+# example: new temperature for -3V after 1 second
+update_system(300.0, -3.0, 1.0)
+
+# ╔═╡ 17c3d4a5-048a-44c1-a5f0-5278a2322f60
+md"""
+
+### Simulation 
+We can then perform a simulation where we step in 1s increments for n seconds. After each 1s increment, the temperature is updated. Note that `update_system` still used the ODE integration under the hood which may be at a higher time resolution. The trick here is that we observe the system every second and have the opportunity to intervene, for example by changing the voltage. Without intervention, the result should be the same as running the ODE solver for the same time interval. 
+
+Note that the simulation is generic. It calls a black box "update_system", that can be replaced with any system imaginable.
+"""
+
+# ╔═╡ 25b351fa-69e6-482e-9543-12e1dde9e438
+function simulation(T, V, n; dt = 1.0)
+	ts = Float64[]
+	Ts = Float64[]
+	Vs = Float64[]
+	push!(Ts, T)
+	push!(Vs, V)
+	push!(ts, 0.0)
+	for i = 1:n
+		theT = Ts[end]
+		theV = Vs[end]
+		newT = update_system(theT, theV, dt)
+		push!(Ts, newT)
+		push!(Vs, theV)
+		push!(ts, ts[end] + dt)
+	end
+
+	return ts, Ts, Vs
+end
+
+# ╔═╡ 1163c920-d2ca-42e7-9b9e-1e19d494bb46
+# Example simulation
+ts, Ts, Vs = simulation(300.0, 2.0, 360; dt = 10)
+
+# ╔═╡ 43c38357-4d59-457d-9b90-94ae1f267212
+plot(ts./60, Ts, color = :black, label = "1 Hz Discrete Event Simulation", 
+		xlabel = "Time (min)", ylabel = "T (K)", size = (700, 300), bottom_margin = 20px, left_margin = 10px, minorgrid = :true, framestyle = :box)
+
+# ╔═╡ 7d030c04-ac3b-4832-a3e8-6053fc9c14e7
+md"""
+
+# Controlling the Temperature
+
+## Controller Block Diagram
+
+$(LocalResource(control3_url, :width => 2800px))
+
+A controller can be used to control the signal. The setpoint of the controller is ``r``. The output of the process is subtracted from the setpoint to produce the error ``e(t)``. The error function is then passed into the controller, which outputs the input ``f(t)`` for the process to be controlled. The output of the controller is also sometimes referred to as the *manipulated variable*.
+
+In the subsequent section we will focus on single-input and single-output (SISO) systems. Such systems a single-variable control system with one input and one output. Hence the vector notation for ``f(t)`` and ``y(t)`` has been dropped for simplicity. Further note that when employing for the discrete event simulation approach, the process initial condition is updated each time step. In a real-world system this step is of course implicit. For this reason, the initial condition arrow is marked as a dashed line. The controller has a few import properties. It has 
+
+- knowledge about the *current error*
+- knowledge about the *past error* 
+- **no knowledge** about the process or *future error*
+"""
+
+# ╔═╡ 1ae8b353-df38-430f-b220-401adddac1d1
+md"""
+## On-Off Controller 
+### Description
+On-Off control is the simplest form of feedback control. An on-off controller simply drives the manipulated variable from fully closed to fully open depending on the position of the controlled variable relative to the setpoint. A common example of on-off control is the temperature control in a domestic heating system. When the temperature is below the thermostat setpoint the heating system is switched on and when the temperature is above the setpoint the heating switches off.
+
+Unfortunately, if the heating switches on and off the instant the measured temperature crossed the setpoint then the system would chatter – repeatedly switch on and off at very high frequency. This, in turn would substantially reduce the lifetime of the unit. To avoid chattering, practical on-off controllers usually have a deadband around the setpoint. When the measured value lies within this dead-band the controller does nothing. Only when the value moves outside the deadband, the controller switches. The effect of this is to introduce continuous oscillation in the value of the controlled variable – the large the dead-band the higher the amplitude and lower the frequency.
+
+### Implementation
+
+An example implementation of the on-off controller is as follows. 
+
+```math
+e(t) = r-y(t)
+```
+```math
+f(t) = 
+\begin{cases}
+ +1  & (e(t)-d) < 0 \land (e(t-\Delta t) - d) > 0 \\ 
+ -1 & (e(t)+d) > 0 \land (e(t-\Delta t) + d) < 0
+\end{cases}
+```
+
+where ``d`` is the deadband value. The output is either ``-1`` (full cooling) or ``+1`` full heating. These values may need to scaled by the output range of the input control, for the TEC to ``\pm 12V``.
+
+For example, if the current output ``y = 15``, the setpoint ``r = 10`` we need to reduce ``y`` and keep the process outut at full cooling. Only when the ``y < 9``, i.e. outside the deadband the signal needs to shift to warming. However, we also only want to switch if we crossed the critical line, hence we need to reach into the past and make sure that the condition changed. The same logic is applied on the other end. We need to heat until we cross the ``y = 11`` before switching back. The function below implements an off control in the context of the simulation. 
+"""
+
+# ╔═╡ f85d4b96-e5d8-4d5c-aaed-df30c8c06084
+function simulation_onoff(Tenv, n; Tset = 280.0, Tdead = 2.0, Thot = 280.0)
+	dt = 1.0 
+	# Need to know if we need heat or cool initially
+	Vstart = (Tset < Tenv) ? 12.0 : -12.0
+	ts = Float64[]  # Memory array for t
+	Ts = Float64[]  # Memory array for T
+	Vs = Float64[]  # Memory array for V
+	
+	push!(Ts, Tenv)    # Need to initialize two values for the control loop to work
+	push!(Ts, Tenv)    # Need to initialize two values for the control loop to work
+	
+	push!(Vs, Vstart)
+	push!(Vs, Vstart)
+	
+	push!(ts, 0.0)
+	push!(ts, 1.0)
+
+	# Control loop
+	for i = 1:n-1
+		theT = Ts[end]
+		theV = Vs[end]
+
+		et = Tset - Ts[end]     # current error
+		etp = Tset - Ts[end-1]  # previous error
+
+		if (et + Tdead) < 0 && (etp + Tdead) > 0
+			theV = +12.0 # + 1 is scaled to + 12 V
+		end
+		
+		if (et - Tdead) > 0 && (etp - Tdead) < 0
+			theV = -12.0 # - 1 is scaled to + 12 V
+		end
+		
+		newT = update_system(theT, theV, dt; Thot = Thot, Tenv = Tenv)
+		push!(Ts, newT)
+		push!(Vs, theV)
+		push!(ts, ts[end] + dt)
+	end
+
+	return ts, Ts, Vs
+end
+
+# ╔═╡ 0c6f2477-1252-4485-9596-2748a2508e14
+@bind on_off combine() do Child
+	md"""
+	``T_{set}\;(K)`` $(
+		Child(Slider(200:10:400, default = 250, show_value = true))
+	) ``T_{env}\;(K)`` $(
+		Child(Slider(280:10:320, default = 300, show_value = true))
+	) 
+	
+	``T_{hot}\; (K)`` $(
+		Child(Slider(260:10:320, default = 280, show_value = true))
+	)  ``T_{dead}\; (K)`` $( 
+		Child(Slider(0:0.1:4, default = 2, show_value = true))
+	)
+	"""
+end
+
+# ╔═╡ 77c08e89-b5ca-45d3-8916-3ac8cf9453cb
+let 
+	Tset = on_off[1]
+	Tenv = on_off[2]
+	Thot = on_off[3]
+	Tdead = on_off[4]
+	ts, Ts, Vs = simulation_onoff(Tenv, 1000; Tset = Tset, Thot = Thot, Tdead = Tdead)
+	p1 = plot(ts./60.0, Vs, label = :none, color = :black, ylabel = "V")
+	p2 = plot(ts./60.0, Ts, color = :black, ylabel = "T (K)", label = "T system")
+	plot!([0, ts[end]./60.0], [Tset, Tset], label = "T set", color = :darkred)
+	plot!([0, ts[end]./60.0], [Tset-Tdead, Tset-Tdead], l = :dash, label = "±T dead", 
+		color = :darkred)
+	plot!([0, ts[end]./60.0], [Tset+Tdead, Tset+Tdead], l = :dash, label = :none, 
+		color = :darkred)
+	plot(p1, p2, layout = grid(2,1))
+end
+
+# ╔═╡ 6647a86f-7f6d-43d7-892e-724d3a191ca9
+md"""
+
+## Proportional (P) Control
+
+$(LocalResource(control3_url, :width => 2800px))
+
+### Description
+
+The controller output is proportional to the error signal, which is the scaled difference between the setpoint and the process variable. 
+
+```math
+g(t) = K_p \frac{r - y(t)}{s} + p_0 
+```
+
+where ``K_p`` is proportional gain, ``r`` is the setpoint, ``y(t)`` is the output variable, ``s`` is the span, and ``p_0`` is the controller output with zero error. The purpose of the span is to set the output to maximum when the difference between the setpoint and the process variable exceeds the span. Furthermore, in practical application the output needs to be constrained between ``-1`` and ``1``.
+
+```math
+f(t) = \begin{cases}
+-1 &  g(t) < -1 \\
+1 & g(t) > 1 \\
+g(t) & else \\
+\end{cases}
+```
+
+The case statement ensures that output ranges from ``-1`` (here maximum heating) to ``+1`` (here maximum cooling). Finally the output is scaled to ``\pm 12V``, which corresponds to the operating voltages of the TEC element. 
+
+### Implementation
+"""
+
+# ╔═╡ b40aefaa-4600-42f7-ab1d-d92b54fb6401
+function simulation_P(T, n; Tset = 280.0, Kp = 1.4, span = 20.0, p0 = 0.0)
+	dt = 1.0 
+	ts = Float64[]
+	Ts = Float64[]
+	Vs = Float64[]
+	push!(Ts, T)
+	push!(Vs, 12.0)
+	push!(ts, 0.0)
+	for i = 1:n
+		theT = Ts[end]
+		theV = Vs[end]
+		g =  Kp*(theT - Tset)/span + p0
+		
+		if g < -1
+			MV = -1
+		elseif g > 1
+			MV = 1
+		else
+			MV = g
+		end
+		
+		theV = 12.0*MV # The voltage changes between -12 and 12  
+		newT = update_system(theT, theV, dt)
+		push!(Ts, newT)
+		push!(Vs, theV)
+		push!(ts, ts[end] + dt)
+	end
+
+	return ts, Ts, Vs
+end
+
+# ╔═╡ a20f135e-f061-4287-9e11-3ffad5cc64b8
+@bind P combine() do Child
+	md"""
+	``T_{set}`` $(
+		Child(Slider(200:10:400, default = 250, show_value = true))
+	) 
+	
+	``T_{span}`` $( 
+		Child(Slider(1:1:40, default = 20, show_value = true))
+	) ``K_p`` $( 
+		Child(Slider(0:0.1:4, default = 2, show_value = true))
+	) ``p_0`` $( 
+		Child(Slider(-1:0.1:1, default = 0, show_value = true))
+	) 
+
+	
+	"""
+end
+
+# ╔═╡ 177d0f02-9045-49d5-84cd-bc7b6ebb58fc
+let 
+	Tset = P[1]
+	span = P[2]
+	Kp = P[3]
+	p0 = P[4]
+	ts, Ts, Vs = simulation_P(300.0, 3600; Tset = Tset, Kp = Kp, span = span, p0)
+	p1 = plot(ts./60.0, Vs, label = :none, color = :black, ylabel = "V")
+	p2 = plot(ts./60.0, Ts, color = :black, ylabel = "T (K)", label = "T")
+	plot!([0, ts[end]./60.0], [Tset, Tset], label = "Tset")
+	plot(p1, p2, layout = grid(2,1), size= (700, 400))
+end
+
+# ╔═╡ 2a2f1d95-60d1-41b5-9d94-e69e7c5bba78
+md"""
+
+### Advantages
+
+The proportional contontroller gradually changes the input to converge on the set point, which eliminates chatter. There are also no oscillations around the final value. 
+
+### Disadvanges
+
+The P-controller suffers from offset error. Offset error is the difference between the desired value and the actual value. Over a range of operating conditions, proportional control alone is unable to eliminate offset error, as it requires an error to generate an output adjustment. Although a proportional controller may be tuned by adjusting ``p_0`` for a specific operating condition, it cannot be eliminated over the entire state space. 
+"""
+
+# ╔═╡ 9e35dc47-ff08-4254-96dd-fe27c0c7366d
+md"""
+## Proportional-Integral (PI) Control
+
+$(LocalResource(control3_url, :width => 2800px))
+
+### Description
+
+Including an integral term increases action in relation not only to the error but also the time for which it has persisted. The integral term can be used to eliminate the bias in the P-controller. 
+
+
+
+```math
+e(t) = \frac{r - y(t)}{s}
+```
+
+```math
+g(t) = K_p e(t) + K_i \int_0^t e(\tau) d\tau  
+```
+
+where ``K_p`` is proportional gain, ``r`` is the setpoint, ``y(t)`` is the output variable, ``s`` is the span (these terms are the same as for the P-controller), and ``K_i`` is the the integral gain.
+
+As with the P-controller, the purpose of the span is to set the output to maximum when the difference between the setpoint and the process variable exceeds the span. Furthermore, in practical application the output needs to be constrained between ``-1`` and ``1``.
+
+```math
+f(t) = \begin{cases}
+-1 &  g(t) < -1 \\
+1 & g(t) > 1 \\
+g(t) & else \\
+\end{cases}
+```
+
+The case statement ensures that output ranges from ``-1`` (here maximum heating) to ``+1`` (here maximum cooling). Finally the output is scaled to ``\pm 12V``, which corresponds to the operating voltages of the TEC element. 
+
+### Implementation
+"""
+
+# ╔═╡ 6e2bc9b4-6b61-49c8-ae72-0bc94e72543a
+function simulation_PI(T, n; Tset = 280.0, Kp = 1.4, span = 20.0, Ki = 1.0)
+	dt = 1.0 
+	ts = Float64[]
+	Ts = Float64[]
+	Vs = Float64[]
+	integral = Float64[]
+	push!(Ts, T)
+	push!(Vs, 12.0)
+	push!(ts, 0.0)
+	push!(integral, 0.0)
+	for i = 1:n
+		theT = Ts[end]
+		theV = Vs[end]
+		error = (theT - Tset)/span
+		theIntegral = integral[end] + error*Ki*dt
+		MV = Kp*error + Ki*theIntegral
+		
+		if MV < -1
+			MV = -1
+		elseif MV > 1
+			MV = 1
+		end
+	
+		theV = 12.0*MV
+		newT = update_system(theT, theV, dt)
+		push!(Ts, newT)
+		push!(Vs, theV)
+		push!(integral, theIntegral)
+		push!(ts, ts[end] + dt)
+	end
+
+	return ts, Ts, Vs, integral
+end
+
+# ╔═╡ bbbb2744-a2d9-412a-9938-e0a97aa2620b
+@bind PI combine() do Child
+	md"""
+	``T_{set}`` $(
+		Child(Slider(200:10:400, default = 250, show_value = true))
+	) 
+	
+	``T_{span}`` $( 
+		Child(Slider(1:1:40, default = 20, show_value = true))
+	) ``K_p`` $( 
+		Child(Slider(0:0.1:4, default = 2, show_value = true))
+	) ``K_i`` $( 
+		Child(Slider(0:0.1:4, default = 1.0, show_value = true))
+	) 
+
+	
+	"""
+end
+
+# ╔═╡ fed350c9-aaa1-4a1a-9338-7f244b5e738b
+let 
+	Tset = PI[1]
+	span = PI[2]
+	Kp = PI[3]
+	Ki = PI[4]
+	ts, Ts, Vs, integral = simulation_PI(300.0, 3600; Tset = Tset, 
+		span = span, Kp = Kp, Ki = Ki)
+	p1 = plot(ts./60.0, Vs, label = :none, color = :black, ylabel = "V")
+	p2 = plot(ts./60.0, Ts, color = :black, ylabel = "T (K)", label = "T")
+	p2 = plot!([0, ts[end]./60.0], [Tset, Tset], label = "Tset")
+	p3 = plot(ts./60.0, integral, color = :black, label = "Integral", 
+		xlabel = "Time (min)")
+	plot(p1, p2, p3, layout = grid(3,1), size = (700,500))
+end
+
+# ╔═╡ f4a47b15-3c2c-4f08-b611-08d57971b04f
+md"""
+### Advantages
+The integral term can clearly eliminate the bias from the P-controller.
+
+### Disadvantages
+The I term can introduce osillations around the setpoint. The ``K_i`` value needs to be tuned for the system.
+"""
+
+# ╔═╡ 3fba7ef0-a994-4f7e-934a-cb475ceea441
+md"""
+## Proportional-Integral-Derivative (PID) Control
+$(LocalResource(control3_url, :width => 2800px))
+
+### Description
+
+The derivative of the process error is calculated by determining the slope of the error over time and multiplying this rate of change by the derivative gain ``K_d``. Derivative action predicts system behavior and thus improves settling time and stability of the system.
+
+The full PID controller equation is given by 
+
+```math
+e(t) = \frac{r - y(t)}{s}
+```
+
+```math
+g(t) = K_p e(t)  + K_i \int_0^t e(\tau) d\tau + K_d \frac{de(t)}{dt}
+```
+
+where ``K_p`` is proportional gain, ``r`` is the setpoint, ``y(t)`` is the output variable, ``s`` is the span, ``K_i`` is the the integral gain (these terms are the same as for the PI-controller), and ``K_d`` is the derivative gain.
+
+As with the PI-controller, the purpose of the span is to set the output to maximum when the difference between the setpoint and the process variable exceeds the span. Furthermore, in practical application the output needs to be constrained between ``-1`` and ``1``.
+
+```math
+f(t) = \begin{cases}
+-1 &  g(t) < -1 \\
+1 & g(t) > 1 \\
+g(t) & else \\
+\end{cases}
+```
+
+The case statement ensures that output ranges from ``-1`` (here maximum heating) to ``+1`` (here maximum cooling). Finally the output is scaled to ``\pm 12V``, which corresponds to the operating voltages of the TEC element. 
+
+### Implementation
+"""
+
+# ╔═╡ 9c1588f1-b49d-470e-b71c-9e70bebafc25
+function simulation_PID(T, n; Tset = 280.0, Kp = 1.4, span = 20.0, Ki = 1.0, Kd = 1.0)
+	dt = 1.0 
+	ts = Float64[]
+	Ts = Float64[]
+	Vs = Float64[]
+	integral = Float64[]
+	derivative = Float64[]
+	push!(Ts, T)
+	push!(Ts, T)
+	push!(Vs, 12.0)
+	push!(Vs, 12.0)
+	push!(ts, 0.0)
+	push!(ts, 1.0)
+	push!(integral, 0.0)
+	push!(integral, 0.0)
+	push!(derivative, 0.0)
+	push!(derivative, 0.0)
+	for i = 1:n
+		theT = Ts[end]
+		theV = Vs[end]
+		error = (Ts[end] - Tset)/span
+		error_past = (Ts[end-1] - Tset)/span
+		
+		theIntegral = integral[end] + error*Ki*dt
+		theDerivative = (error_past - error)/dt
+		MV = Kp*error + Ki*theIntegral + Kd*theDerivative
+		
+		if MV < -1
+			MV = -1
+		elseif MV > 1
+			MV = 1
+		end
+
+		theV = 12.0*MV
+		newT = update_system(theT, theV, dt)
+		push!(Ts, newT)
+		push!(Vs, theV)
+		push!(integral, theIntegral)
+		push!(derivative, theDerivative)
+		push!(ts, ts[end] + dt)
+	end
+
+	return ts, Ts, Vs, integral, derivative
+end
+
+# ╔═╡ 5fe29e57-fe90-4ae8-9beb-3662c51d9c16
+@bind PID combine() do Child
+	md"""
+	``T_{set}`` $(
+		Child(Slider(200:10:400, default = 250, show_value = true))
+	) ``T_{span}`` $( 
+		Child(Slider(1:1:40, default = 20, show_value = true))
+	) 
+	
+	``K_p`` $( 
+		Child(Slider(0:0.1:4, default = 2, show_value = true))
+	) ``K_i`` $( 
+		Child(Slider(0:0.1:4, default = 1.0, show_value = true))
+	) ``K_d`` $( 
+		Child(Slider(0:1.0:40, default = 0.0, show_value = true))
+	) 
+
+	
+	"""
+end
+
+# ╔═╡ 537f07ab-f141-4a38-9dcd-be8de62fc3e5
+let 
+	Tset = PID[1]
+	span = PID[2]
+	Kp = PID[3]
+	Ki = PID[4]
+	Kd = PID[5]
+	ts, Ts, Vs, integral, derivative = simulation_PID(300.0, 3600; Tset = Tset, 
+		span = span, Kp = Kp, Ki = Ki, Kd = Kd)
+	p1 = plot(ts./60.0, Vs, label = :none, color = :black, ylabel = "V")
+	p2 = plot(ts./60.0, Ts, color = :black, ylabel = "T (K)", label = "T")
+	p2 = plot!([0, ts[end]./60.0], [Tset, Tset], label = "Tset")
+	p3 = plot(ts./60.0, integral, color = :black, label = "Integral")
+	p4 = plot(ts./60.0, derivative, color = :black, label = "Derivative", 
+	 	xlabel = "Time (min)")
+	
+	plot(p1, p2, p3, p4, layout = grid(4,1), size = (700,500))
+end
+
+# ╔═╡ 0a42d713-ecc8-41cb-90f0-30f3c598c1af
+md"""
+### Advantages
+The derivative term can improve convergence rates to the setpoint.
+
+### Disadvantages
+Noise in derivative calculations can lead to error amplification. In many applications PI control is preferred to PID control.
+"""
+
+# ╔═╡ 4267d65e-1cfd-4fc1-ba61-3f15ba5885c6
+md"""
+## Trajactory Control
+$(LocalResource(control4_url, :width => 2800px))
+
+### Description
+
+The standard PID controller operates with a fixed set point ``r``. However, the set point may itself be a function of time, ``r(t)``, thus forcing a temperature trajectory, rather than a fixed-point control. 
+
+It is possible to try to force the system along the trajectory by updating ``r(t)`` at each time step. The example below tries to force the system with a linear cooling rate of 1 K min⁻¹.
+
+"""
+
+# ╔═╡ 06007dd6-94dc-4ed6-bf53-18a44db17c06
+function simulation_PID_trajectory(
+	T, n; Kp = 1.4, span = 20.0, Ki = 1.0, Kd = 1.0, cr = 1.0)
+
+	dt = 1.0 
+	ts = Float64[]
+	Ts = Float64[]
+	Vs = Float64[]
+	Tset = Float64[]
+	integral = Float64[]
+	derivative = Float64[]
+	push!(Ts, T)
+	push!(Ts, T)
+	push!(Vs, 12.0)
+	push!(Vs, 12.0)
+	push!(ts, 0.0)
+	push!(ts, 1.0)
+	push!(integral, 0.0)
+	push!(integral, 0.0)
+	push!(derivative, 0.0)
+	push!(derivative, 0.0)
+	push!(Tset, 300.0)
+	push!(Tset, 300.0)
+	for i = 1:n
+		theT = Ts[end]
+		theV = Vs[end]
+		error = (Ts[end] - Tset[end])/span
+		error_past = (Ts[end-1] - Tset[end-1])/span
+		
+		theIntegral = integral[end] + error*Ki*dt
+		theDerivative = (error_past - error)/dt
+		MV = Kp*error + Ki*theIntegral + Kd*theDerivative
+		
+		if MV < -1
+			MV = -1
+		elseif MV > 1
+			MV = 1
+		end
+
+		theV = 12.0*MV
+		newT = update_system(theT, theV, dt)
+		newTset = Tset[end] - cr/60.0*dt
+		push!(Ts, newT)
+		push!(Vs, theV)
+		push!(integral, theIntegral)
+		push!(derivative, theDerivative)
+		push!(Tset, newTset)
+		push!(ts, ts[end] + dt)
+	end
+
+	return ts, Ts, Vs, integral, derivative, Tset
+end
+
+# ╔═╡ 6fc7e520-e85e-4b96-ae6a-1d1312e9e6c8
+@bind PID_traj combine() do Child
+	md"""
+	``c_{r}\;[K\;min^{-1}]`` $( 
+		Child(Slider(0:0.1:2, default = 1, show_value = true))
+	) 
+	
+	``T_{span}`` $( 
+		Child(Slider(1:1:40, default = 20, show_value = true))
+	) 
+	
+	``K_p`` $( 
+		Child(Slider(0:0.1:4, default = 2, show_value = true))
+	) ``K_i`` $( 
+		Child(Slider(0:0.1:4, default = 1.0, show_value = true))
+	) ``K_d`` $( 
+		Child(Slider(0:1.0:40, default = 0.0, show_value = true))
+	) 
+
+	
+	"""
+end
+
+# ╔═╡ e2698160-39e6-4a76-ac17-6ccd56fb151f
+let 
+	cr = PID_traj[1]
+	span = PID_traj[2]
+	Kp = PID_traj[3]
+	Ki = PID_traj[4]
+	Kd = PID_traj[5]
+	
+	ts, Ts, Vs, integral, derivative, Tset = simulation_PID_trajectory(
+		300.0, 3600; span = span, Kp = Kp, Ki = Ki, Kd = Kd, cr = cr)
+	p1 = plot(ts./60.0, Vs, label = :none, color = :black, ylabel = "V")
+	p2 = plot(ts./60.0, Ts, color = :black, ylabel = "T (K)", label = "T")
+	p2 = plot!(ts./60.0, Tset, label = "Tset")
+	p3 = plot(ts./60.0, integral, color = :black, label = "Integral")
+	p4 = plot(ts./60.0, derivative, color = :black, label = "Derivative", 
+	 	xlabel = "Time (min)")
+	
+	plot(p1, p2, p3, p4, layout = grid(4,1), size = (700,500))
+end
+
+# ╔═╡ 2ae4f6e6-a1f0-4618-b0a2-ca3e4c73ee7f
+md"""
+For this particular system, forcing a linear profile is easy. However, oscillations may occur for ``K_i`` and ``K_d`` settings, particularly for small span values. Tuned PID parameters (see more below) may be different from the constant set-point case. 
+"""
+
+# ╔═╡ d3780235-46e6-472c-9f46-18ac5cf8ee40
+md"""
+## Hardware Controllers
+
+Many hardware controllers have on-board PID capabilities. The picture shows a TE Technology TC-36-25-RS232 device, which is a bi-polar proportional-integral-derivative temperature controller that can modulate power input to a thermolectric device. It communicates through an RS 232 port. 
+
+$(LocalResource(control5_url, :width => 2800px))
+
+The controller stores the ``T_{set}``, ``T_{span}``, ``K_p``, ``K_i``, and ``K_d`` values in the unit's memory. The values can be changed through serial commands passed to the controller. The unit takes fixed voltage power as input provides regulated output (``\pm 100%`` of the input) to a TEC module. The advantage of hardware controllers is that they can operate offline as part of an instrument. 
+"""
+
+# ╔═╡ 945aba6b-ad67-44e7-ae6b-50cff0ac014a
+md"""
+## PID Tuning
+
+PID parameters can be tuned either on the physical system, or by simulating the system as we did above. Manual tuning is common. One tuning method is to first set ``K_{i}`` and ``K_{d}`` values to zero. Next, increase the ``K_{p}`` value until oscillations are observed. Then set ``K_{p}`` to approximately half that value. Next, increase ``K_{i}`` until any offset is corrected in sufficient time for the process, but not until too great a value causes instability. Finally, increase ``K_{d}``, if required, until the loop is acceptably quick to reach its reference after a load disturbance. 
+"""
+
+# ╔═╡ 57d40abd-2a35-468a-9334-f63d962ba604
+md"""
+# Some Key Concepts in Systems Control 
+
+## Mutli-Input Control System
+
+SISO - Single Input, Single Output
+
+These systems use data/input from one sensor to control one output. These are the simplest to design since they correspond one sensor to one actuator. For example, temperature (TC) is used to control the valve state of v1 through a PID controller.
+
+SIMO - Single Input, Multiple Output
+
+These systems use data/input from one sensor to control multiple outputs. For example, temperature (TC) is used to control the valve state of v1 and v2 through PID controllers.
+
+MISO - Multiple Input, Single Output
+
+These systems use data/input from multiple sensors to control one ouput. For example, a cascade controller can be considered MISO. Temperature (TC) is used in a PID controller (#1) to determine a flow rate set point i.e. FCset. With the FCset and FC controller, they are used to control the valve state of v1 through a PID controller (#2).
+
+MIMO - Multiple Input, Multiple Output
+
+These systems use data/input from multiple sensors to control multiple outputs. These are usually the hardest to design since multiple sensor data is integrated to coordinate multiple actuators. For example, flow rate (FC) and temperature (TC) are used to control multiple valves (v1, v2, and v3). Often, MIMO systems are not PID controllers but rather designed for a specific situation.
+
+## Classification of Systems
+
+- Continuous Linear Time-Invariant Systems (LTI Systems)
+
+```math
+\begin{eqnarray}
+ & \quad \vec{q}'(t) &= \mathbf{A}\vec{q}(t) + \mathbf{B} \vec{f}(t) \\
+ & \quad \vec{y}(t) &=  \mathbf{C}\vec{q}(t) + \mathbf{D} \vec{f}(t) \\
+\end{eqnarray}
+```
+
+- Continuous Linear Time-Variant (LTV Systems)
+
+```math
+\begin{eqnarray}
+ & \quad \vec{q}'(t) &= \mathbf{A}(t)\vec{q}(t) + \mathbf{B}(t) \vec{f}(t) \\
+ & \quad \vec{y}(t) &=  \mathbf{C}(t)\vec{q}(t) + \mathbf{D}(t) \vec{f}(t) \\
+\end{eqnarray}
+```
+
+- Non-linear systems
+
+## Controllability and Observability
+Controllability and observability represent two major concepts of modern control
+system theory. They can be roughly defined as follows.
+"""
+
+# ╔═╡ 0d40bd72-6be9-4127-9c63-6041473a3ccc
+Markdown.MD(
+	Markdown.Admonition("warning", "Key Concepts", [md"
+**Controllability:** In order to be able to do whatever we want with the given
+dynamic system under control input, the system must be controllable.
+
+**Observability:** In order to see what is going on inside the system under observation, the system must be observable.
+	"]))
+
+# ╔═╡ b9f569a7-3854-40c8-8e64-de13f5eb19cf
+md"""
+For linear systems, controllability and observability are determined by the matrices ``\mathbf{A}`` and ``\mathbf{B}``.
+
+The controllability matrix for LTI systems is given by
+
+```math
+ \mathbf{R}={\begin{bmatrix}\mathbf{B}&\mathbf{AB}&\mathbf{A^{{2}}B}&...&\mathbf{A}^{{n-1}}\mathbf{B}\end{bmatrix}}
+```
+
+The system is controllable if the controllability matrix has full row rank. The solution is more difficult for LTV systems, but remains closely related to the matrices ``\mathbf{A}`` and ``\mathbf{B}``
+"""
+
+# ╔═╡ 4af334c0-c8bd-416f-956e-6c702a6b5f01
+md"""
+
+## Optimal Control
+
+Optimal control theory is a branch of control theory that deals with finding a control for a dynamical system over a period of time such that an objective function is optimized. For example, the dynamical system might be a spacecraft with controls corresponding to rocket thrusters, and the objective might be to reach the Moon with minimum fuel expenditure
+
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -266,11 +1030,13 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
 
 [compat]
 DifferentialEquations = "~7.9.1"
 Plots = "~1.39.0"
 PlutoUI = "~0.7.52"
+SymPy = "~1.1.12"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -279,7 +1045,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "0b54549dd9b54f22d0c5673db0880442da495b8d"
+project_hash = "b79a323e77e55d0c5529a7430059e8749c559c2a"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "a4c8e0f8c09d4aa708289c1a5fc23e2d1970017a"
@@ -458,6 +1224,11 @@ git-tree-sha1 = "fc08e5930ee9a4e03f84bfb5211cb54e7769758a"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.10"
 
+[[deps.CommonEq]]
+git-tree-sha1 = "d1beba82ceee6dc0fce8cb6b80bf600bbde66381"
+uuid = "3709ef60-1bee-4518-9f2f-acd86f176c50"
+version = "0.2.0"
+
 [[deps.CommonSolve]]
 git-tree-sha1 = "0eee5eb66b1cf62cd6ad1b460238e60e4b09400c"
 uuid = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
@@ -489,6 +1260,12 @@ deps = ["Serialization", "Sockets"]
 git-tree-sha1 = "5372dbbf8f0bdb8c700db5367132925c0771ef7e"
 uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
 version = "2.2.1"
+
+[[deps.Conda]]
+deps = ["Downloads", "JSON", "VersionParsing"]
+git-tree-sha1 = "8c86e48c0db1564a1d49548d3515ced5d604c408"
+uuid = "8f4d0f93-b110-5947-807f-2305c1781a2d"
+version = "1.9.1"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
@@ -1451,6 +2228,12 @@ version = "1.4.0"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
+[[deps.PyCall]]
+deps = ["Conda", "Dates", "Libdl", "LinearAlgebra", "MacroTools", "Serialization", "VersionParsing"]
+git-tree-sha1 = "43d304ac6f0354755f1d60730ece8c499980f7ba"
+uuid = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+version = "1.96.1"
+
 [[deps.Qt6Base_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Fontconfig_jll", "Glib_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "OpenSSL_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Xorg_libxcb_jll", "Xorg_xcb_util_image_jll", "Xorg_xcb_util_keysyms_jll", "Xorg_xcb_util_renderutil_jll", "Xorg_xcb_util_wm_jll", "Zlib_jll", "xkbcommon_jll"]
 git-tree-sha1 = "364898e8f13f7eaaceec55fd3d08680498c0aa6e"
@@ -1575,9 +2358,9 @@ version = "0.6.39"
 
 [[deps.SciMLBase]]
 deps = ["ADTypes", "ArrayInterface", "ChainRulesCore", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PrecompileTools", "Preferences", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables", "TruncatedStacktraces", "ZygoteRules"]
-git-tree-sha1 = "29b7de64069e08f093c894757e8c0612ff75085a"
+git-tree-sha1 = "54b005258bb5ee4b6fd0f440b528e7b7af4c9975"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "1.96.1"
+version = "1.96.2"
 
     [deps.SciMLBase.extensions]
     ZygoteExt = "Zygote"
@@ -1740,9 +2523,9 @@ version = "1.9.0"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "45a7769a04a3cf80da1c1c7c60caf932e6f4c9f7"
+git-tree-sha1 = "1ff449ad350c9c4cbc756624d6f8a8c3ef56d3ed"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
-version = "1.6.0"
+version = "1.7.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
@@ -1802,6 +2585,18 @@ deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Op
 git-tree-sha1 = "04777432d74ec5bc91ca047c9e0e0fd7f81acdb6"
 uuid = "fb77eaff-e24c-56d4-86b1-d163f2edb164"
 version = "5.2.1+0"
+
+[[deps.SymPy]]
+deps = ["CommonEq", "CommonSolve", "Latexify", "LinearAlgebra", "Markdown", "PyCall", "RecipesBase", "SpecialFunctions"]
+git-tree-sha1 = "ed1605d9415cccb50e614b8fe0035753877b5303"
+uuid = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
+version = "1.1.12"
+
+    [deps.SymPy.extensions]
+    SymPySymbolicUtilsExt = "SymbolicUtils"
+
+    [deps.SymPy.weakdeps]
+    SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
 
 [[deps.SymbolicIndexingInterface]]
 deps = ["DocStringExtensions"]
@@ -1929,6 +2724,11 @@ deps = ["ArrayInterface", "CPUSummary", "HostCPUFeatures", "IfElse", "LayoutPoin
 git-tree-sha1 = "b182207d4af54ac64cbc71797765068fdeff475d"
 uuid = "3d5dd08c-fd9d-11e8-17fa-ed2836048c2f"
 version = "0.21.64"
+
+[[deps.VersionParsing]]
+git-tree-sha1 = "58d6e80b4ee071f5efd07fda82cb9fbe17200868"
+uuid = "81def892-9a0e-5fdd-b105-ffc91e053289"
+version = "1.3.0"
 
 [[deps.VertexSafeGraphs]]
 deps = ["Graphs"]
@@ -2180,24 +2980,60 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─3deb3968-4c58-11ee-2350-eb87f8e1a936
-# ╟─e49b4689-6f9c-4068-bd10-39330548ac70
-# ╠═b81966df-8038-4e4b-b290-3cc3aaa3115f
-# ╠═be9c2f5f-6963-4d7d-8750-9c1aa63a099f
-# ╟─2c75a9c3-dc0f-4db3-aa59-0db5702d74db
-# ╠═ed9c8d7d-6990-456b-8b60-58a9cf218bbf
-# ╠═9b5a963d-c7ac-4d25-baaa-bc7a9b84bb03
-# ╟─8f0ed474-7dd0-4966-808f-7258f1d2acf7
-# ╟─89e4f550-40a9-442c-a94f-693259c1e8d4
-# ╟─c0a676a4-bdbe-47a1-985c-5ce80582334c
-# ╠═2337d310-238b-4a49-9bde-6911b0eec605
-# ╠═fa5fc3cd-c6e9-4df6-877d-bd2d6be9cb7f
-# ╠═6a23744f-89e0-4b3a-a33a-5c9089312efd
-# ╠═44f67c15-e66b-4171-b958-e92bce788308
-# ╟─07c08a7e-95d9-4cf5-ba8f-a0d14eebdc9a
-# ╟─672f7a56-5bfd-4192-a01f-7b7b1277b28f
-# ╟─33448f59-b0a7-4a31-af5a-9ff5c957eea8
-# ╠═2b5d7fda-4091-4df5-90ba-2713a4e5bdb9
-# ╠═605d0ab3-90c4-40a9-a7af-5631fc066913
+# ╟─cc5fa8b8-4da3-11ee-28fd-7dacab544db3
+# ╟─aabae4cb-3912-408d-bacf-267f2440c047
+# ╟─9db0e27f-32f5-4b03-9d70-5dea9f079ecb
+# ╟─ba749db8-c015-4137-ac7e-92fc0bfbe7ce
+# ╟─a25d1d5d-abc8-4ec4-80b2-ecdaea755a1c
+# ╠═be1a604c-6cf6-405f-9fa0-86e3b454315e
+# ╟─759f6f53-866c-4cc8-9bb5-41be3b43f1dc
+# ╠═bdc5a009-c6c4-434d-a619-63081c6af32d
+# ╠═f4c5f8dd-a66f-4b1a-8a6f-3e4ad9615999
+# ╟─b8fe4424-9eac-4011-85ba-f1bf5e72c718
+# ╟─1b1dbf06-c67b-4447-9049-4ab1bf82ee8a
+# ╠═cf63fd31-4c00-46e5-8648-713b59080eba
+# ╟─451a1910-4ce9-4e15-bca3-c516e20e5bd5
+# ╠═c42f51a3-a02d-4c86-beee-7feedd378ad0
+# ╠═538e7d53-5cc3-4447-b1c7-3d02a0946f09
+# ╟─6369c1ac-e52c-4d81-869d-77cbd483fd8b
+# ╟─03a0fc10-9875-4248-8711-8a3887db30a5
+# ╟─8aa24500-d236-4e24-bf06-4db94e612a50
+# ╠═54a7e106-4537-4857-a9e7-fdc3e9bf4ba1
+# ╠═f0ecf625-53f3-4595-8764-ab0a95c5b6e3
+# ╟─17c3d4a5-048a-44c1-a5f0-5278a2322f60
+# ╠═25b351fa-69e6-482e-9543-12e1dde9e438
+# ╠═1163c920-d2ca-42e7-9b9e-1e19d494bb46
+# ╠═43c38357-4d59-457d-9b90-94ae1f267212
+# ╟─7d030c04-ac3b-4832-a3e8-6053fc9c14e7
+# ╟─1ae8b353-df38-430f-b220-401adddac1d1
+# ╟─f85d4b96-e5d8-4d5c-aaed-df30c8c06084
+# ╟─0c6f2477-1252-4485-9596-2748a2508e14
+# ╟─77c08e89-b5ca-45d3-8916-3ac8cf9453cb
+# ╟─6647a86f-7f6d-43d7-892e-724d3a191ca9
+# ╠═b40aefaa-4600-42f7-ab1d-d92b54fb6401
+# ╟─a20f135e-f061-4287-9e11-3ffad5cc64b8
+# ╠═177d0f02-9045-49d5-84cd-bc7b6ebb58fc
+# ╟─2a2f1d95-60d1-41b5-9d94-e69e7c5bba78
+# ╟─9e35dc47-ff08-4254-96dd-fe27c0c7366d
+# ╠═6e2bc9b4-6b61-49c8-ae72-0bc94e72543a
+# ╟─bbbb2744-a2d9-412a-9938-e0a97aa2620b
+# ╟─fed350c9-aaa1-4a1a-9338-7f244b5e738b
+# ╟─f4a47b15-3c2c-4f08-b611-08d57971b04f
+# ╟─3fba7ef0-a994-4f7e-934a-cb475ceea441
+# ╠═9c1588f1-b49d-470e-b71c-9e70bebafc25
+# ╟─5fe29e57-fe90-4ae8-9beb-3662c51d9c16
+# ╟─537f07ab-f141-4a38-9dcd-be8de62fc3e5
+# ╟─0a42d713-ecc8-41cb-90f0-30f3c598c1af
+# ╟─4267d65e-1cfd-4fc1-ba61-3f15ba5885c6
+# ╟─06007dd6-94dc-4ed6-bf53-18a44db17c06
+# ╠═6fc7e520-e85e-4b96-ae6a-1d1312e9e6c8
+# ╟─e2698160-39e6-4a76-ac17-6ccd56fb151f
+# ╟─2ae4f6e6-a1f0-4618-b0a2-ca3e4c73ee7f
+# ╟─d3780235-46e6-472c-9f46-18ac5cf8ee40
+# ╟─945aba6b-ad67-44e7-ae6b-50cff0ac014a
+# ╟─57d40abd-2a35-468a-9334-f63d962ba604
+# ╟─0d40bd72-6be9-4127-9c63-6041473a3ccc
+# ╟─b9f569a7-3854-40c8-8e64-de13f5eb19cf
+# ╟─4af334c0-c8bd-416f-956e-6c702a6b5f01
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
