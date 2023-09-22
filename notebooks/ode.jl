@@ -47,7 +47,7 @@ A differential equation is an equation, where the unknown is a function and both
 
 
 ```math
-m \frac{d \vec{x}(t)}{dt^2} = f \left ( t,\vec{x(t)},\frac{\vec{x}(t)}{t} \right )
+m \frac{d \vec{x}(t)}{dt^2} = f \left ( t,\vec{x}(t),\frac{d\vec{x}(t)}{dt} \right )
 ```
 **(b) Radioactive Decay:** The amount ``u`` of a radioactive material changes in time as follows
 
@@ -60,7 +60,7 @@ where k is a positive constant representing radioactive properties of the materi
 **(c) The Heat Equation:** The temperature ``T`` in a solid material changes in time and in three space dimensions, labeled by ``x = (x, y, z)``, according to the equation
 
 ```math
-\frac{T(t, \vec{x})}{t} = k \left (\frac{\partial^2 T(t, \vec{x})}{\partial x^2} + \frac{\partial^2 T(t, \vec{x})}{\partial y^2} + \frac{\partial^2 T(t, \vec{x})}{\partial z^2} \right )
+\frac{\partial T}{\partial t}(t, \vec{x})= k \left (\frac{\partial^2 T}{\partial x^2} (t, \vec{x})+ \frac{\partial^2 T}{\partial y^2}(t, \vec{x}) + \frac{\partial^2 T}{\partial z^2} (t, \vec{x})\right )
 ```
 
 where ``k`` is a positive constant representing thermal properties of the material.

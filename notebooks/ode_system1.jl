@@ -134,9 +134,6 @@ md"""
 - In this case it is x, y, and z concentrations
 """
 
-# ╔═╡ 72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
-
-
 # ╔═╡ bd4878a2-27cd-4b74-af3e-1061de5886e5
 solution.u
 
@@ -2179,7 +2176,6 @@ version = "1.4.1+0"
 # ╟─4fcf4de3-5217-4d19-bfe9-fb0a7b1de4c1
 # ╠═83257d8a-4a12-4e28-b4b2-4bd4accfa54c
 # ╟─24c7963c-cb1e-43cf-b0bb-fd383fde3c05
-# ╠═72f5c6d7-6f4e-4708-b89c-a322cf7a0dbc
 # ╠═bd4878a2-27cd-4b74-af3e-1061de5886e5
 # ╟─4ad58d78-22f4-4716-a0db-ac533b53cecf
 # ╟─36065129-50b3-465a-b6a2-052c5a9e0339
