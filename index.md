@@ -31,7 +31,8 @@ Students will need access to a laptop computer with scientific computing softwar
 2. to perform matrix-based regression and inversion problems on data
 3. to perform spectral analysis on data sets
 4. to solve ordinary differential equations using ODE solvers
-5. to solve partial differential equations using finite element methods
+5. to perform discrete event system simulations of linear systems and interface those with control systems
+6. to solve partial differential equations using finite element methods
 }
 
 #### Assessment
@@ -45,9 +46,11 @@ The grade components in the class include:
 | Activity      | Weight | Details                                                        |
 | --------------|--------|----------------------------------------------------------------|
 | Participation | 10%    | Attendance and in-class activities.                            |
-| Homework      | 30%    | Each module will have one or more graded homework assignments. |
-| Midterm Exams | 30%    | Two midterm exams are scheduled.                               |
+| Homework      | 40%    | Each module will have one or more graded homework assignments. |
+| Midterm Exams | 20%    | Two midterm exams are scheduled.                               |
 | Final Exam    | 30%    | The final exam is cumulative.                                  |
+
+The participation score will be based on physical presence and participation during in-class poll questions. The grade will be computed from the automatically generated grade book of the [Poll Everywhere](https://www.polleverywhere.com/home) platform. 
 
 Exams will mimic the homework assignments and are to be taken in person. They will be administered via GitHub Classroom. A laptop computer with appropriate software installed will be required for taking the exam.
 
@@ -76,6 +79,7 @@ Late homework will receive no credit. An extension may be granted if the student
 #### Methods of Student Instruction 
 - Slides: Slide deck presentation are used to deliver boilerplate content
 - Lecture Notes: Handwritten lecture notes are used to deliver key derivations
+- Poll Everywhere: In-class polling questions for formative assessments 
 - GitHub Classroom: GitHub Classroom is used for homework projects 
 - Pluto Notebooks: Pluto notebooks are used as reference text and demonstration of implementation of algorithms in computer language
 - Discussion Sessions: Discussion sessions are used for one-on-one instruction 
@@ -117,7 +121,10 @@ Cheating is the giving, taking, or presenting of information or material by a st
 #### Digital Course Components
 Students may be required to disclose personally identifiable information to other students in the course, via digital tools, such as email or web-postings, where relevant to the course. Examples include online discussions of class topics, and posting of student coursework. All students are expected to respect the privacy of each other by not sharing or using such information outside the course.
 
-*Digital Course Components:* Digital course components may include the GitHub Classroom platform.
+*Digital Course Components:* Digital course components include 
+- GitHub Classroom platform.
+- Canvas LMS
+- PollEverywhere
 
 #### Non-Discrimination Policy
 It is the policy of the University of California Riverside not to engage in discrimination against or harassment of any person employed or seeking employment with the University of California on the basis of race, color, national origin, religion, sex, gender, gender expression, gender identity, pregnancy, physical or mental disability, medical condition, genetic information, ancestry, marital status, age, sexual orientation, citizenship, or service in the uniformed services. Furthermore, University policy prohibits retaliation against any member of the University community filing a complaint of discrimination or harassment. This policy is intended to be consistent with the provisions of applicable State and Federal laws and University policies. 

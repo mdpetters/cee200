@@ -23,14 +23,14 @@ begin
 	using SymPy
 	import PlutoUI:combine
 
-	#https://mdpetters.github.io/cee200/
-	cs_url = "../_assets/cold_stage.png"
-	tec_url = "../_assets/tec_performance.png"
-	control1_url = "../_assets/control1.svg"
-	control2_url = "../_assets/control2.svg"
-	control3_url = "../_assets/control3.svg"
-	control4_url = "../_assets/control4.svg"
-	control5_url = "../_assets/TC-36-25_RS232_02.jpg"
+	#https://mdpetters.github.io/cee200/assets/
+	cs_url = "https://mdpetters.github.io/cee200/assets/cold_stage.png"
+	tec_url = "https://mdpetters.github.io/cee200/assets/tec_performance.png"
+	control1_url = "https://mdpetters.github.io/cee200/assets/control1.svg"
+	control2_url = "https://mdpetters.github.io/cee200/assets/control2.svg"
+	control3_url = "https://mdpetters.github.io/cee200/assets/control3.svg"
+	control4_url = "https://mdpetters.github.io/cee200/assets/control4.svg"
+	control5_url = "https://mdpetters.github.io/cee200/assets/TC-36-25_RS232_02.jpg"
 
 	md"""
 	$(TableOfContents(depth=4))
@@ -51,7 +51,7 @@ md"""
 ## Introduction
 This module will develop the design and analysis of simple control systems using a simple example application: an enclolsed thermoelectrically cooled/heated plate surface whose temperature can be varied between −45 °C and +90 °C.  
 
-$(LocalResource(cs_url, :width => 2500px))
+$(Resource(cs_url, :width => 2500px))
 
 **Figure.** A  thermoelectric cold plate with an enclousre cell. 1: heat sink, 2: barb connectors, 3: TEC module, 4: base block, 5: cold plate, 6: spacers, 7: M2.5 screw, 8: M4 screw, 9: glass lid, T: thermistor opening. Two thermistor openings are located on the left front facing side of the baseblock. (Source: Mahant et al., 2023).
 
@@ -71,7 +71,7 @@ Q(V,\Delta T) = a_1\sqrt{V} + a_2\Delta T + a_3
 
 where  ``V`` is the voltage applied to the TEC module, ``\Delta T`` is the temperature difference between the hot and cold side, and ``a_i`` are fitted coefficients that determine the performance for a specific TEC model.  
 
-$(LocalResource(tec_url, :height => 900px))
+$(Resource(tec_url, :height => 900px))
 
 """
 
@@ -233,7 +233,7 @@ Recall the state-space equations:
 
 We have the input vector ``\vec{f}``, the output vector ``\vec{y}``. The system is subject to initial conditions ``\vec{q_0}``. The `process` box solves for the evolution of the system over time ``t``.
 
-$(LocalResource(control1_url, :width => 1500px))
+$(Resource(control1_url, :width => 1500px))
 
 For the cold stage, the inputs are ``\quad\vec{f} = 
 \begin{bmatrix}
@@ -253,7 +253,7 @@ A discrete-event simulation (DES) models the operation of a system as a (discret
 
 Instead of solving for the evolution over the entire time domain, the discrete simulation soves for the evolution from time ``t \rightarrow t + \Delta t``.
 
-$(LocalResource(control2_url, :width => 1500px))
+$(Resource(control2_url, :width => 1500px))
 
 To simulate the evolution of the system over longer times, the output of ``\vec{y}(t + \Delta t)`` is used to re-initialize the system. For the cold stage, the output is ``T`` and maps directly to the initial condition ``T_0``. This introduces: 
 
@@ -343,7 +343,7 @@ md"""
 
 ## Controller Block Diagram
 
-$(LocalResource(control3_url, :width => 2800px))
+$(Resource(control3_url, :width => 2800px))
 
 A controller can be used to control the signal. The setpoint of the controller is ``r``. The output of the process is subtracted from the setpoint to produce the error ``e(t)``. The error function is then passed into the controller, which outputs the input ``f(t)`` for the process to be controlled. The output of the controller is also sometimes referred to as the *manipulated variable*.
 
@@ -464,7 +464,7 @@ md"""
 
 ## Proportional (P) Control
 
-$(LocalResource(control3_url, :width => 2800px))
+$(Resource(control3_url, :width => 2800px))
 
 ### Description
 
@@ -569,7 +569,7 @@ The P-controller suffers from offset error. Offset error is the difference betwe
 md"""
 ## Proportional-Integral (PI) Control
 
-$(LocalResource(control3_url, :width => 2800px))
+$(Resource(control3_url, :width => 2800px))
 
 ### Description
 
@@ -684,7 +684,7 @@ The I term can introduce osillations around the setpoint. The ``K_i`` value need
 # ╔═╡ 3fba7ef0-a994-4f7e-934a-cb475ceea441
 md"""
 ## Proportional-Integral-Derivative (PID) Control
-$(LocalResource(control3_url, :width => 2800px))
+$(Resource(control3_url, :width => 2800px))
 
 ### Description
 
@@ -815,7 +815,7 @@ Noise in derivative calculations can lead to error amplification. In many applic
 # ╔═╡ 4267d65e-1cfd-4fc1-ba61-3f15ba5885c6
 md"""
 ## Trajactory Control
-$(LocalResource(control4_url, :width => 2800px))
+$(Resource(control4_url, :width => 2800px))
 
 ### Description
 
@@ -932,9 +932,9 @@ md"""
 
 Many hardware controllers have on-board PID capabilities. The picture shows a TE Technology TC-36-25-RS232 device, which is a bi-polar proportional-integral-derivative temperature controller that can modulate power input to a thermolectric device. It communicates through an RS 232 port. 
 
-$(LocalResource(control5_url, :width => 2800px))
+$(Resource(control5_url, :width => 2800px))
 
-The controller stores the ``T_{set}``, ``T_{span}``, ``K_p``, ``K_i``, and ``K_d`` values in the unit's memory. The values can be changed through serial commands passed to the controller. The unit takes fixed voltage power as input provides regulated output (``\pm 100%`` of the input) to a TEC module. The advantage of hardware controllers is that they can operate offline as part of an instrument. 
+The controller stores the ``T_{set}``, ``T_{span}``, ``K_p``, ``K_i``, and ``K_d`` values in the unit's memory. The values can be changed through serial commands passed to the controller. The unit takes fixed voltage power as input provides regulated output (``\pm 100\%`` of the input) to a TEC module. The advantage of hardware controllers is that they can operate offline as part of an instrument. 
 """
 
 # ╔═╡ 945aba6b-ad67-44e7-ae6b-50cff0ac014a
@@ -3026,7 +3026,7 @@ version = "1.4.1+0"
 # ╟─0a42d713-ecc8-41cb-90f0-30f3c598c1af
 # ╟─4267d65e-1cfd-4fc1-ba61-3f15ba5885c6
 # ╟─06007dd6-94dc-4ed6-bf53-18a44db17c06
-# ╠═6fc7e520-e85e-4b96-ae6a-1d1312e9e6c8
+# ╟─6fc7e520-e85e-4b96-ae6a-1d1312e9e6c8
 # ╟─e2698160-39e6-4a76-ac17-6ccd56fb151f
 # ╟─2ae4f6e6-a1f0-4618-b0a2-ca3e4c73ee7f
 # ╟─d3780235-46e6-472c-9f46-18ac5cf8ee40

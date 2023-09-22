@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.7
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -167,7 +167,7 @@ SymPy = "~1.1.10"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
 project_hash = "0e5c970ac256dbc048d0e70c70100bf82dafbf33"
 
@@ -384,7 +384,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -1280,7 +1280,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -2148,6 +2148,6 @@ version = "1.4.1+0"
 # ╠═29e530c8-8c77-4a5f-9930-785ab343aa2e
 # ╠═d73c976f-71e5-49f5-9944-da3c3469f5c4
 # ╟─cd7c2b68-cb0f-4f7f-9bcf-68c278022c07
-# ╠═f8bf3bbd-55f7-4e92-8a3a-588f6897efb2
+# ╟─f8bf3bbd-55f7-4e92-8a3a-588f6897efb2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -1,10 +1,9 @@
-
-# Regression
+# Regularization
 
 Matrix based ordinary least squares regression is reviewed. Discretization of Fredholm and Voltarra integral equations is introduced. Matrix-based regularization approaches to solve ill-posed problems is discussed. 
 
 \learning{
-**By the end of this lesson you have learned**
+**By the end of this module you have learned**
 - apply matrix based ordinary regression to find multi-linear regression parameters to fit data.
 - discretize integral equations to cast them into matrix form.
 - analyze matrices to determine the degree to which problems are ill posed.
@@ -21,7 +20,7 @@ Notes: <a href="" target="_blank"> Notes</a>
 ## Notebooks
 
 ~~~
-Notebook1: <a href="https://mdpetters.github.io/cee200/notebooks/regression/" target="_blank"> Regression, Inversion, and Regularization</a>
+Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/regression/" target="_blank"> Regression, Inversion, and Regularization</a>
 ~~~
 
 ## Homework

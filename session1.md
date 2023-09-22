@@ -4,7 +4,7 @@
 This session introduces some important tools used in this class, including `git`, `GitHub`, `GitHub Classroom`, `Julia`, and `Pluto` notebooks.    
 
 \learning{
-**By the end of this lesson you have learned**
+**By the end of this module you have learned**
 - how to download and install Julia and how to install packages
 - how to start, use and interact with Julia/Pluto notebooks
 - how git creates a file system and what commit, push, pull, and sync do
