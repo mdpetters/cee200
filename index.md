@@ -27,12 +27,12 @@ Students will need access to a laptop computer with scientific computing softwar
 #### Key Learning Outcomes
 \outcomes{
 *At the end of the term, participants will be able to write computer programs*
-1. to perform symbolic computations
+1. to manipulate and solve differential equation using symbolic solvers
 2. to perform matrix-based regression and inversion problems on data
 3. to perform spectral analysis on data sets
 4. to solve ordinary differential equations using ODE solvers
 5. to perform discrete event system simulations of linear systems and interface those with control systems
-6. to solve partial differential equations using finite element methods
+6. to solve partial differential equations using numerical methods
 }
 
 #### Assessment
@@ -139,14 +139,16 @@ The use of laptop computers or tablet to follow the notebooks during lectures is
 | Oct 3  | Lecture 1  | Oct 5  | Lecture 2  | Oct 6   | Discussion |
 | Oct 10 | Lecture 3  | Oct 12 | Lecture 4  | Oct 13  | Discussion |
 | Oct 17 | Lecture 5  | Oct 19 | Lecture 6  | Oct 20  | Discussion |
-| Oct 24 | Lecture 7  | Oct 26 | Lecture 8  | Oct 27  | **Midterm 1** |
-| Oct 31 | Lecture 9  | Nov 2  | Lecture 10 | Nov 3   | Discussion |
-| Nov 7  | Lecture 11 | Nov 9  | Lecture 12 | Nov 10  | Discussion |
-| Nov 14 | Lecture 13 | Nov 16 | Lecture 14 | Nov 17  | Discussion |
-| Nov 21 | Lecture 15 | Nov 23 | *Thanksgiving break* | Nov 24 | *Thanksgiving break* |
-| Nov 28 | Lecture 16 | Nov 30 | Lecture 17 | Dec 1   | **Midterm 2**  |
-| Dec 5  | Lecture 18 | Dec 7  | Final Review | Dec 8 | No Meeting |
-| Dec 12 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; Reading Week   | Dec 17 | **Final Exam, 7-11 pm**  | Dec 8 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No Meeting |
+| Oct 24 | Lecture 7  | Oct 26 | **Midterm 1**  | Oct 27  | Discussion |
+| Oct 31 | Lecture 8  | Nov 2  | Lecture 9 | Nov 3   | Discussion |
+| Nov 7  | Lecture 10 | Nov 9  | Lecture 11 | Nov 10  | Discussion |
+| Nov 14 | Lecture 12 | Nov 16 | Lecture 13 | Nov 17  | Discussion |
+| Nov 21 | Lecture 14 | Nov 23 | *Thanksgiving break* | Nov 24 | *Thanksgiving break* |
+| Nov 28 | Lecture 15 | Nov 30 | **Midterm 2** | Dec 1  | Discussion  |
+| Dec 5  | Lecture 16 | Dec 7  | Lecture 17 | Dec 8 | No Meeting |
+| Dec 12 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; Reading Week   | Dec 14 | **Final Exam, 7-10 pm**  | Dec 15| &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No Meeting |
+
+I reserve the right to move the **midterm exams** to the Friday Discussion section should we need more time to cover material during regular class time.
 
 
 #### Survey

@@ -1,7 +1,7 @@
 
 # Introduction
 
-This session introduces some important tools used in this class, including `git`, `GitHub`, `GitHub Classroom`, `Julia`, and `Pluto` notebooks.    
+Covers important tools used in this class, including `git`, `GitHub`, `GitHub Classroom`, `Julia`, and `Pluto` notebooks.    
 
 \learning{
 **By the end of this module you have learned**

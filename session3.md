@@ -1,14 +1,14 @@
 # Regularization
 
-Matrix based ordinary least squares regression is reviewed. Discretization of Fredholm and Voltarra integral equations is introduced. Matrix-based regularization approaches to solve ill-posed problems is discussed. 
+Covers matrix based ordinary least squares regression, discretization of Fredholm and Voltarra integral equations, and matrix-based regularization approaches to solve ill-posed problems. 
 
 \learning{
 **By the end of this module you have learned**
-- apply matrix based ordinary regression to find multi-linear regression parameters to fit data.
-- discretize integral equations to cast them into matrix form.
-- analyze matrices to determine the degree to which problems are ill posed.
-- apply regularization to invert ill-posed matrix equations.
-- apply common approaches to identify the optimal regularization parameter. 
+- how to apply matrix based ordinary regression to find multi-linear regression parameters to fit data.
+- how to discretize integral equations to cast them into matrix form.
+- how to analyze matrices to determine the degree to which problems are ill posed.
+- how to apply regularization to invert ill-posed matrix equations.
+- how to apply common approaches to identify the optimal regularization parameter. 
 }
 
 ## Slides and Lecture Notes

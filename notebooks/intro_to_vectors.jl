@@ -79,8 +79,6 @@ For the forward difference $h$ values around $10^{-8}$ are typically good, for t
 f''(x) \approx \frac{{\frac{f(x+h) - f(x)}{h}} - \frac{f(x) - f(x-h)}{h}}{h} = \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}.
 ```
 
-
-
 Example: 
 
 ```math

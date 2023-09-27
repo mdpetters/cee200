@@ -1,6 +1,6 @@
 # Coupled Reactions 
 
-This module covers you how solve ordinary differential equations using analytic, symbolic, and numerical methods. Example applications include coupled chemical reactions. 
+Covers how to solve ordinary differential equations using analytic, symbolic, and numerical methods. Example applications include coupled chemical reactions. 
 
 \learning{
 **By the end of this module you have learned**
