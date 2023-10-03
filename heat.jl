@@ -631,6 +631,213 @@ thesol = let
 end
 
 # ╔═╡ a6e6b31d-8726-44e4-8834-7136156b750a
+md"""
+# 2. Advection-Diffusion Equation
+
+The advection diffusion equation is mathematically analogous to the heat equation:
+
+```math
+{\frac {\partial c}{\partial t}}-\nabla \cdot \left(D\nabla c\right) + \nabla \cdot (\vec{u} c) = S
+```
+
+where  ``c(x,y,z,t)`` is the concentration of a scalar, ``D``  is the diffusion coefficient of the scalar in a medium material, ``\vec{u}`` is the velocity field that the quantity is moving with. It is a function of time and space, and ``S`` describes sources or sinks of the quantity ``c``. 
+
+The only difference to the heat equation is that we have included *advection*, which denotes the transport of the scalar with the flow field. Note that temperature is an intensive property and technically temperature does not advect. In contrast **enthalpy** (an extensive property) advects and temperature changes are derived from enthalpy changes. 
+"""
+
+# ╔═╡ c5206c4e-8bbf-4972-811b-e23000a147f6
+md"""
+## 2.1 One-Dimensional Homogeneous Equation
+
+With no advection, no sources, one dimension, and no variation in ``D`` the equation is
+
+```math
+\frac{\partial c}{\partial t} = D \frac{\partial^2 c}{\partial t}
+```
+
+which is the smae as the heat equation used in 1.1.
+
+### 2.1.1 Puff Dispersion
+
+Consider a puff of pullutant at ``x = 0``. Then what is the concentration at any point in the x-domain at time ``t`` after release?
+
+### 2.1.1 Analytical Solution
+
+The analytical solution to this problem is
+
+```math
+c(x,t) = \frac{M}{\sqrt{4\pi D t}} \exp \left(-\frac{x^2}{4Dt} \right)
+```
+
+where ``c(x,t)`` is the mass per unit length, and ``M`` is mass of the material. The domain in ``\Omega = [-\infty, \infty]``. The initial condition is ``c(x, 0) = M \delta(x)``, where ``\delta`` is the Dirac delta distribution (or unit impulse), and the boundary conditions are at infinity, i.e ``c(x,t) \rightarrow 0, x \rightarrow \infty``.
+
+Note that 
+
+```math
+\int_{-\infty}^\infty \delta (x) dx = 1 
+```
+
+"""
+
+# ╔═╡ 40124a9c-3933-457f-b92d-3420eeb22354
+md"""
+### 2.2.2 Numerical Solution
+
+The numerical solution is identical to the 1D heat equation, but with ``\alpha`` changed to ``D``.
+
+```math
+\frac{\partial c}{\partial t} =  D \frac {\partial^2 c}{\partial x^2}  
+```
+
+The second order finite difference derivative is given by: 
+
+```math
+f''(x) \approx \frac{{\frac{f(x+h) - f(x)}{h}} - \frac{f(x) - f(x-h)}{h}}{h} = \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}.
+```
+
+Discretizing ``l`` into ``n`` points:
+
+```math
+\frac{d\vec{c}}{dt} = \frac{D}{\Delta x^2} \mathbf{A}\vec{c}
+```
+
+where ``\Delta x = \frac{l}{n-1}`` is the discrete grid spacing in the ``x``-dimensions, ``\vec{c}`` is a vector of length ``n`` corresponding to the concentration per unit mass at each grid point, and ``\mathbf{A}`` is ``\mathbb{R}^{n \times n}`` and a tridiagonal matrix of the form
+
+```math
+\mathbf{A} = \begin{bmatrix}
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & -2 & 1 & 0 & 0  & 0 & 0 & 0 \\
+0 & 1  & -2 & 1 & 0 & 0 & 0 & 0  \\
+0 & 0 &  \ddots  &  \ddots &  \ddots & 0 & 0 & 0  \\
+0 & 0 & 0 & \ddots  &  \ddots &  \ddots & 0 & 0  \\
+0 & 0 & 0 & 0 & 1 & -2 & 1 & 0  \\
+0 & 0 & 0 & 0 & 0 & 1 & -2 & 1  \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+
+\end{bmatrix}
+```
+
+The first and last row of the solution indicates the ``\frac{dc_1}{dt} = 0`` and ``\frac{dc_n}{dt} = 0``. This corresponds to a *Dirichlet boundary condition*.
+
+Note two differences to the heat solution:
+
+1. Technically the domain is ``\Omega = [-\infty, \infty]``. However, the discrete domain is smaller. To compare to the analytical solution, the numerical domain must be selected wide enough to ensure that the concentration at the boundary remains effectively zero. Otherwise, the boundary conditions will lead to deviation from the analytical solution, since the boundary removes all mass that reaches it.
+2. Th initial condition depends on the bin spacing. The height of the initial pulse is ``M\Delta x``, where ``\Delta x`` is the bin spacing. Note that in the limit of infinitely small bins, the initial pulse equals ``\infty``. 
+
+"""
+
+# ╔═╡ f2398a1d-4bb7-449c-95d9-e0f8d5ebdef4
+@bind myDiff combine() do Child
+	md"""
+	``t`` = $(
+		Child(Slider(0.1:0.05:5, default = 0.1, show_value = true))
+	)
+	``\Delta x`` = $(
+		Child(Slider([0.05, 0.1, 0.2], default = 0.05, show_value = true))
+	)
+	"""
+end
+
+# ╔═╡ 30197907-b1af-4d96-ab8c-ef56bcbeafbe
+let
+	dx = myDiff[2]
+	x = -1:0.01:1
+	D = 0.025
+	M = 1.0
+	t = myDiff[1]
+
+	discrete_x = -1:dx:1 
+	n = length(discrete_x)
+	A = finite_diff_matrix(n)
+	u0 = zeros(length(discrete_x))
+	
+	u0[Int((length(discrete_x)+1)/2.0)] = M./dx
+
+	sol = finite_diff_solver(A, u0, [D/dx^2.0], [0,10.0])
+	f(x, t) = M./sqrt(4.0*pi*D*t)*exp(-x^2.0/(4.0*D*t))
+	p1 = plot(x, f.(x, 0.1), xlabel = L"x", ylabel = L"c(x,t)", color = :black, 
+		label = "Analytical: "*L"t = 0.1s")
+	p1 = plot!(x, f.(x, t), color = :darkred, 
+		label = "Analytical: "*L"t = t")
+	plot!(discrete_x, u0, lw = 1, lt = :stepmid, color = :steelblue3, label = "Numerical: Initial Condition")
+	plot!(discrete_x, sol(t), lt = :stepmid, color = :darkgoldenrod, label = "Numerical: "*L"t =t")
+	plot!(size = (700,300))
+end
+
+# ╔═╡ fb3dc54b-d5b6-41dd-a7b0-20204a5a1088
+md"""
+### 2.1.1 Puff Advection + Dispersion
+
+For one dimension and incompressible flow and assuming ``u_x`` is constant:
+
+```math
+\frac{\partial c}{\partial t} =  D \frac {\partial^2 c}{\partial x^2}  - u_x \frac{\partial c}{\partial x}
+```
+
+Instead of the matrix formulation, we will use the straightforard discretization approach:
+
+
+```math
+\frac{dc_{i}}{dt} = D \left (\frac{T_{i+1} - 2T_{i} + T_{i-1}}{\Delta x^2} \right) - u_{x} \left( \frac{c_{i+1} - c_{i-1}}{2 \Delta x} \right )
+```
+
+"""
+
+# ╔═╡ e5777793-9c76-4d6e-8305-0c57cc4c8b60
+function finite_diff_solver_advection(c0, p, tspan)
+	function f(c, p, t)
+		D = p[1]
+		uₓ = p[2]
+		Δx = p[3]
+
+		n = length(c)
+		dc = zeros(n)
+		for i = 2:n-1
+				dc[i] = D*(c[i+1] - 2.0*c[i] + c[i-1])/(Δx^2.0) - 
+					uₓ*(c[i+1] - c[i-1])/(2.0*Δx) 
+		end
+		
+		return dc
+	end
+	
+	problem = ODEProblem(f, c0, tspan, p) 
+	solution = solve(problem, RK4(), reltol = 1e-12, abstol = 1e-12)
+end
+
+# ╔═╡ 81852eee-d92c-4c73-b506-e1650c768b30
+@bind myDiff1 combine() do Child
+	md"""
+	``t`` = $(
+		Child(Slider(0:0.05:10, default = 0.0, show_value = true))
+	)
+	``u_x`` = $(
+		Child(Slider(-0.5:0.05:0.5, default = 0, show_value = true))
+	)
+	"""
+end
+
+# ╔═╡ 611b8909-465b-4cd7-9828-747b95c5b707
+let
+	t = myDiff1[1]
+	uₓ = myDiff1[2]
+	dx = 0.1
+	D = 0.025
+	M = 1.0
+	
+	discrete_x = -10:dx:10 
+	n = length(discrete_x)
+	u0 = zeros(length(discrete_x))	
+	u0[Int((length(discrete_x)+1)/2.0)] = M./dx
+
+	sol = finite_diff_solver_advection(u0, [D, uₓ, dx], [0,20.0])
+	p1 = plot(discrete_x, sol(t), lw = 1, lt = :stepmid,  
+		label = :none, xlabel = L"x", ylabel = L"c(x,t)", 
+		color = :black)
+
+	plot!(size = (700,300))
+end
+
+# ╔═╡ fa9dcb16-337b-4052-a652-2cdc380fc7b9
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2570,7 +2777,7 @@ version = "1.4.1+0"
 # ╠═4a45dc28-f309-436a-b0cd-178c0d8e1057
 # ╟─3890562e-26b3-483c-b255-10f8b54c3be1
 # ╟─6508ad56-1946-4b30-9cab-0d147628048e
-# ╠═22403521-1df6-474b-b67a-5de5f32a23ac
+# ╟─22403521-1df6-474b-b67a-5de5f32a23ac
 # ╟─dff6eb36-438b-41ea-91b7-c91e5f5905b4
 # ╠═a790eba6-a529-4d63-91b9-fc1d431cd258
 # ╠═62212ad1-d39a-4068-af63-ceb99187e31d
@@ -2584,9 +2791,18 @@ version = "1.4.1+0"
 # ╟─756cfcd1-a9a0-4859-bf13-257703f27318
 # ╟─77b17850-da04-4e3a-82bc-aa55bb3e1905
 # ╟─2b093b32-3b77-46b8-a320-a482e7a4cf89
-# ╟─e5f0da31-5030-400a-b05e-e04a10c01795
+# ╠═e5f0da31-5030-400a-b05e-e04a10c01795
 # ╟─99740be4-9849-43e4-9672-13d6fceab687
 # ╟─aa68ad5d-1e98-452c-9ad4-b3be82ea7d0f
-# ╠═a6e6b31d-8726-44e4-8834-7136156b750a
+# ╟─a6e6b31d-8726-44e4-8834-7136156b750a
+# ╟─c5206c4e-8bbf-4972-811b-e23000a147f6
+# ╟─40124a9c-3933-457f-b92d-3420eeb22354
+# ╟─f2398a1d-4bb7-449c-95d9-e0f8d5ebdef4
+# ╟─30197907-b1af-4d96-ab8c-ef56bcbeafbe
+# ╟─fb3dc54b-d5b6-41dd-a7b0-20204a5a1088
+# ╠═e5777793-9c76-4d6e-8305-0c57cc4c8b60
+# ╟─81852eee-d92c-4c73-b506-e1650c768b30
+# ╟─611b8909-465b-4cd7-9828-747b95c5b707
+# ╠═fa9dcb16-337b-4052-a652-2cdc380fc7b9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
