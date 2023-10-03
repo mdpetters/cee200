@@ -28,5 +28,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target="_b
 ## Homework
 
 \exercise{
-Due Date TBD: 
+Due Date Oct 16, 2023: (https://classroom.github.com/a/UiQ-CDc1)[https://classroom.github.com/a/UiQ-CDc1] 
 }
