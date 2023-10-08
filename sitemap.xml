@@ -15,7 +15,7 @@
 </url>
 <url>
     <loc>https://mdpetters.github.io/cee200/session1/index.html</loc>
-    <lastmod>2023-10-03</lastmod>
+    <lastmod>2023-10-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
@@ -51,7 +51,7 @@
 </url>
 <url>
     <loc>https://mdpetters.github.io/cee200/session7/index.html</loc>
-    <lastmod>2023-09-27</lastmod>
+    <lastmod>2023-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
@@ -70,6 +70,12 @@
 <url>
     <loc>https://mdpetters.github.io/cee200/notebooks/dft/</loc>
     <lastmod>2023-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://mdpetters.github.io/cee200/notebooks/heat/</loc>
+    <lastmod>2023-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
