@@ -12,13 +12,17 @@ Covers the advection-diffusion equation to describe heat and mass transport phen
 ## Slides and Lecture Notes
 
 ~~~
+Slides: <a href="https://docs.google.com/presentation/d/1BXhPkyp6f25HSSSMVER4HYaKyujzf5oFa7_2xbDalnQ/edit?usp=sharing" target="_blank">Transport Slides</a> <br><br>
+~~~
+
+~~~
 Notes: <a href="" target="_blank"> Notes</a>
 ~~~
 
 ## Notebooks
 
 ~~~
-Notebook 1:
+Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/heat/" target="_blank"> Numerical Solution to PDEs</a>
 ~~~
 
 ## Homework
