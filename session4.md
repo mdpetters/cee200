@@ -14,19 +14,23 @@ This session teaches you how to apply the discrete Fourier transform to perform 
 ## Slides and Lecture Notes
 
 ~~~
-Notes: <a href="" target="_blank"> Notes</a>
+Slides: <a href="https://docs.google.com/presentation/d/1tgb63vTVY6S9e0WIXNf5MfuL_AzIdu0sKpb-fQruZPk/edit?usp=sharing" target="_blank"> Fourier Transform</a> <br><br>
+~~~
+
+~~~
+Notes: <a href="https://drive.google.com/file/d/10FDL03vgqHy_gPjufjJxbAgG8gp-HZSK/view?usp=sharing" target="_blank"> Oct 5, 2023</a>
 ~~~
 
 
 ## Notebooks
 
 ~~~
-Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target="_blank"> Fourier Transforms</a>
+Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target="_blank"> Fourier Transform</a>
 ~~~
 
 
 ## Homework
 
 \exercise{
-Due Date Oct 16, 2023: (https://classroom.github.com/a/UiQ-CDc1)[https://classroom.github.com/a/UiQ-CDc1] 
+Due Oct 16, 2023: [https://classroom.github.com/a/UiQ-CDc1](https://classroom.github.com/a/UiQ-CDc1) 
 }

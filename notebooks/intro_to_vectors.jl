@@ -43,6 +43,36 @@ Markdown.MD(
 "]))
 
 
+# ╔═╡ 2466d645-3367-423a-815d-d86d5c2228b3
+md"""
+# Taylor Series Approximation
+
+A function can be approximated near a point ``x_0`` using the Taylor series expansion
+
+```math
+f(x_0 + h) = \sum_{n=0}^\infty \frac{f^{(n)}(x_0)}{n!}h^n = f(x_0) + f'(x_0)h + \frac{f''(x_0)}{2!}h^2 + \frac{f'''(x_0)}{3!}h^3 + \dots
+```
+
+The example below is for ``f(x) = sin(x)`` and ``x_0 = \frac{pi}{4}``. Not how the first order term represents the tangent line at ``x_0``.
+"""
+
+# ╔═╡ be9dc539-b848-410b-bb37-4aa91155e306
+let 
+	x0 = pi/4.0
+	x = 0:0.1:2pi
+	p = plot(x, sin.(x), color = :black, label = "f(x)", ylim = [-1,2], 
+		xlabel = "x", ylabel = "y")
+	f1(a,h) = sin(a) + cos(a)*h
+	h = -pi:0.1:pi
+	x2 = x0 .+ h
+	plot!(x2, f1.(x0,h), label = "n = 0..1", color = :darkred) 
+	f2(a,h) = sin(a) + cos(a)*h - 1/2*sin(a)*h^2
+	plot!(x2, f2.(x0,h), label = "n = 0..2", color = :steelblue3)
+	f3(a,h) = sin(a) + cos(a)*h - 1/2*sin(a)*h^2 - 1/6*cos(a)*h^3.0
+	plot!(x2, f3.(x0,h), label = "n = 0..3", color = :darkgoldenrod)
+	plot!(size = (700,300), bottom_margin = 20px)
+end
+
 # ╔═╡ 52f31447-9fb3-4c43-91ac-9cb27f209e04
 md"""
 # Numeric Differentiation
@@ -78,6 +108,8 @@ For the forward difference $h$ values around $10^{-8}$ are typically good, for t
 ```math
 f''(x) \approx \frac{{\frac{f(x+h) - f(x)}{h}} - \frac{f(x) - f(x-h)}{h}}{h} = \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}.
 ```
+
+Note that thefinite difference approximation can be straightforwardly derived from the Taylor series expansion.
 
 Example: 
 
@@ -564,7 +596,7 @@ M = \left[
 \vec{b} = \langle 10, 11, 12\rangle,
 ```
 
-and the expression $M\vec{x} = \vec{b}$. The matrix $M$ is a rectangular collection of numbers or expressions arranged in rows and columns with certain algebraic definitions. There are $m$ rows and $n$ columns in an $m\times n$ matrix. In this example $m=n=3$, and in such a case the matrix is called square. A vector, like $\vec{x}$ is usually identified with the $n \times 1$ matrix (a column vector). Were that done, the system of equations would be written $Mx=b$.
+and the expression $M\vec{x} = \vec{b}$. The matrix $M$ is a rectangular collection of numbers or expressions arranged in rows and columns with certain algebraic definitions. There are $m$ rows and $n$ columns in an $m\times n$ matrix. In this example $m=n=3$, and in such a case the matrix is called square. A vector, like $\vec{x}$ is usually identified with the $n \times 1$ matrix (a column vector). Were that done, the system of equations would be written $M\vec{x}=\vec{b}$.
 
 If we refer to a matrix $M$ by its components, a convention is to use $(M)_{ij}$ or $m_{ij}$ to denote the entry in the $i$th *row* and $j$th *column*. Following `Julia`'s syntax, we would use $m_{i:}$ to refer to *all* entries in the $i$th row, and $m_{:j}$ to denote *all* entries in the $j$ column.
 
@@ -671,6 +703,9 @@ M .* M   # component wise (Hadamard product)
 
 # ╔═╡ 0331ab7a-5529-4320-89ec-c448dbe54194
 [1 2; 3 4] * [1 2; 3 4] # Matrix Multiplication
+
+# ╔═╡ 9ba04cc5-b33e-4478-b0eb-8f0d8ab93ce2
+[1 3] ⋅ [1 3]
 
 # ╔═╡ 1308e420-e393-4c24-a508-106f346c8ad6
 md"""
@@ -1784,6 +1819,12 @@ version = "0.9.3"
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
+
+[[deps.EpollShim_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8e9441ee83492030ace98f9789a654a6d0b1f643"
+uuid = "2702e6a9-849d-5ed8-8c21-79e8b8f9ee43"
+version = "0.0.20230411+0"
 
 [[deps.ExceptionUnwrapping]]
 deps = ["Test"]
@@ -3057,7 +3098,7 @@ uuid = "3d5dd08c-fd9d-11e8-17fa-ed2836048c2f"
 version = "0.21.64"
 
 [[deps.Wayland_jll]]
-deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
+deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
 git-tree-sha1 = "ed8d92d9774b077c53e1da50fd81a36af3744c1c"
 uuid = "a2964d1f-97da-50d4-b82a-358c7fce9d89"
 version = "1.21.0+0"
@@ -3302,6 +3343,8 @@ version = "1.4.1+0"
 # ╔═╡ Cell order:
 # ╟─9cb51ec8-40ff-11ee-0ddd-3335291342a5
 # ╟─8cba9988-b750-448e-9b94-df412c4af5a3
+# ╟─2466d645-3367-423a-815d-d86d5c2228b3
+# ╟─be9dc539-b848-410b-bb37-4aa91155e306
 # ╟─52f31447-9fb3-4c43-91ac-9cb27f209e04
 # ╠═0348024a-027a-4ac2-9530-44803c6a6289
 # ╠═1a994a91-bcb2-4df6-9862-3f6eb696eb21
@@ -3360,6 +3403,7 @@ version = "1.4.1+0"
 # ╠═29d53bd2-6517-41f2-9d2e-679a8c0f8f90
 # ╠═83801d66-89da-4161-b4b8-1962a97ac6a8
 # ╠═0331ab7a-5529-4320-89ec-c448dbe54194
+# ╠═9ba04cc5-b33e-4478-b0eb-8f0d8ab93ce2
 # ╟─1308e420-e393-4c24-a508-106f346c8ad6
 # ╠═911b5ad6-5991-4472-8229-7a091dfc8a80
 # ╠═aaccb6c0-c3c5-4e2e-b529-58aeef9bd8e7
