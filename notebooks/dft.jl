@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.29
 
 #> [frontmatter]
 #> title = "Fourier Transform"
@@ -855,8 +855,6 @@ begin
 		summary_table = DataFrame(k = 0:16384, f = freq, 
 			X = X[1:16385], A = Amp[1:16385], P = P[1:16385], P2 = P2[1:16385])
 		summary_table[1,4] = summary_table[1,4]/2 
-		rename(summary_table, :k => "kᵗʰ bin", :f => "f (Hz)", :X => "X(k)", 
-			:A => "Amplitude (-)", :P => "P (°)")
 		
 		filtered_data = ifft(Z) |> real
 		deltaf = (summary_table[2:end,:f] .- summary_table[1:end-1,:f])[1]
@@ -867,10 +865,10 @@ begin
 		p22 = plot!(filtered_data, label = "Filtered data")
 
 		p23 = plot(summary_table[2:end, 2], summary_table[2:end, 5]./deltaf, 
-		color = :black, xscale = :log10, 
-		minorgrid = :true, label = "Fourier Transform", 
-		xlabel = "Frequency (d⁻¹)", ylabel = "S (m² s⁻² Hz⁻¹)", 
-		yscale = :log10, legend = :left, xlim = [0.00001, 1], ylim = [1e-2, 1e8])
+			color = :black, xscale = :log10, 
+			minorgrid = :true, label = "Fourier Transform", 
+			xlabel = "Frequency (d⁻¹)", ylabel = "P (Sunspots²)", 
+			yscale = :log10, legend = :left, xlim = [0.00001, 1], ylim = [1e-2, 1e8])
 		p23 = plot!(summary_table[2:end, 2], summary_table[2:end, 6]./deltaf, 
 			label = "Low-pass-filtered spectrum")
 
@@ -890,7 +888,7 @@ md"""
  & \text{Discrete Fourier transform:} & 
 X(k) = \sum_{n = 0}^{N-1} x_n \exp^{-i 2\pi \frac{k}{N} n}
  \\
-& \text{Inverse discrete Fourier transform:} & x(n) = \sum_{k = -\infty}^\infty X_k \exp^{i 2 \pi \frac{ k}{N} t}
+& \text{Inverse discrete Fourier transform:} & x(n) = \sum_{k =0}^{N-1} X_k \exp^{i 2 \pi \frac{k}{N} n}
 \end{array}
 ```
 
@@ -2291,7 +2289,7 @@ version = "1.4.1+0"
 # ╟─a0055782-9f10-4a47-be68-a88442ffc582
 # ╟─6cb0e462-67de-4ed5-a671-51131a5c3c6c
 # ╟─320dfe95-d647-4106-953a-3bdb6ef3133c
-# ╟─dea1d104-0ece-4540-99da-3ea58387235c
+# ╠═dea1d104-0ece-4540-99da-3ea58387235c
 # ╟─e4489e46-2a57-4ab9-badd-aa2895b48e98
 # ╟─460e85b2-6b50-4d3e-8f57-73d6cc21b929
 # ╟─025ed5b0-3982-4ba4-8b78-9514da4adcab
@@ -2303,7 +2301,7 @@ version = "1.4.1+0"
 # ╟─1dd0225b-c974-49ae-99b2-b98d2360f0c5
 # ╟─9826982f-0d7c-43e2-8328-9b686612eaf5
 # ╟─f0a64881-805a-459d-9e8a-31efa787af7a
-# ╟─c698ffa3-db8b-4920-b6ff-00416dc99094
+# ╠═c698ffa3-db8b-4920-b6ff-00416dc99094
 # ╟─09d0aa06-b1bd-4793-a08b-fa4cb4fa08c8
 # ╟─0605a57f-7cb2-4d83-ae54-ae1b65756efc
 # ╟─b7a8a268-d12e-40ff-b95f-cf5669a96a1c
