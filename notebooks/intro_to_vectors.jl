@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.29
 
 #> [frontmatter]
 #> title = "Review of Vector Calculus"
@@ -288,12 +288,6 @@ begin
 	end
 	plot1()
 end
-
-# ╔═╡ b16e962b-81d8-4b84-bd04-183f1477a332
-
-
-# ╔═╡ e342246e-ccf7-4059-b4e8-638ce47d1d6a
-
 
 # ╔═╡ 031753c1-7fcf-4e74-bf37-66e241248bbb
 md"""
@@ -3363,8 +3357,6 @@ version = "1.4.1+0"
 # ╠═9f2348dc-726f-4320-9611-f94c736ba0fb
 # ╠═c4ad6ae2-065f-4438-a984-865e6440d43d
 # ╟─e40b137b-a15e-433a-9a3a-5838458b45af
-# ╠═b16e962b-81d8-4b84-bd04-183f1477a332
-# ╠═e342246e-ccf7-4059-b4e8-638ce47d1d6a
 # ╟─031753c1-7fcf-4e74-bf37-66e241248bbb
 # ╠═74a35dd7-bd9a-4d02-bcd7-85e58b3ff4bf
 # ╠═7e34a490-1a94-4bc1-b657-61bc197282b3

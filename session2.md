@@ -30,5 +30,5 @@ Notebook 2 : <a href="https://mdpetters.github.io/cee200/notebooks/vectors/" tar
 ## Homework
 
 \exercise{
-Due Date TBD: 
+Due Oct 23, 2023: [https://classroom.github.com/a/UiQ-CDc1](https://classroom.github.com/a/Ta2D0neU) 
 }
