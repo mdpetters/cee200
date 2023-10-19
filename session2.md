@@ -14,7 +14,8 @@ Covers symbolic solvers and reviews key concepts in vector calculus with the obj
 ## Slides and Lecture Notes
 
 ~~~
-Notes: <a href="" target="_blank"> Notes</a>
+Notes: <a href="https://drive.google.com/file/d/1fPim01vDPKJwwuxCCmNEnFZyARAIJ4R6/view?usp=sharing
+" target="_blank"> Oct 19, 2023</a>
 ~~~
 
 
