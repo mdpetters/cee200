@@ -26,5 +26,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/regression/" tar
 ## Homework
 
 \exercise{
-Due Date TBD: 
+Due Nov 6, 2023: [https://classroom.github.com/a/GX478nuP](https://classroom.github.com/a/GX478nuP) 
 }
