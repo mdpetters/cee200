@@ -722,6 +722,21 @@ begin
 end
 
 
+# ╔═╡ 09f4a93f-8e88-49f4-81a5-ec194713d86c
+let
+	ct4 = cosine_taper(2^15, 0.1)
+	tdata = turbulence_data[!,2]
+	tapered_data = tdata.*ct4
+	
+	X4  = fft(tapered_data) 
+	mangle4 = map(Θ -> (Θ * (180.0/pi) + 360.0) % 360.0, atan.(imag.(X4), real.(X4)))
+	Amp4 = real(2*sqrt.(X4 .* conj.(X4))) / 32768
+	P4 = 0.5.*Amp4.^2
+
+	P5 = 2/(32768)^2 * (real.(X4).^2 + imag.(X4).^2)
+	P4 .== P5
+end
+
 # ╔═╡ c0072a98-ddb5-4ac7-9d10-37bcf460b8e3
 md"""
 
@@ -1012,6 +1027,21 @@ If ``f, f', \cdots , f^{(n-1)}`` are continuous on ``[0, \infty)`` and are of ex
 ```
 where ``F(s) = \mathcal{L}\{f (t)\}``.
 """
+
+# ╔═╡ c7263946-d128-41d7-9f4e-0c6d033a168d
+
+
+# ╔═╡ 1b2a2ca4-3092-43e7-b5d8-689dc213069a
+
+
+# ╔═╡ ad437aee-00a0-4ac0-9685-2d8314fe66a1
+
+
+# ╔═╡ bbcd415e-42bc-4d85-9354-f32675a391fc
+
+
+# ╔═╡ 927da28f-a16f-4f6b-a662-4490b28c12fb
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2312,7 +2342,8 @@ version = "1.4.1+0"
 # ╟─5e046263-ff18-40b4-9810-f32b89316e3d
 # ╟─f44e4292-97bc-4372-b28e-6868f8e64449
 # ╟─c72f0b73-75ca-4e42-b73d-eb573081fca0
-# ╟─45114e1c-baac-4334-bff8-6b019a16b11c
+# ╠═45114e1c-baac-4334-bff8-6b019a16b11c
+# ╠═09f4a93f-8e88-49f4-81a5-ec194713d86c
 # ╟─c0072a98-ddb5-4ac7-9d10-37bcf460b8e3
 # ╠═ba1b5fbe-0543-47aa-a789-dbbd342c478b
 # ╠═e064dc71-2012-4cba-a974-f7a5af86cbd8
@@ -2330,5 +2361,10 @@ version = "1.4.1+0"
 # ╠═56fcab84-9174-4207-9a54-5f81fbab59c3
 # ╟─453650c6-395d-4710-921f-961e40fcd0b4
 # ╟─c84358b4-09ff-4ddc-a4c3-31068a8a8662
+# ╠═c7263946-d128-41d7-9f4e-0c6d033a168d
+# ╠═1b2a2ca4-3092-43e7-b5d8-689dc213069a
+# ╠═ad437aee-00a0-4ac0-9685-2d8314fe66a1
+# ╠═bbcd415e-42bc-4d85-9354-f32675a391fc
+# ╠═927da28f-a16f-4f6b-a662-4490b28c12fb
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
