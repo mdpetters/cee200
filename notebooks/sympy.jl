@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.29
 
 #> [frontmatter]
 #> title = "A Short Introduction to SymPy "

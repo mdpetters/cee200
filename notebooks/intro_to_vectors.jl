@@ -172,7 +172,8 @@ end
 
 # ╔═╡ a8e2053a-4557-490e-9a4e-babc6a0fc8e6
 # Test second derivative around x = 2 
-let	fpp = (2.0^2.0 - 1) * exp(-2.0^2.0/2.0) # True derivative
+let	
+	fpp = (2.0^2.0 - 1) * exp(-2.0^2.0/2.0) # True derivative
 	f(x) = exp(-x^2/2)
 	# 4: number of grid points, 2: order of derivative, f: function, 2: value
 	cfdm = central_fdm(6, 2)(f, 2) 
@@ -231,6 +232,9 @@ Mathematically, a vector is a one-dimensional collection of numbers, a matrix a 
 # ╔═╡ 9b43916d-3b24-4fe7-8eea-b044aecf0681
 x, y = [1, 2, 3], [4, 5, 6]
 
+# ╔═╡ b9de777d-aae7-45fa-bc3f-34899b911fa9
+xx = [1,2.0,3]
+
 # ╔═╡ 7878efe3-04fd-4632-bca9-045565e82824
 [x; y]
 
@@ -239,6 +243,15 @@ x, y = [1, 2, 3], [4, 5, 6]
 
 # ╔═╡ 5eca5911-287a-4252-9393-d8469acb34af
 [x y]
+
+# ╔═╡ 08aa5e12-5e0d-44bf-827d-eafb2ad5a238
+aa= [1 2 3]
+
+# ╔═╡ e0f30602-8498-4592-b461-b17c12c9e6b7
+aa[:]
+
+# ╔═╡ a8999060-be95-40ce-9d86-7aa48c97d317
+[1,2,3]
 
 # ╔═╡ 446c2b03-5204-4380-b250-c1bcb3f6dba5
 md"""
@@ -249,7 +262,7 @@ Addition can be visualized geometrically: put the tail of $\vec{v}$ at the tip o
 
 ```math
 \begin{array}
-\textit{Cummuatative}: & \vec{u}+\vec{v} = \vec{v}+\vec{u} \\
+\textit{Commutative}: & \vec{u}+\vec{v} = \vec{v}+\vec{u} \\
 \textit{Associative}: & (\vec{v}+\vec{w}) + \vec{u} = \vec{v}+ (\vec{u} + \vec{w})
 \end{array}
 ```
@@ -297,7 +310,7 @@ When a vector is multiplied by a scalr, the magnitdue of the vector is altered t
 
 ```math
 \begin{array}
-\textit{Cummuatative}: & s\vec{v} = \vec{v}s \\
+\textit{Commutative}: & s\vec{v} = \vec{v}s \\
 \textit{Associative}: & r(s\vec{v}) = (rs)\vec{v} \\
 \textit{Distributive}: & (q+r+s)\vec{v} = q \vec{v} + r \vec{v} + s \vec{v}	
 \end{array}
@@ -355,10 +368,10 @@ In `Julia`, the `norm` function is in the standard library, `LinearAlgebra`, whi
 norm([2,2,1])
 
 # ╔═╡ d1024fa4-5a13-4ce7-8efd-b0321e675cd9
-norm(2.0*[2,2,1]) === 2.0*norm([2,2,1])
+norm(2.0*[2,2,1]) === 2.0*norm([2,2,1]) 
 
 # ╔═╡ 4e203179-00f9-4de0-bcd3-e4c4e1e08b2f
-norm(-[2,2,1]) == norm([2,2,1])
+norm(-2*[2,2,1]) == norm(2*[2,2,1])
 
 # ╔═╡ d6b4f284-1638-45db-ad25-5749aefd550f
 md"""
@@ -386,7 +399,7 @@ The rules governing the dot product are
 
 ```math
 \begin{array}
-\textit{Cummuatative}: & \vec{u} \cdot \vec{v} = \vec{v} \cdot \vec{u} \\
+\textit{Commutative}: & \vec{u} \cdot \vec{v} = \vec{v} \cdot \vec{u} \\
 \textit{Not Associative}: & (\vec{u} \cdot \vec{v})\vec{w} \ne \vec{u}  (\vec{v} \cdot \vec{w}) \\
 \textit{Distributive}: & \vec{u} \cdot [ \vec{v} + \vec{w} ] = \vec{u} \cdot \vec{v} + \vec{v} \cdot \vec{w} 
 \end{array}
@@ -470,7 +483,7 @@ The vector product (or cross product) of two ``3``-dimensional vectors $\vec{v}$
 
 
 with $\theta$ being the angle in $[0, \pi]$ between $\vec{v}$ and $\vec{w}$.
-The direction of the cross product is such that it is *orthogonal* to *both* $\vec{u}$ and $\vec{v}$. There are two such directions, to identify which is correct, the [right-hand rule](https://en.wikipedia.org/wiki/Cross_product#Definition) is used. This rule points the right hand fingers in the direction of $\vec{v}$ and curls them towards $\vec{w}$ (so that the angle between the two vectors is in $[0, \pi]$). The thumb will point in the direction. Call this direction $\hat{n}$, a normal unit vector. It immediately follows that
+The direction of the cross product is such that it is *orthogonal* to *both* $\vec{v}$ and $\vec{w}$. There are two such directions, to identify which is correct, the [right-hand rule](https://en.wikipedia.org/wiki/Cross_product#Definition) is used. This rule points the right hand fingers in the direction of $\vec{v}$ and curls them towards $\vec{w}$ (so that the angle between the two vectors is in $[0, \pi]$). The thumb will point in the direction. Call this direction $\hat{n}$, a normal unit vector. It immediately follows that
 
 ```math
 [\vec{v} \times \vec{v}] = 0
@@ -624,7 +637,7 @@ Vertically combining the two will stack them:
 
 
 # ╔═╡ 0977c4d2-54b9-48ef-8cc7-6c7827c52cb3
-[3 4 -5; 5 -5 7; -3 6 9]
+[3 4 -5; 5 -5 7; -3 (6 +2im) 9]
 
 # ╔═╡ 5e36c68f-6dcb-4ce4-8084-401153d201f2
 [[10, 11, 12] [13, 14, 15]]
@@ -700,6 +713,9 @@ M .* M   # component wise (Hadamard product)
 
 # ╔═╡ 9ba04cc5-b33e-4478-b0eb-8f0d8ab93ce2
 [1 3] ⋅ [1 3]
+
+# ╔═╡ 4be5acc1-b66e-41a2-8818-6411c1f67054
+exp([1, 2])
 
 # ╔═╡ 1308e420-e393-4c24-a508-106f346c8ad6
 md"""
@@ -1056,7 +1072,7 @@ end
 # ╔═╡ a13b9789-fa4b-45bb-a083-81d3df4d4c86
 let # zs is a matrix!
 	f(x, y) = x^2 + y^2
-	xs = range(-2, 2, length=100)
+	xs = range(-2, 2, length=10)
 	ys = range(-2, 2, length=100)
 	zs = [f(x,y) for y in ys, x in xs]
 end
@@ -3349,10 +3365,14 @@ version = "1.4.1+0"
 # ╠═e41e96c0-2c3b-497d-8a39-2aaaccc17423
 # ╟─cb12b4de-5957-499b-b45e-cef684675903
 # ╠═9b43916d-3b24-4fe7-8eea-b044aecf0681
+# ╠═b9de777d-aae7-45fa-bc3f-34899b911fa9
 # ╠═7878efe3-04fd-4632-bca9-045565e82824
 # ╠═c49a2915-ca5a-4405-8625-3167dbc767a6
 # ╠═5eca5911-287a-4252-9393-d8469acb34af
-# ╟─446c2b03-5204-4380-b250-c1bcb3f6dba5
+# ╠═08aa5e12-5e0d-44bf-827d-eafb2ad5a238
+# ╠═e0f30602-8498-4592-b461-b17c12c9e6b7
+# ╠═a8999060-be95-40ce-9d86-7aa48c97d317
+# ╠═446c2b03-5204-4380-b250-c1bcb3f6dba5
 # ╠═a2174988-7bb9-4ec9-a586-b38bf0d4c821
 # ╠═9f2348dc-726f-4320-9611-f94c736ba0fb
 # ╠═c4ad6ae2-065f-4438-a984-865e6440d43d
@@ -3396,6 +3416,7 @@ version = "1.4.1+0"
 # ╠═83801d66-89da-4161-b4b8-1962a97ac6a8
 # ╠═0331ab7a-5529-4320-89ec-c448dbe54194
 # ╠═9ba04cc5-b33e-4478-b0eb-8f0d8ab93ce2
+# ╠═4be5acc1-b66e-41a2-8818-6411c1f67054
 # ╟─1308e420-e393-4c24-a508-106f346c8ad6
 # ╠═911b5ad6-5991-4472-8229-7a091dfc8a80
 # ╠═aaccb6c0-c3c5-4e2e-b529-58aeef9bd8e7
