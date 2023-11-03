@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -236,7 +236,7 @@ A = [ones(length(df.x), 1) df.x]
 
 # ╔═╡ 1ca8c66d-9041-4a8f-899f-35c35b2f1c82
 # Regression coefficients β[1] = b and β[2] = m. Compare to "best fit" above!
-β = inv(A'A)*A'*df.y
+β = inv(A'*A)*A'*df.y
 
 # ╔═╡ d85306eb-a3a8-4075-b09b-8efab8f5efe2
 # Sum square error. Compare to "best fit" above!
@@ -568,7 +568,7 @@ Using the quadrature method, the integral is approximated by a weighted sum such
 
 $\int_{a}^{b}K(x,t)u(t)dt \rightarrow y_j \approx\sum_{i=1}^{n}w_nK(x_{j},t_{i})u(t_{i})$
 
-where $w_n=\frac{b-a}{n}$, $w_m = \frac{c-d}{m}$, $t_{i}=(i-\frac{1}{2})w_1$, and $x_{j} = (j - \frac{1}{2})w_m$. The elements comprising the design matrix $\mathrm{\mathbf{A}}$ are $a_{j,i}=w_nK(x_{i},t_{j})$. The matrix $\mathbf{A}$ is $\mathbb{R}^{m\times n}. $ If $n = m$, the matrix is square.
+where $w_n=\frac{b-a}{n}$, $w_m = \frac{c-d}{m}$, $t_{i}=(i-\frac{1}{2})w_n$, and $x_{j} = (j - \frac{1}{2})w_m$. The elements comprising the design matrix $\mathrm{\mathbf{A}}$ are $a_{j,i}=w_nK(x_{j},t_{i})$. The matrix $\mathbf{A}$ is $\mathbb{R}^{m\times n}. $ If $n = m$, the matrix is square.
 
 Below is an example how to calculate the matrix ``\mathbf{A}\vec{u}``. The discrete solution ``\mathbf{A}\vec{u}`` and ``\vec{y}`` are close, but not identical due to discretization errors.
 """
@@ -1285,6 +1285,12 @@ version = "0.9.3"
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
+
+[[deps.EpollShim_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8e9441ee83492030ace98f9789a654a6d0b1f643"
+uuid = "2702e6a9-849d-5ed8-8c21-79e8b8f9ee43"
+version = "0.0.20230411+0"
 
 [[deps.ExceptionUnwrapping]]
 deps = ["Test"]
@@ -2042,7 +2048,7 @@ uuid = "81def892-9a0e-5fdd-b105-ffc91e053289"
 version = "1.3.0"
 
 [[deps.Wayland_jll]]
-deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
+deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
 git-tree-sha1 = "ed8d92d9774b077c53e1da50fd81a36af3744c1c"
 uuid = "a2964d1f-97da-50d4-b82a-358c7fce9d89"
 version = "1.21.0+0"
@@ -2348,7 +2354,7 @@ version = "1.4.1+0"
 # ╟─d02b8d90-24e8-420f-934c-f3bc4d62554f
 # ╟─3ad80698-f495-4740-9ece-dbf908bd9734
 # ╟─0d399316-d9b9-4980-bff0-d60d8c3fdb94
-# ╠═aabdeb85-2ca7-43ae-b413-92cc73c5fff1
+# ╟─aabdeb85-2ca7-43ae-b413-92cc73c5fff1
 # ╟─46a31a35-e5f9-4e71-8d44-7093c6feb6a1
 # ╟─42bd1e5f-25ea-4375-8a9c-3c5e8ded2867
 # ╠═f7dbe9d9-b709-47fe-9a7b-9a6cedb8d3c9
