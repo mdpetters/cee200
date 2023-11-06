@@ -32,5 +32,5 @@ Notebook 5: <a href="https://mdpetters.github.io/cee200/notebooks/ode_system2/" 
 ## Homework
 
 \exercise{
-Due Date TBD: 
+Due Nov 13, 2023: [https://classroom.github.com/a/3XtCkEew](https://classroom.github.com/a/3XtCkEew) 
 }

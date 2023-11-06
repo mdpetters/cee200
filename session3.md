@@ -14,7 +14,7 @@ Covers matrix based ordinary least squares regression, discretization of Fredhol
 ## Slides and Lecture Notes
 
 ~~~
-Notes: <a href="" target="_blank"> Notes</a>
+Notes: <a href="https://drive.google.com/file/d/1pE-f5JEwXMYOx7adz2A-SrONOdS5uuLJ/view?usp=sharing" target="_blank"> Notes</a>
 ~~~
 
 ## Notebooks
