@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -191,17 +191,15 @@ let
 		color = "black", label = "phase space")
 	sol1 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 1))
 	f1(x) =  1*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y'(x)", 
+	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y(x)", 
 		color = :steelblue3)
 	sol2 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 2))
 	f2(x) =  2*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f2,  linewidth=3, label = "$(sol2)", title = "y'(x) = x*y'(x)", 
-		color = :darkred)
+	plot!(f2,  linewidth=3, label = "$(sol2)", color = :darkred)
 
 	sol3 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => -1))
 	f3(x) =  -1*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f3,  linewidth=3, label = "$(sol3)", title = "y'(x) = x*y'(x)", 
-		color = :darkgoldenrod)
+	plot!(f3,  linewidth=3, label = "$(sol3)", color = :darkgoldenrod)
 	plot(p, size = (600,300), xlabel = "x", ylabel = "y", 
 		legend = :outertopright, bottom_margin = 20px)
 end
@@ -259,7 +257,7 @@ let
 		color = "black", label = "phase space")
 	sol1 = dsolve(D(y)(x) - y(x)*x, y(x), ics=Dict(y(1) => 1))
 	f1(x) =  1*exp(-x0^2/2) * exp(x^2/2)
-	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y'(x)", 
+	plot!(f1,  linewidth=3, label = "$(sol1)", title = "y'(x) = x*y(x)", 
 		color = :black)
 	xs, ys = euler(F, 1.0, 3, 1.0, 10)
 	plot!(xs, ys, color = :darkgoldenrod, label = "Euler: n = 10")
@@ -914,6 +912,12 @@ version = "0.6.8"
 git-tree-sha1 = "bdb1942cd4c45e3c678fd11569d5cccd80976237"
 uuid = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
 version = "1.0.4"
+
+[[deps.EpollShim_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8e9441ee83492030ace98f9789a654a6d0b1f643"
+uuid = "2702e6a9-849d-5ed8-8c21-79e8b8f9ee43"
+version = "0.0.20230411+0"
 
 [[deps.ExceptionUnwrapping]]
 deps = ["Test"]
@@ -2235,7 +2239,7 @@ uuid = "19fa3120-7c27-5ec5-8db8-b0b0aa330d6f"
 version = "0.2.0"
 
 [[deps.Wayland_jll]]
-deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
+deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
 git-tree-sha1 = "ed8d92d9774b077c53e1da50fd81a36af3744c1c"
 uuid = "a2964d1f-97da-50d4-b82a-358c7fce9d89"
 version = "1.21.0+0"
@@ -2517,6 +2521,6 @@ version = "1.4.1+0"
 # ╠═5699ad7a-cf22-4f40-b0bf-277ac4dafc15
 # ╠═906c03c3-54bb-431a-96c4-2016e50763c5
 # ╟─50b56d96-7257-49e0-832c-9644194d2647
-# ╟─209530e9-e019-4c3e-b581-2300446e3ad6
+# ╠═209530e9-e019-4c3e-b581-2300446e3ad6
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
