@@ -28,5 +28,5 @@ Notebook 2: <a href="https://mdpetters.github.io/cee200/notebooks/control/" targ
 ## Homework
 
 \exercise{
-Due Date TBD: 
+Due Nov 27, 2023: [https://classroom.github.com/a/02GAew5R](https://classroom.github.com/a/02GAew5R) 
 }

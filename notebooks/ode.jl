@@ -414,7 +414,7 @@ The most useful options are the tolerances abstol and reltol. These tell the int
 "]))
 
 # ╔═╡ 8d37df6d-cae0-482f-babe-a0156d91f2dd
-odeSolution = solve(prob, Euler(), dt = 0.2, reltol = 1e-8, abstol = 1e-8)
+odeSolution = solve(prob, Euler(), dt = 0.02, reltol = 1e-8, abstol = 1e-8)
 
 # ╔═╡ 5d39406a-c81f-4ede-8cea-fd731f98d98a
 md"""
@@ -475,6 +475,14 @@ let
 	p = plot(t, odeSolution.u, color = :black, lw = 3, label = "Euler Method")
 	plot!(t, exp.(-1.0.*t), color = :darkred, lw = 2, label = "Analytical Solution")
 	plot(p, size = (400,300), xlabel = "t", ylabel = "Activity")
+end
+
+# ╔═╡ 7dacca5b-ce3b-432e-8b67-645b4c3b38b9
+foo = (y,x) -> y*x
+
+# ╔═╡ c359ba91-c6ed-418f-9ea6-f01c20657df4
+function foo(y,x)
+	return y*x
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2498,6 +2506,8 @@ version = "1.4.1+0"
 # ╟─6d51519f-9b1f-462a-acaa-a11b564e040d
 # ╠═cff4074e-a0c1-4c4e-b19d-7665d3edb353
 # ╠═42428795-d698-4c9e-9f47-67cdb8453c57
+# ╠═7dacca5b-ce3b-432e-8b67-645b4c3b38b9
+# ╠═c359ba91-c6ed-418f-9ea6-f01c20657df4
 # ╟─358ee0cf-c710-437d-8473-eb8c0b04235e
 # ╟─fd762ce1-4cd6-4c3b-b023-6cf913aa92c8
 # ╟─9c346abb-eda6-487c-b8cd-345dc1a233cb

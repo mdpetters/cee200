@@ -12,7 +12,7 @@ Covers how to solve ordinary differential equations using analytic, symbolic, an
 ## Slides and Lecture Notes
 
 ~~~
-Notes: <a href="" target="_blank"> Notes</a>
+Notes: <a href="https://drive.google.com/file/d/1Xv7MxuE83KXzkYsFAseEfWEA5obUAcF1/view?usp=sharing" target="_blank"> ODE Notes</a>
 ~~~
 
 ## Notebooks
