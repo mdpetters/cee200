@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -60,7 +60,7 @@ The purpose of the heat sink is the maintain one side of the TEC module at a con
 ## Instrument Model
 
 ```math
-\frac{dT}{dt} = -k(T_{env}-T) - \frac{Q(V,\Delta T)}{mc}
+\frac{dT}{dt} = k(T_{env}-T) - \frac{Q(V,\Delta T)}{mc}
 ```
 
 where ``k`` is the coefficient of heat transfer, ``T_{env}`` is the temperature of the environment, ``T`` is the temperature of the place, ``Q`` is the heat transfer across the TEC, ``m`` is the mass of the metal stage, and ``c`` is the heat capacity of the metal. Recall from a previous homework assignment that the performance of the TEC can be modeled via the model
@@ -333,7 +333,7 @@ end
 ts, Ts, Vs = simulation(300.0, 2.0, 360; dt = 10)
 
 # ╔═╡ 43c38357-4d59-457d-9b90-94ae1f267212
-plot(ts./60, Ts, color = :black, label = "1 Hz Discrete Event Simulation", 
+plot(ts./60, Ts, color = :black, label = "0.1 Hz Discrete Event Simulation", 
 		xlabel = "Time (min)", ylabel = "T (K)", size = (700, 300), bottom_margin = 20px, left_margin = 10px, minorgrid = :true, framestyle = :box)
 
 # ╔═╡ 7d030c04-ac3b-4832-a3e8-6053fc9c14e7
@@ -1438,6 +1438,12 @@ version = "0.6.8"
 git-tree-sha1 = "bdb1942cd4c45e3c678fd11569d5cccd80976237"
 uuid = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
 version = "1.0.4"
+
+[[deps.EpollShim_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8e9441ee83492030ace98f9789a654a6d0b1f643"
+uuid = "2702e6a9-849d-5ed8-8c21-79e8b8f9ee43"
+version = "0.0.20230411+0"
 
 [[deps.ExceptionUnwrapping]]
 deps = ["Test"]
@@ -2737,7 +2743,7 @@ uuid = "19fa3120-7c27-5ec5-8db8-b0b0aa330d6f"
 version = "0.2.0"
 
 [[deps.Wayland_jll]]
-deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
+deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
 git-tree-sha1 = "ed8d92d9774b077c53e1da50fd81a36af3744c1c"
 uuid = "a2964d1f-97da-50d4-b82a-358c7fce9d89"
 version = "1.21.0+0"
@@ -2982,7 +2988,7 @@ version = "1.4.1+0"
 # ╔═╡ Cell order:
 # ╟─cc5fa8b8-4da3-11ee-28fd-7dacab544db3
 # ╟─aabae4cb-3912-408d-bacf-267f2440c047
-# ╠═9db0e27f-32f5-4b03-9d70-5dea9f079ecb
+# ╟─9db0e27f-32f5-4b03-9d70-5dea9f079ecb
 # ╟─ba749db8-c015-4137-ac7e-92fc0bfbe7ce
 # ╟─a25d1d5d-abc8-4ec4-80b2-ecdaea755a1c
 # ╠═be1a604c-6cf6-405f-9fa0-86e3b454315e
@@ -3006,9 +3012,9 @@ version = "1.4.1+0"
 # ╠═43c38357-4d59-457d-9b90-94ae1f267212
 # ╟─7d030c04-ac3b-4832-a3e8-6053fc9c14e7
 # ╟─1ae8b353-df38-430f-b220-401adddac1d1
-# ╟─f85d4b96-e5d8-4d5c-aaed-df30c8c06084
+# ╠═f85d4b96-e5d8-4d5c-aaed-df30c8c06084
 # ╟─0c6f2477-1252-4485-9596-2748a2508e14
-# ╟─77c08e89-b5ca-45d3-8916-3ac8cf9453cb
+# ╠═77c08e89-b5ca-45d3-8916-3ac8cf9453cb
 # ╟─6647a86f-7f6d-43d7-892e-724d3a191ca9
 # ╠═b40aefaa-4600-42f7-ab1d-d92b54fb6401
 # ╟─a20f135e-f061-4287-9e11-3ffad5cc64b8

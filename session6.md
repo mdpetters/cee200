@@ -14,7 +14,7 @@ Covers the state-space equations, how to set up discrete event simulations of li
 ## Slides and Lecture Notes
 
 ~~~
-Notes: <a href="" target="_blank"> Notes</a>
+Notes: <a href="https://drive.google.com/file/d/1kCAzCY8g826XIjsq5ZCUeJEqEntOHvPc/view?usp=sharing" target="_blank"> Control Notes</a>
 ~~~
 
 ## Notebooks
