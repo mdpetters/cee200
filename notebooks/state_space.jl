@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -41,7 +41,7 @@ We can reuse our second order ODE solver solution before. The only change made i
 begin
 	f(t) = 1.0/p[1]*(sin(4*t))^2
 	function f!(ddu, du, u, p, t)  
-		ddu[1] = -p[2]/p[1] * du[1] - p[3]/p[1] * u[1] + f(t)
+		ddu[1] = -p[2]/p[1] * du[1] - p[3]/p[1] * u[1]  + f(t)
 	end
 	u0_second =  [-1.0]                  # initial position
 	du0_second = [0.0]                   # initial velocity
@@ -205,7 +205,7 @@ end
 # ╔═╡ fa5fc3cd-c6e9-4df6-877d-bd2d6be9cb7f
 begin
 	accel = map(x -> x[1], outvec)
-	plot(ts3, accel, label = "acceleration", color = :black)
+	plot(ts3, accel, label = "force", color = :black)
 end
 
 # ╔═╡ 6a23744f-89e0-4b3a-a33a-5c9089312efd
@@ -661,6 +661,12 @@ version = "0.6.8"
 git-tree-sha1 = "bdb1942cd4c45e3c678fd11569d5cccd80976237"
 uuid = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
 version = "1.0.4"
+
+[[deps.EpollShim_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8e9441ee83492030ace98f9789a654a6d0b1f643"
+uuid = "2702e6a9-849d-5ed8-8c21-79e8b8f9ee43"
+version = "0.0.20230411+0"
 
 [[deps.ExceptionUnwrapping]]
 deps = ["Test"]
@@ -1937,7 +1943,7 @@ uuid = "19fa3120-7c27-5ec5-8db8-b0b0aa330d6f"
 version = "0.2.0"
 
 [[deps.Wayland_jll]]
-deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
+deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
 git-tree-sha1 = "ed8d92d9774b077c53e1da50fd81a36af3744c1c"
 uuid = "a2964d1f-97da-50d4-b82a-358c7fce9d89"
 version = "1.21.0+0"
@@ -2180,7 +2186,7 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═3deb3968-4c58-11ee-2350-eb87f8e1a936
+# ╟─3deb3968-4c58-11ee-2350-eb87f8e1a936
 # ╟─e49b4689-6f9c-4068-bd10-39330548ac70
 # ╠═b81966df-8038-4e4b-b290-3cc3aaa3115f
 # ╠═be9c2f5f-6963-4d7d-8750-9c1aa63a099f
