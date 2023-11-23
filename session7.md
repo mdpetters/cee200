@@ -28,5 +28,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/heat/" target="_
 ## Homework
 
 \exercise{
-Due Dec 4, 2023: [https://classroom.github.com/a/bf6UCQBD](https://classroom.github.com/a/bf6UCQBD) 
+Due Dec 11, 2023: [https://classroom.github.com/a/bf6UCQBD](https://classroom.github.com/a/bf6UCQBD) 
 }
