@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.9
 
 using Markdown
 using InteractiveUtils
@@ -180,7 +180,7 @@ function finite_diff_matrix(n)
 end
 
 # ╔═╡ 21f39915-33a5-4b05-a612-8c6c50592cd2
-A = finite_diff_matrix(10)
+A = finite_diff_matrix(6)
 
 # ╔═╡ 9c83bae7-0a81-4e53-8883-ed0c4d2b4513
 md"""
@@ -592,7 +592,7 @@ thesol = let
 	νₙ = n*pi/b
 	λ = sqrt(α)*sqrt(μₘ^2.0 + νₙ^2.0)
 
-	nx = 40
+	nx = 60
 	ma = range(0.0, a, length = nx)
 	mb = range(0.0, b, length = nx)
 	T(x,y) = sin(μₘ*x)*sin(νₙ*y)
@@ -645,7 +645,7 @@ md"""
 With no advection, no sources, one dimension, and no variation in ``D`` the equation is
 
 ```math
-\frac{\partial c}{\partial t} = D \frac{\partial^2 c}{\partial t}
+\frac{\partial c}{\partial t} = D \frac{\partial^2 c}{\partial x^2}
 ```
 
 which is the smae as the heat equation used in 1.1.
@@ -801,7 +801,7 @@ end
 @bind myDiff1 combine() do Child
 	md"""
 	``t`` = $(
-		Child(Slider(0:0.05:10, default = 0.0, show_value = true))
+		Child(Slider(0:0.05:100, default = 0.0, show_value = true))
 	)
 	``u_x`` = $(
 		Child(Slider(-0.5:0.05:0.5, default = 0, show_value = true))
@@ -822,7 +822,7 @@ let
 	u0 = zeros(length(discrete_x))	
 	u0[Int((length(discrete_x)+1)/2.0)] = M./dx
 
-	sol = finite_diff_solver_advection(u0, [D, uₓ, dx], [0,20.0])
+	sol = finite_diff_solver_advection(u0, [D, uₓ, dx], [0,100.0])
 	p1 = plot(discrete_x, sol(t), lw = 1, lt = :stepmid,  
 		label = :none, xlabel = L"x", ylabel = L"c(x,t)", 
 		color = :black)
