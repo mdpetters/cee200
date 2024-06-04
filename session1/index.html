@@ -1,81 +1,184 @@
-<!doctype html> <html lang=en > <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND13YRR6SB"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-ND13YRR6SB'); </script> <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/cee200/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/cee200/css/jtd.css"> <link rel=icon  href="/cee200/assets/favicon.png"> <style> /* #148 wrap long header */ .franklin-content a.header-anchor, .franklin-toc li a { word-wrap: break-word; white-space: normal; } </style> <title>Introduction</title> <div class=page-wrap > <div class=side-bar > <div class=header > <a href="/cee200/" class=title > CEE-200 </a> </div> <label for=show-menu  class=show-menu >MENU</label> <input type=checkbox  id=show-menu  role=button > <div class=menu  id=side-menu > <ul class=menu-list > <li class="menu-list-item "><a href="/cee200/" class="menu-list-link ">Syllabus</a> <li class="menu-list-item active"><a href="/cee200/session1/" class="menu-list-link ">Introduction</a> <li class="menu-list-item "><a href="/cee200/session4/" class="menu-list-link ">Fourier Transform</a> <li class="menu-list-item "><a href="/cee200/session2/" class="menu-list-link ">Vector Calculus</a> <li class="menu-list-item "><a href="/cee200/session3/" class="menu-list-link ">Regularization</a> <li class="menu-list-item "><a href="/cee200/session5/" class="menu-list-link ">Coupled Reactions</a> <li class="menu-list-item "><a href="/cee200/session6/" class="menu-list-link ">Control Systems</a> <li class="menu-list-item "><a href="/cee200/session7/" class="menu-list-link ">Transport</a> </ul> </div> <div class=footer > UC Riverside</a> </div> </div> <div class=main-content-wrap > <div class=main-content > <div class=main-header > <a id=github  href="">Advanced Engineering Computation</a> </div> <div class=franklin-content ><h1 id=introduction ><a href="#introduction" class=header-anchor >Introduction</a></h1> <p>Covers important tools used in this class, including <code>git</code>, <code>GitHub</code>, <code>GitHub Classroom</code>, <code>Julia</code>, and <code>Pluto</code> notebooks. </p> <div class=learning ><div class=title ><strong>⏻ Learning Objectives</strong></div> <div class=content ><p><strong>By the end of this module you have learned</strong></p> <ul> <li><p>how to download and install Julia and how to install packages</p> <li><p>how to start, use and interact with Julia/Pluto notebooks</p> <li><p>how git creates a file system and what commit, push, pull, and sync do</p> <li><p>how to use a git work flow to collaborate with yourself across multiple computers and others</p> <li><p>how to create ssh keys and use ssh</p> </ul></div></div> <h2 id=slides_and_lecture_notes ><a href="#slides_and_lecture_notes" class=header-anchor >Slides and Lecture Notes</a></h2> <p>Thus section will contain a link to slides and notes shown in class. </p> Slides: <a href="https://docs.google.com/presentation/d/1IowVxPyuMRNh2Wj8edUgvpEHh7MwakLgR-pu3ccLpGc/edit?usp=sharing" target=_blank > Slides</a> <br><br> <h2 id=pluto_notebooks ><a href="#pluto_notebooks" class=header-anchor >Pluto Notebooks</a></h2> <p>Most languages have a notebook environment. For example, <a href="https://observablehq.com/">Observable.js</a> for Javascript, <a href="https://jupyter.org/">Jupyter</a> for <strong>Ju</strong>lia, <strong>Py</strong>thon, and <strong>R</strong>, <a href="https://www.mathworks.com/campaigns/offers/matlab-live-editor.html">MATLAB live</a> for MATLAB. The notebook model was pioneered by Mathematica and Maple and provide programmers a way to intersperse code with markup, add interactive UI elements, and show off code in a format more interesting than text files. </p> <p>Pluto.jl provides a reactive notebook environment specific to Julia.</p> <p><img src="/cee200/assets/pluto_logo.svg" alt="" /></p> <h1 id=pluto_quickstart ><a href="#pluto_quickstart" class=header-anchor >Pluto Quickstart</a></h1> <h4 id=open_julia_repl ><a href="#open_julia_repl" class=header-anchor >Open Julia REPL:</a></h4> <pre><code class="julia hljs">[petters<span class=hljs-meta >@dev</span> ~]$ julia
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND13YRR6SB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-ND13YRR6SB');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <link rel="stylesheet" href="/cee200/libs/highlight/styles/github.min.css">
+   
+  <link rel="stylesheet" href="/cee200/css/jtd.css">
+<link rel="icon" href="/cee200/assets/favicon.png">
+
+<style>
+  /* #148 wrap long header */
+  .franklin-content a.header-anchor,
+  .franklin-toc li a
+   {
+    word-wrap: break-word;
+    white-space: normal;
+  }
+</style>
+
+   <title>Introduction</title>  
+</head>
+<body>                      <!-- closed in foot.html -->
+<div class="page-wrap">   <!-- closed in foot.html -->
+  <!-- SIDE BAR -->
+  <div class="side-bar">
+    <div class="header">
+      <a href="/cee200/" class="title">
+        CEE-200
+      </a>
+    </div>
+    <label for="show-menu" class="show-menu">MENU</label>
+    <input type="checkbox" id="show-menu" role="button">
+    <div class="menu" id="side-menu">
+      <ul class="menu-list">
+        <li class="menu-list-item "><a href="/cee200/" class="menu-list-link ">Syllabus</a>
+        <li class="menu-list-item active"><a href="/cee200/session1/" class="menu-list-link ">Introduction</a>
+        <li class="menu-list-item "><a href="/cee200/session4/" class="menu-list-link ">Fourier Transform</a>
+        <li class="menu-list-item "><a href="/cee200/session2/" class="menu-list-link ">Vector Calculus</a>
+        <li class="menu-list-item "><a href="/cee200/session3/" class="menu-list-link ">Regularization</a>
+        <li class="menu-list-item "><a href="/cee200/session5/" class="menu-list-link ">Coupled Reactions</a>
+        <li class="menu-list-item "><a href="/cee200/session6/" class="menu-list-link ">Control Systems</a>
+        <li class="menu-list-item "><a href="/cee200/session7/" class="menu-list-link ">Transport</a>
+        <!-- <li class="menu-list-item {{ispage session8/*}}active{{end}}"><a href="/cee200/session8/" class="menu-list-link {{ispage menu1}}active{{end}}">CFD Simulation</a> -->
+      </ul>
+    </div>
+    <div class="footer">
+      UC Riverside</a>
+    </div>
+  </div>
+  <!-- CONTENT -->
+  <div class="main-content-wrap"> <!-- closed in foot.html -->
+    <div class="main-content">    <!-- closed in foot.html -->
+      <div class="main-header">
+        <a id="github" href="">Advanced Engineering Computation</a>
+      </div>
+
+
+
+<!-- Content appended here (in class franklin-content) -->
+<div class="franklin-content"><h1 id="introduction"><a href="#introduction" class="header-anchor">Introduction</a></h1>
+<p>Covers important tools used in this class, including <code>git</code>, <code>GitHub</code>, <code>GitHub Classroom</code>, <code>Julia</code>, and <code>Pluto</code> notebooks.    </p>
+<div class="learning"><div class="title"><strong>⏻ Learning Objectives</strong></div>
+<div class="content"><p><strong>By the end of this module you have learned</strong></p>
+<ul>
+<li><p>how to download and install Julia and how to install packages</p>
+</li>
+<li><p>how to start, use and interact with Julia/Pluto notebooks</p>
+</li>
+<li><p>how git creates a file system and what commit, push, pull, and sync do</p>
+</li>
+<li><p>how to use a git work flow to collaborate with yourself across multiple computers and others</p>
+</li>
+<li><p>how to create ssh keys and use ssh</p>
+</li>
+</ul></div></div>
+<h2 id="slides_and_lecture_notes"><a href="#slides_and_lecture_notes" class="header-anchor">Slides and Lecture Notes</a></h2>
+<p>Thus section will contain a link to slides and notes shown in class. </p>
+
+Slides: <a href="https://docs.google.com/presentation/d/1IowVxPyuMRNh2Wj8edUgvpEHh7MwakLgR-pu3ccLpGc/edit?usp=sharing" target="_blank"> Slides</a> <br><br>
+
+<h2 id="pluto_notebooks"><a href="#pluto_notebooks" class="header-anchor">Pluto Notebooks</a></h2>
+<p>Most languages have a notebook environment. For example, <a href="https://observablehq.com/">Observable.js</a> for Javascript, <a href="https://jupyter.org/">Jupyter</a> for <strong>Ju</strong>lia, <strong>Py</strong>thon, and <strong>R</strong>,  <a href="https://www.mathworks.com/campaigns/offers/matlab-live-editor.html">MATLAB live</a> for MATLAB. The notebook model was pioneered by Mathematica and Maple and provide programmers a way to intersperse code with markup, add interactive UI elements, and show off code in a format more interesting than text files. </p>
+<p>Pluto.jl provides a reactive notebook environment specific to Julia.</p>
+<p><img src="/cee200/assets/pluto_logo.svg" alt="" /></p>
+<h1 id="pluto_quickstart"><a href="#pluto_quickstart" class="header-anchor">Pluto Quickstart</a></h1>
+<h4 id="open_julia_repl"><a href="#open_julia_repl" class="header-anchor">Open Julia REPL:</a></h4>
+<pre><code class="language-julia">&#91;petters@dev ~&#93;&#36; julia
                _
-   _       _ _(_)_     |  Documentation: https://docs.julialang.org
-  (_)     | (_) (_)    |
-   _ _   _| |_  __ _   |  <span class=hljs-built_in >Type</span> <span class=hljs-string >&quot;?&quot;</span> <span class=hljs-keyword >for</span> help, <span class=hljs-string >&quot;]?&quot;</span> <span class=hljs-keyword >for</span> Pkg help.
-  | | | | | | |/ _<span class=hljs-string >` |  |
-  | | |_| | | | (_| |  |  Version 1.9.3 (2023-08-24)
- _/ |\__&#x27;_|_|_|\__&#x27;_|  |  Official https://julialang.org/ release
+   _       _ _&#40;_&#41;_     |  Documentation: https://docs.julialang.org
+  &#40;_&#41;     | &#40;_&#41; &#40;_&#41;    |
+   _ _   _| |_  __ _   |  Type &quot;?&quot; for help, &quot;&#93;?&quot; for Pkg help.
+  | | | | | | |/ _&#96; |  |
+  | | |_| | | | &#40;_| |  |  Version 1.9.3 &#40;2023-08-24&#41;
+ _/ |\__&#39;_|_|_|\__&#39;_|  |  Official https://julialang.org/ release
 |__/                   |
 
-julia&gt;</span></code></pre> <h4 id=installing_pluto_only_need_to_do_this_once ><a href="#installing_pluto_only_need_to_do_this_once" class=header-anchor >Installing Pluto &#40;only need to do this once&#41;:</a></h4> <pre><code class="julia hljs">julia&gt; ] add Pluto</code></pre>
-<h4 id=starting_the_pluto_server ><a href="#starting_the_pluto_server" class=header-anchor >Starting the Pluto Server:</a></h4>
-<pre><code class="julia hljs">julia&gt; <span class=hljs-keyword >using</span> Pluto
+julia&gt;</code></pre>
+<h4 id="installing_pluto_only_need_to_do_this_once"><a href="#installing_pluto_only_need_to_do_this_once" class="header-anchor">Installing Pluto &#40;only need to do this once&#41;:</a></h4>
+<pre><code class="language-julia">julia&gt; &#93; add Pluto</code></pre>
+<h4 id="starting_the_pluto_server"><a href="#starting_the_pluto_server" class="header-anchor">Starting the Pluto Server:</a></h4>
+<pre><code class="language-julia">julia&gt; using Pluto
 
-julia&gt; Pluto.run()
+julia&gt; Pluto.run&#40;&#41;
 ┌ Info: 
-└ Opening http://localhost:<span class=hljs-number >1234</span>/?secret=MrGlCAQ1 <span class=hljs-keyword >in</span> your default browser... ~ have fun!
+└ Opening http://localhost:1234/?secret&#61;MrGlCAQ1 in your default browser... ~ have fun&#33;
 ┌ Info: 
-│ Press Ctrl+C <span class=hljs-keyword >in</span> this terminal to stop Pluto</code></pre>
-<h4 id=opening_the_link_in_the_browser_-_which_should_be_automatic_-_will_bring_up_the_following_page ><a href="#opening_the_link_in_the_browser_-_which_should_be_automatic_-_will_bring_up_the_following_page" class=header-anchor >Opening the link in the browser - which should be automatic - will bring up the following page:</a></h4>
+│ Press Ctrl&#43;C in this terminal to stop Pluto</code></pre>
+<h4 id="opening_the_link_in_the_browser_-_which_should_be_automatic_-_will_bring_up_the_following_page"><a href="#opening_the_link_in_the_browser_-_which_should_be_automatic_-_will_bring_up_the_following_page" class="header-anchor">Opening the link in the browser - which should be automatic - will bring up the following page:</a></h4>
 <p><img src="/cee200/assets/pluto_screenshot.png" alt="" /></p>
 <p>To get back to this page from an opened notebook, click the <code>Pluto.jl</code> icon in the top navigation bar.  </p>
-<h4 id=open_an_existing_notebook_or_create_a_new_notebook_press_ctrl_to_view_keyboard_shortcuts ><a href="#open_an_existing_notebook_or_create_a_new_notebook_press_ctrl_to_view_keyboard_shortcuts" class=header-anchor >Open an existing notebook or create a new notebook. Press <code>CTRL &#43; ?</code> to view keyboard shortcuts:</a></h4>
+<h4 id="open_an_existing_notebook_or_create_a_new_notebook_press_ctrl_to_view_keyboard_shortcuts"><a href="#open_an_existing_notebook_or_create_a_new_notebook_press_ctrl_to_view_keyboard_shortcuts" class="header-anchor">Open an existing notebook or create a new notebook. Press <code>CTRL &#43; ?</code> to view keyboard shortcuts:</a></h4>
 <p><img src="/cee200/assets/shortcuts.png" alt="" /></p>
-<h2 id=key_points_about_pluto ><a href="#key_points_about_pluto" class=header-anchor >Key Points about Pluto</a></h2>
-<h4 id=your_code_is_reactive ><a href="#your_code_is_reactive" class=header-anchor >Your Code is Reactive.  </a></h4>
+<h2 id="key_points_about_pluto"><a href="#key_points_about_pluto" class="header-anchor">Key Points about Pluto</a></h2>
+<h4 id="your_code_is_reactive"><a href="#your_code_is_reactive" class="header-anchor">Your Code is Reactive.  </a></h4>
 <p>When you change a variable, that change gets propagated through all cells which reference that variable. </p>
 <p><img src="/cee200/assets/reactive.gif" alt="" /></p>
-<h4 id=returned_values_will_render_as_html ><a href="#returned_values_will_render_as_html" class=header-anchor >Returned Values will render as HTML.</a></h4>
+<h4 id="returned_values_will_render_as_html"><a href="#returned_values_will_render_as_html" class="header-anchor">Returned Values will render as HTML.</a></h4>
 <p>Text with a <a href="https://en.wikipedia.org/wiki/Markdown">markdown</a> string macro &#40;md&#41; will look nice.  Note that output gets displayed above the code.</p>
 <p><img src="/cee200/assets/pluto_markdown.png" alt="" /></p>
-<h4 id=code_can_be_hidden ><a href="#code_can_be_hidden" class=header-anchor >Code can be Hidden.</a></h4>
+<h4 id="code_can_be_hidden"><a href="#code_can_be_hidden" class="header-anchor">Code can be Hidden.</a></h4>
 <p>Click the eye icon on the top left of a cell to hide the code.  It only appears if your cursor is hovering over the cell.</p>
 <p><img src="/cee200/assets/hide.gif" alt="" /></p>
-<h2 id=notes_tips_and_tricks ><a href="#notes_tips_and_tricks" class=header-anchor >Notes, Tips, and Tricks</a></h2>
-<h4 id=multiple_expressions ><a href="#multiple_expressions" class=header-anchor >Multiple Expressions</a></h4>
+<h2 id="notes_tips_and_tricks"><a href="#notes_tips_and_tricks" class="header-anchor">Notes, Tips, and Tricks</a></h2>
+<h4 id="multiple_expressions"><a href="#multiple_expressions" class="header-anchor">Multiple Expressions</a></h4>
 <p>Pluto will try to get you to split multiple expressions into multiple cells &#40;You can also put multiple expressions in a begin-end block&#41;.  This helps Pluto manage the dependencies between cells and avoids unnecessary re-running of code that &quot;reacts&quot; to something it doesn&#39;t need to. </p>
-<h4 id=immutable_state ><a href="#immutable_state" class=header-anchor >Immutable State</a></h4>
+<h4 id="immutable_state"><a href="#immutable_state" class="header-anchor">Immutable State</a></h4>
 <p>Because <code>Pluto.jl</code> is reactive, once a variable is assigned, it cannot be assigned again &#40;sort of&#41;. In older <code>Pluto.jl</code> versions, the second assignment threw an error. In the current version, Pluto will disable the previous cell. Suffice to say, you cannot/should not have multiple assignments to the same variable.</p>
 <p><img src="/cee200/assets/disabled.png" alt="" /></p>
 <p>In many ways this is a good thing. It makes it easier to reason about the code. For example, if we declared <code>x &#61; 5</code> then x equals five in the entire notebook. However, this is a departure from how many think about computing, and differs from &quot;regular&quot; Julia/MATLAB/R code where this is allowed. It makes it particularly difficult/impossible to implement algorithms that increment variables, e.g, <code>x &#61; x &#43; 1</code>. If you write code like this you will have an easier time using the standard IDE. </p>
 <p><img src="/cee200/assets/multiple.png" alt="" /></p>
-<h4 id=global_and_local_scope ><a href="#global_and_local_scope" class=header-anchor >Global and Local Scope</a></h4>
+<h4 id="global_and_local_scope"><a href="#global_and_local_scope" class="header-anchor">Global and Local Scope</a></h4>
 <p>Associated with the immutable state of variables is their global scope. Once the assignment statement is made, the variable name is taken for the entire notebook.</p>
 <p><img src="/cee200/assets/scope1.png" alt="" /></p>
 <p>For educational purposes we often may want to reuse <code>x</code> multiple times in the notebook. Item wrapped in a <code>let ... end</code> block are local scope and freed at the end of the block. In the example below, <code>f</code> is evaluated &#40;and available&#41; inside the <code>let ... end</code> block, but seizes to exist afterwards. Thus the variables inside the <code>let ... end</code> block are local scope.</p>
 <p><img src="/cee200/assets/scope2.png" alt="" /></p>
 <p>Variables inside functions are, per usual, local scope. In the example below, <code>a</code> and <code>b</code> refer to the local definition inside the function. They are locally scoped.</p>
 <p><img src="/cee200/assets/scope3.png" alt="" /></p>
-<h4 id=pluto_package_manager ><a href="#pluto_package_manager" class=header-anchor >Pluto Package Manager</a></h4>
+<h4 id="pluto_package_manager"><a href="#pluto_package_manager" class="header-anchor">Pluto Package Manager</a></h4>
 <p>Each notebook has it&#39;s own package configuration. <code>Pluto.jl</code> will download the packages and manage dependencies. They are thus a mostly &quot;one-click&quot; deployment. In contrast, local installs require you to manually add the packages to the local environment. Packages are best declared at the beginning of the notebook in a <code>begin ... end</code> block. The check mark indicates that the package is downloaded and compiled.  </p>
 <p><img src="/cee200/assets/package.png" alt="" /></p>
-<div class=concept ><div class=title ><strong>✔ Key Concept</strong></div>
-<div class=content >When you change the package configuration by adding or subtracting packages, the notebook resets and the configuration is recompiled. This can be slow and sometimes requires are restart of the notebook.</div></div>
+<div class="concept"><div class="title"><strong>✔ Key Concept</strong></div>
+<div class="content">When you change the package configuration by adding or subtracting packages, the notebook resets and the configuration is recompiled. This can be slow and sometimes requires are restart of the notebook.</div></div>
 <p>You can learn more about Pluto&#39;s package management system <a href="https://plutojl.org/docs/packages/">here</a>.</p>
-<h4 id=documentation ><a href="#documentation" class=header-anchor >Documentation</a></h4>
+<h4 id="documentation"><a href="#documentation" class="header-anchor">Documentation</a></h4>
 <p><code>Pluto.jl</code> has a documentation tool built in. It displays the standard doc strings provided by a package or the language.  </p>
 <p><img src="/cee200/assets/document.png" alt="" /></p>
-<h2 id=notebooks ><a href="#notebooks" class=header-anchor >Notebooks</a></h2>
+<h2 id="notebooks"><a href="#notebooks" class="header-anchor">Notebooks</a></h2>
 <p><code>Pluto.jl</code> notebooks are the main &quot;text&quot; used for this course. One or more notebooks for each module will be posted under this heading. The link is to a <code>html</code> version of the notebook. Those are for display only and do not contain any interactive elements. There is a link in the top right of the <code>html</code> version called <code>Edit or run this notebook</code> that allows you to download the notebook. The link will provide instructions on how to run it. I do not recommend the binder approach, but to download and execute it on your own computer. This way you can save your changes as needed.  </p>
 <p><img src="/cee200/assets/download_link.png" alt="" /></p>
 
-Notebook1: <a href="https://mdpetters.github.io/cee200/notebooks/introduction_to_pluto/" target=_blank > Introduction to Pluto Notebook</a>
+Notebook1: <a href="https://mdpetters.github.io/cee200/notebooks/introduction_to_pluto/" target="_blank"> Introduction to Pluto Notebook</a>
 
-<div class=warning ><div class=title ><strong>⚠ Caution</strong></div>
-<div class=content >The first time you run these notebooks it will be exceptionally slow &#40;up to a few minutes&#41; since the package manager must download and compile a long list of dependencies. Once the notebook has been executed once, the start up time is improved, but still slow &#40;maybe 1-2 min&#41;. I recommend starting the notebook&#40;s&#41; during the few minutes before class when you are settling in for the lecture.</div></div>
-<h2 id=homework ><a href="#homework" class=header-anchor >Homework</a></h2>
+<div class="warning"><div class="title"><strong>⚠ Caution</strong></div>
+<div class="content">The first time you run these notebooks it will be exceptionally slow &#40;up to a few minutes&#41; since the package manager must download and compile a long list of dependencies. Once the notebook has been executed once, the start up time is improved, but still slow &#40;maybe 1-2 min&#41;. I recommend starting the notebook&#40;s&#41; during the few minutes before class when you are settling in for the lecture.</div></div>
+<h2 id="homework"><a href="#homework" class="header-anchor">Homework</a></h2>
 <p>This section contains links to homework assignments. The link is password protected to ensure that only students enrolled in the course submit homework. Once you accept, please associate your GitHub account with your name in GitHub classroom. You only need to do this once.  </p>
-<div class=exercise ><div class=title ><strong>⌨ Assignments</strong></div>
-<div class=content >Due Oct 9, 2023: <a href="https://classroom.github.com/a/Zqujj2dp">https://classroom.github.com/a/Zqujj2dp</a></div></div>
-<div class=page-foot >
+<div class="exercise"><div class="title"><strong>⌨ Assignments</strong></div>
+<div class="content"><a href="https://classroom.github.com/a/QPCK6yOX">https://classroom.github.com/a/QPCK6yOX</a></div></div>
+<div class="page-foot">
     <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> Markus Petters</a>.
 </div>
-</div>
-    </div> 
-    </div> 
+</div><!-- CONTENT ENDS HERE -->
+    </div> <!-- end of class main-content -->
+    </div> <!-- end of class main-content-wrap -->
     </div> <!-- end of class page-wrap-->
     
     
       <script src="/cee200/libs/highlight/highlight.min.js"></script>
 <script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>

@@ -1,1 +1,108 @@
-<!doctype html> <html lang=en > <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND13YRR6SB"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-ND13YRR6SB'); </script> <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/cee200/css/jtd.css"> <link rel=icon  href="/cee200/assets/favicon.png"> <style> /* #148 wrap long header */ .franklin-content a.header-anchor, .franklin-toc li a { word-wrap: break-word; white-space: normal; } </style> <title>Fourier Transforms</title> <div class=page-wrap > <div class=side-bar > <div class=header > <a href="/cee200/" class=title > CEE-200 </a> </div> <label for=show-menu  class=show-menu >MENU</label> <input type=checkbox  id=show-menu  role=button > <div class=menu  id=side-menu > <ul class=menu-list > <li class="menu-list-item "><a href="/cee200/" class="menu-list-link ">Syllabus</a> <li class="menu-list-item "><a href="/cee200/session1/" class="menu-list-link ">Introduction</a> <li class="menu-list-item active"><a href="/cee200/session4/" class="menu-list-link ">Fourier Transform</a> <li class="menu-list-item "><a href="/cee200/session2/" class="menu-list-link ">Vector Calculus</a> <li class="menu-list-item "><a href="/cee200/session3/" class="menu-list-link ">Regularization</a> <li class="menu-list-item "><a href="/cee200/session5/" class="menu-list-link ">Coupled Reactions</a> <li class="menu-list-item "><a href="/cee200/session6/" class="menu-list-link ">Control Systems</a> <li class="menu-list-item "><a href="/cee200/session7/" class="menu-list-link ">Transport</a> </ul> </div> <div class=footer > UC Riverside</a> </div> </div> <div class=main-content-wrap > <div class=main-content > <div class=main-header > <a id=github  href="">Advanced Engineering Computation</a> </div> <div class=franklin-content ><h1 id=fourier_transforms ><a href="#fourier_transforms" class=header-anchor >Fourier Transforms</a></h1> <p>This session teaches you how to apply the discrete Fourier transform to perform spectral analysis and filtering on data sets. The topic is generalized to introduce the continuous Fourier and Laplace transform. </p> <div class=learning ><div class=title ><strong>⏻ Learning Objectives</strong></div> <div class=content ><p><strong>By the end of this module you have</strong></p> <ul> <li><p>learned how to apply the discrete Fourier transform to compute the amplitude and phase spectrum</p> <li><p>learned how to apply the discrete Fourier transform to compute the power spectrum</p> <li><p>learned how to filter data in the spectral domain</p> <li><p>reviewed important properties of the continuous and Fourier and Laplace transform</p> </ul></div></div> <h2 id=slides_and_lecture_notes ><a href="#slides_and_lecture_notes" class=header-anchor >Slides and Lecture Notes</a></h2> Slides: <a href="https://docs.google.com/presentation/d/1tgb63vTVY6S9e0WIXNf5MfuL_AzIdu0sKpb-fQruZPk/edit?usp=sharing" target=_blank > Fourier Transform</a> <br><br> Notes: <a href="https://drive.google.com/file/d/10FDL03vgqHy_gPjufjJxbAgG8gp-HZSK/view?usp=sharing" target=_blank > Oct 5, 2023</a> <h2 id=notebooks ><a href="#notebooks" class=header-anchor >Notebooks</a></h2> Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target=_blank > Fourier Transform</a> <h2 id=homework ><a href="#homework" class=header-anchor >Homework</a></h2> <div class=exercise ><div class=title ><strong>⌨ Assignments</strong></div> <div class=content >Due Oct 16, 2023: <a href="https://classroom.github.com/a/UiQ-CDc1">https://classroom.github.com/a/UiQ-CDc1</a></div></div> <div class=page-foot > <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> Markus Petters</a>. </div> </div> </div> </div> </div> <!-- end of class page-wrap-->
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND13YRR6SB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-ND13YRR6SB');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+  <link rel="stylesheet" href="/cee200/css/jtd.css">
+<link rel="icon" href="/cee200/assets/favicon.png">
+
+<style>
+  /* #148 wrap long header */
+  .franklin-content a.header-anchor,
+  .franklin-toc li a
+   {
+    word-wrap: break-word;
+    white-space: normal;
+  }
+</style>
+
+   <title>Fourier Transforms</title>  
+</head>
+<body>                      <!-- closed in foot.html -->
+<div class="page-wrap">   <!-- closed in foot.html -->
+  <!-- SIDE BAR -->
+  <div class="side-bar">
+    <div class="header">
+      <a href="/cee200/" class="title">
+        CEE-200
+      </a>
+    </div>
+    <label for="show-menu" class="show-menu">MENU</label>
+    <input type="checkbox" id="show-menu" role="button">
+    <div class="menu" id="side-menu">
+      <ul class="menu-list">
+        <li class="menu-list-item "><a href="/cee200/" class="menu-list-link ">Syllabus</a>
+        <li class="menu-list-item "><a href="/cee200/session1/" class="menu-list-link ">Introduction</a>
+        <li class="menu-list-item active"><a href="/cee200/session4/" class="menu-list-link ">Fourier Transform</a>
+        <li class="menu-list-item "><a href="/cee200/session2/" class="menu-list-link ">Vector Calculus</a>
+        <li class="menu-list-item "><a href="/cee200/session3/" class="menu-list-link ">Regularization</a>
+        <li class="menu-list-item "><a href="/cee200/session5/" class="menu-list-link ">Coupled Reactions</a>
+        <li class="menu-list-item "><a href="/cee200/session6/" class="menu-list-link ">Control Systems</a>
+        <li class="menu-list-item "><a href="/cee200/session7/" class="menu-list-link ">Transport</a>
+        <!-- <li class="menu-list-item {{ispage session8/*}}active{{end}}"><a href="/cee200/session8/" class="menu-list-link {{ispage menu1}}active{{end}}">CFD Simulation</a> -->
+      </ul>
+    </div>
+    <div class="footer">
+      UC Riverside</a>
+    </div>
+  </div>
+  <!-- CONTENT -->
+  <div class="main-content-wrap"> <!-- closed in foot.html -->
+    <div class="main-content">    <!-- closed in foot.html -->
+      <div class="main-header">
+        <a id="github" href="">Advanced Engineering Computation</a>
+      </div>
+
+
+
+<!-- Content appended here (in class franklin-content) -->
+<div class="franklin-content"><h1 id="fourier_transforms"><a href="#fourier_transforms" class="header-anchor">Fourier Transforms</a></h1>
+<p>This session teaches you how to apply the discrete Fourier transform to perform spectral analysis and filtering on data sets. The topic is generalized to introduce the continuous Fourier and Laplace transform.  </p>
+<div class="learning"><div class="title"><strong>⏻ Learning Objectives</strong></div>
+<div class="content"><p><strong>By the end of this module you have</strong></p>
+<ul>
+<li><p>learned how to apply the discrete Fourier transform to compute the amplitude and phase spectrum</p>
+</li>
+<li><p>learned how to apply the discrete Fourier transform to compute the power spectrum</p>
+</li>
+<li><p>learned how to filter data in the spectral domain</p>
+</li>
+<li><p>reviewed important properties of the continuous and Fourier and Laplace transform</p>
+</li>
+</ul></div></div>
+<h2 id="slides_and_lecture_notes"><a href="#slides_and_lecture_notes" class="header-anchor">Slides and Lecture Notes</a></h2>
+
+Slides: <a href="https://docs.google.com/presentation/d/1tgb63vTVY6S9e0WIXNf5MfuL_AzIdu0sKpb-fQruZPk/edit?usp=sharing" target="_blank"> Fourier Transform</a> <br><br>
+
+
+Notes: <a href="https://drive.google.com/file/d/10FDL03vgqHy_gPjufjJxbAgG8gp-HZSK/view?usp=sharing" target="_blank"> Notes</a>
+
+<h2 id="notebooks"><a href="#notebooks" class="header-anchor">Notebooks</a></h2>
+
+Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target="_blank"> Fourier Transform</a>
+
+<h2 id="homework"><a href="#homework" class="header-anchor">Homework</a></h2>
+<div class="exercise"><div class="title"><strong>⌨ Assignments</strong></div>
+<div class="content"><a href="https://classroom.github.com/a/vtE5MQAA">https://classroom.github.com/a/vtE5MQAA</a></div></div>
+<div class="page-foot">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> Markus Petters</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    </div> <!-- end of class main-content -->
+    </div> <!-- end of class main-content-wrap -->
+    </div> <!-- end of class page-wrap-->
+    
+    
+  </body>
+</html>
