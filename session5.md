@@ -32,5 +32,5 @@ Notebook 5: <a href="https://mdpetters.github.io/cee200/notebooks/ode_system2/" 
 ## Homework
 
 \exercise{
-[https://classroom.github.com/a/fruipcit](https://classroom.github.com/a/fruipcit) 
+[Homework #5](https://classroom.github.com/a/VxDFCjKH) 
 }

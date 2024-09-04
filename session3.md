@@ -26,5 +26,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/regression/" tar
 ## Homework
 
 \exercise{
-[https://classroom.github.com/a/38_H5mH_](https://classroom.github.com/a/38_H5mH_) 
+[Homework #4](https://classroom.github.com/a/MbLC_jId) 
 }

@@ -28,5 +28,5 @@ Notebook 2: <a href="https://mdpetters.github.io/cee200/notebooks/control/" targ
 ## Homework
 
 \exercise{
-[https://classroom.github.com/a/V6kjz_Sa](https://classroom.github.com/a/V6kjz_Sa) 
+[Homework #6](https://classroom.github.com/a/ndqhgkwn) 
 }

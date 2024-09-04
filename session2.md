@@ -31,5 +31,5 @@ Notebook 2 : <a href="https://mdpetters.github.io/cee200/notebooks/vectors/" tar
 ## Homework
 
 \exercise{
-[https://classroom.github.com/a/0oBXmqT8](https://classroom.github.com/a/0oBXmqT8) 
+[Homework #3](https://classroom.github.com/a/-foQ3yX-) 
 }

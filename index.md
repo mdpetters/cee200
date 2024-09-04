@@ -12,23 +12,16 @@ Web: [https://mdpetters.github.io](https://mdpetters.github.io) \\
 Email: [markus.petters@ucr.edu](mailto:markus.petters@ucr.edu) \\
 Office Hours: Friday 3:50-4:50 pm 
 
-#### Course Teaching Assistant
-Elavarasi Ravichandran
-Email: [elavarasi.ravichandran@email.ucr.edu](elavarasi.ravichandran@email.ucr.edu) \\
-
-
 #### Course Description
 Develops problem-solving techniques for basic engineering systems including heat and mass transfer, coupled reactions, fluid flow potential, and control.
 
 #### Meeting Time/Location
-Lecture: Online \\
-Discussion: Online \\
-Location: Online \\
-
-The Summer-2024 section of this course is for students enrolled in the Masters of Engineering Online program. Recordings of the lectures and the discussion section are taken from the Fall quarter 2023 offering.   
+Lecture: Tu/Th, 12:30 PM - 1:50 PM \\
+Discussion: F, 03:00 PM - 03:50 PM \\
+Location: Riverside Campus | Materials Sci and Engineering | Room 011 
 
 #### Course Materials
-Students will need access to a laptop computer with scientific computing software installed. The choice of software is up to the student and may be one of the following: MATLAB, Python, R, or Julia. Students need to be able to run git from the command line and be able to install add-on packages on their device. The computer will be needed to exams
+Students will need access to a laptop computer. The choice of software is up to the student and may be one of the following: MATLAB, Python, R, or Julia. Students need to be able to run git from the command line and be able to install add-on packages on their device. Students are provided the option to either use a web-based JupyterHub environment or use their personal device for development work. The computer will be needed for exams. 
 
 #### Key Learning Outcomes
 \outcomes{
@@ -157,20 +150,19 @@ The use of laptop computers or tablet to follow the notebooks during lectures is
 
 #### Course Schedule
 
-Below is the course schedule as recorded. The videos for each of the lectures and discussions sections are available via Yuja Media/Storage on Canvas. 
 
 | Tu     | Activity   | Th     | Activity   | F       | Activity   |
 |--------|------------|--------|------------|---------|------------|
-|        |            | Sep 28 | Syllabus   | Sep 29  | No Meeting |
-| Oct 3  | Lecture 1  | Oct 5  | Lecture 2  | Oct 6   | Discussion |
-| Oct 10 | Lecture 3  | Oct 12 | Lecture 4  | Oct 13  | Discussion |
-| Oct 17 | Lecture 5  | Oct 19 | Lecture 6  | Oct 20  | Discussion |
-| Oct 24 | Lecture 7  | Oct 26 | **Midterm 1**  | Oct 27  | Discussion |
-| Oct 31 | Lecture 8  | Nov 2  | Lecture 9 | Nov 3   | Discussion |
-| Nov 7  | Lecture 10 | Nov 9  | Lecture 11 | Nov 10  | Discussion |
-| Nov 14 | Lecture 12 | Nov 16 | Lecture 13 | Nov 17  | Discussion |
-| Nov 21 | Lecture 14 | Nov 23 | *Thanksgiving break* | Nov 24 | *Thanksgiving break* |
-| Nov 28 | Lecture 15 | Nov 30 | **Midterm 2** | Dec 1  | Discussion  |
-| Dec 5  | Lecture 16 | Dec 7  | Lecture 17 | Dec 8 | No Meeting |
-| Dec 12 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; Reading Week   | Dec 14 | **Final Exam, 7-10 pm**  | Dec 15| &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No Meeting |
+|        |                    | Sep 26 | Syllabus           | Sep 27  | No Meeting |
+| Oct 1  | Introduction       | Oct 3  | Fourier Transform  | Oct 4   | Discussion |
+| Oct 8  | Fourier Transform  | Oct 10 | Fourier Transform  | Oct 11  | Discussion |
+| Oct 15 | Vector Calculus    | Oct 17 | Vector Calculus    | Oct 18  | Discussion |
+| Oct 22 | **Midterm 1**      | Oct 24 | Regularization     | Oct 25  | Discussion |
+| Oct 29 | Regularization     | Oct 31 | Regularization     | Nov 1   | Discussion |
+| Nov 5  | Coupled Reactions  | Nov 7  | Coupled Reactions  | Nov 8   | Discussion |
+| Nov 12 | Control Systems    | Nov 14 | Control Systems    | Nov 15  | Discussion |
+| Nov 19 | Control Systems    | Nov 21 | **Midterm 2**      | Nov 22  | Discussion |
+| Nov 26 | Transport          | Nov 28 | *Thanksgiving*     | Nov 29  | *Thanksgiving*  |
+| Dec 3  | Transport          | Dec 5  | Transport          | Dec 6   | No Meeting |
+| Dec 10 | Reading Week       | Dec 12 | Reading Week       | Dec 13  | **Final Exam\\ 11:30 AM-2:30 PM** |
 

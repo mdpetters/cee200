@@ -1,4 +1,3 @@
-
 # Introduction
 
 Covers important tools used in this class, including `git`, `GitHub`, `GitHub Classroom`, `Julia`, and `Pluto` notebooks.    
@@ -168,5 +167,5 @@ The first time you run these notebooks it will be exceptionally slow (up to a fe
 This section contains links to homework assignments. The link is password protected to ensure that only students enrolled in the course submit homework. Once you accept, please associate your GitHub account with your name in GitHub classroom. You only need to do this once.  
 
 \exercise{
-[https://classroom.github.com/a/QPCK6yOX](https://classroom.github.com/a/QPCK6yOX)
+[Homework #1](https://classroom.github.com/a/Va47Q4OA)
 }

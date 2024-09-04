@@ -28,5 +28,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/heat/" target="_
 ## Homework
 
 \exercise{
-[https://classroom.github.com/a/yH6UQjDE](https://classroom.github.com/a/yH6UQjDE)
+[Homework #7](https://classroom.github.com/a/y4XE_W6L)
 }

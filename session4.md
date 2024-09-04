@@ -1,4 +1,3 @@
-
 # Fourier Transforms
 
 This session teaches you how to apply the discrete Fourier transform to perform spectral analysis and filtering on data sets. The topic is generalized to introduce the continuous Fourier and Laplace transform.  
@@ -32,5 +31,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target="_b
 ## Homework
 
 \exercise{
-[https://classroom.github.com/a/vtE5MQAA](https://classroom.github.com/a/vtE5MQAA) 
+[Homework #2](https://classroom.github.com/a/KT2gotT9) 
 }
