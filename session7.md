@@ -16,7 +16,7 @@ Slides: <a href="https://docs.google.com/presentation/d/1BXhPkyp6f25HSSSMVER4HYa
 ~~~
 
 ~~~
-Notes: <a href="" target="_blank"> Notes</a>
+Notes: <a href="https://drive.google.com/file/d/1pUYbc-7TXx51YcaKzFu--HTlRYCD6ePb/view?usp=sharing" target="_blank"> Notes</a>
 ~~~
 
 ## Notebooks
@@ -28,5 +28,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/heat/" target="_
 ## Homework
 
 \exercise{
-Due Dec 11, 2023: [https://classroom.github.com/a/bf6UCQBD](https://classroom.github.com/a/bf6UCQBD) 
+[https://classroom.github.com/a/yH6UQjDE](https://classroom.github.com/a/yH6UQjDE)
 }

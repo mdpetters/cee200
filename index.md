@@ -8,18 +8,24 @@ Chemical and Environmental Engineering
 
 #### Course Instructor
 Markus Petters, Department of Chemical and Environmental Engineering \\
-Office: Center for Environmental Research & Technology of UCR | Room 128 \\
 Web: [https://mdpetters.github.io](https://mdpetters.github.io) \\
 Email: [markus.petters@ucr.edu](mailto:markus.petters@ucr.edu) \\
-Office Hours: Friday 3:50-4:50 pm (after class Discussion) 
+Office Hours: Friday 3:50-4:50 pm 
+
+#### Course Teaching Assistant
+Elavarasi Ravichandran
+Email: [elavarasi.ravichandran@email.ucr.edu](elavarasi.ravichandran@email.ucr.edu) \\
+
 
 #### Course Description
 Develops problem-solving techniques for basic engineering systems including heat and mass transfer, coupled reactions, fluid flow potential, and control.
 
 #### Meeting Time/Location
-Lecture: Tu/Th 12:30 PM - 01:50 PM \\
-Discussion: F 03:00 PM - 03:50 PM \\
-Location: Riverside Campus | Materials Sci and Engineering | Room 011 \\
+Lecture: Online \\
+Discussion: Online \\
+Location: Online \\
+
+The Summer-2024 section of this course is for students enrolled in the Masters of Engineering Online program. Recordings of the lectures and the discussion section are taken from the Fall quarter 2023 offering.   
 
 #### Course Materials
 Students will need access to a laptop computer with scientific computing software installed. The choice of software is up to the student and may be one of the following: MATLAB, Python, R, or Julia. Students need to be able to run git from the command line and be able to install add-on packages on their device. The computer will be needed to exams
@@ -45,22 +51,39 @@ The grade components in the class include:
 
 | Activity      | Weight | Details                                                        |
 | --------------|--------|----------------------------------------------------------------|
-| Participation | 10%    | Attendance and in-class activities.                            |
 | Homework      | 40%    | Each module will have one or more graded homework assignments. |
-| Midterm Exams | 20%    | Two midterm exams are scheduled.                               |
+| Midterm Exams | 30%    | Two midterm exams are scheduled.                               |
 | Final Exam    | 30%    | The final exam is cumulative.                                  |
-
-The participation score will be based on physical presence and participation during in-class poll questions. The grade will be computed from the automatically generated grade book of the [Poll Everywhere](https://www.polleverywhere.com/home) platform. 
 
 Exams will mimic the homework assignments and are to be taken in person. They will be administered via GitHub Classroom. A laptop computer with appropriate software installed will be required for taking the exam.
 
-**Curve Policy:**
+**Definition of Letter Grades**
 
-I reserve the right to assign grades using a curve, should the class average be lower than expected.
+This Course uses Letter Grading: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F, I, W. Grading policies follow [UCR Regulations](https://senate.ucr.edu/regulations/section/513/01)., Letter grades are defined as follows:
 
-*However, if I were to apply a curve, I would never reduce your grade. If you earned an 95/100 without a curve, you earned at minimum an A.*
+**A - Distinction, indicating exceptional achievement.** Mastery of course content at the highest level of attainment that can reasonably be expected of students at a given stage of development.
 
-In case I apply a curve, I take all of the total scores for the class and make a grade distribution. I then compute the average and standard deviation of the distribution. The mean and standard deviation are adjusted to updated values, thus resulting in a curved grade distribution.  
+**B - High pass, indicating more than minimal competence but less than exceptional achievement.** Strong performance demonstrating a high level of attainment for a student at a given stage of development.
+
+**C - Pass, indicating competence.** Totally acceptable performance demonstrating an adequate level of attainment for a student at a given stage of development.
+
+**D - Marginal pass.** This grade is used to recognize that a student’s performance was marginal but clearly better than that of students who receive an F.
+
+**F - Fail.** This grade is used to indicate that the student has failed the course and will not receive any credit for the course. The F grade indicates that the student’s performance in the required exercises has revealed almost no understanding of the course content.
+
+**I - Incomplete.** This grade is used as a temporary grade. At the discretion of the instructor, students may be given an GD grade for work not completed because of a serious interruption in their work not caused by the student’s negligence.
+
+**W - Withdrawal.** Used on student’s grade reports and transcripts to indicate all courses for which they have received official approval to drop or from which they have received official approval to withdraw after the deadlines for dropping.
+
+**Mastery Based Grading**
+
+This course will use mastery-based grading. Mastery based grading assigns letter grades "A" to "F" based on a point cutoff evaluated from the assignment rubric. 
+
+\note{
+Mastery based grading will never reduce your grade. If you earned an 95/100, you demonstrated mastery. The assignment difficulty is typically at a level that full credit can be achieved.
+}
+
+Under some circumstances I *may* allow resubmission of an assignment for you to demonstrate mastery. 
 
 **Absence Policy**
 
@@ -133,6 +156,9 @@ It is the policy of the University of California Riverside not to engage in disc
 The use of laptop computers or tablet to follow the notebooks during lectures is permitted and encouraged.  
 
 #### Course Schedule
+
+Below is the course schedule as recorded. The videos for each of the lectures and discussions sections are available via Yuja Media/Storage on Canvas. 
+
 | Tu     | Activity   | Th     | Activity   | F       | Activity   |
 |--------|------------|--------|------------|---------|------------|
 |        |            | Sep 28 | Syllabus   | Sep 29  | No Meeting |
@@ -148,12 +174,3 @@ The use of laptop computers or tablet to follow the notebooks during lectures is
 | Dec 5  | Lecture 16 | Dec 7  | Lecture 17 | Dec 8 | No Meeting |
 | Dec 12 | &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; Reading Week   | Dec 14 | **Final Exam, 7-10 pm**  | Dec 15| &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No Meeting |
 
-I reserve the right to move the **midterm exams** to the Friday Discussion section should we need more time to cover material during regular class time.
-
-
-#### Survey
-Please fill out the survey to provide initial feedback on the course. 
-
-~~~
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScpICUDyQmRoahfC_ZQcl2aONhNhjtIcoMxZG1YZLhTqqlE3w/viewform?embedded=true" width="600" height="1599" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-~~~
