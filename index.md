@@ -34,9 +34,29 @@ Students will need access to a laptop computer. The choice of software is up to 
 6. to solve partial differential equations using numerical methods
 }
 
+#### Technology Policy
+The use of laptop computers or tablet to follow the notebooks during lectures is permitted and encouraged.  
+
+#### Course Schedule
+
+
+| Tu     | Activity   | Th     | Activity   | F       | Activity   |
+|--------|------------|--------|------------|---------|------------|
+|        |                    | Sep 26 | Syllabus           | Sep 27  | No Meeting |
+| Oct 1  | Introduction       | Oct 3  | Fourier Transform  | Oct 4   | Discussion |
+| Oct 8  | Fourier Transform  | Oct 10 | Fourier Transform  | Oct 11  | Discussion |
+| Oct 15 | Vector Calculus    | Oct 17 | Vector Calculus    | Oct 18  | Discussion |
+| Oct 22 | **Midterm 1**      | Oct 24 | Regularization     | Oct 25  | Discussion |
+| Oct 29 | Regularization     | Oct 31 | Regularization     | Nov 1   | Discussion |
+| Nov 5  | Coupled Reactions  | Nov 7  | Coupled Reactions  | Nov 8   | Discussion |
+| Nov 12 | Control Systems    | Nov 14 | Control Systems    | Nov 15  | Discussion |
+| Nov 19 | Control Systems    | Nov 21 | **Midterm 2**      | Nov 22  | Discussion |
+| Nov 26 | Transport          | Nov 28 | *Thanksgiving*     | Nov 29  | *Thanksgiving*  |
+| Dec 3  | Transport          | Dec 5  | Transport          | Dec 6   | No Meeting |
+| Dec 10 | Reading Week       | Dec 12 | Reading Week       | Dec 13  | **Final Exam\\ 11:30 AM-2:30 PM** |
+
 #### Assessment
 Assessment of learning objectives will be through coding assignments and frequent exams. The homework assignments will require students to demonstrate that they are able to write the computer programs to perform the tasks taught in class.  
-
 
 #### Evaluation of Student Performance
 
@@ -127,8 +147,8 @@ Cheating is the giving, taking, or presenting of information or material by a st
 5. Working with another or others in completing an assignment, examination, or other academic exercise when the faculty member has required independent and unaided action.
 6. Attempting to influence or change an academic evaluation, grade, or record by unfair means.
 7. Permitting another individual to substitute for one’s self in an academic evaluation.
-8. Marking or submitting an examination or evaluation material in a manner designed to deceive the grading system,
-9. Failing to comply with a specific condition of academic integrity which has been clearly announced in a particular course,
+8. Marking or submitting an examination or evaluation material in a manner designed to deceive the grading system.
+9. Failing to comply with a specific condition of academic integrity which has been clearly announced in a particular course.
 10. Submitting, without prior permission of the faculty member, any work by a student which has at any time been submitted in identical or similar form by that student in fulfillment of any other academic requirement at any institution.
 11. Submitting of material in whole or part for academic evaluation that has been prepared by another individual(s).
 12. Submitting data which have been altered or contrived in such a way as to be deliberately misleading. 
@@ -145,24 +165,39 @@ Students may be required to disclose personally identifiable information to othe
 #### Non-Discrimination Policy
 It is the policy of the University of California Riverside not to engage in discrimination against or harassment of any person employed or seeking employment with the University of California on the basis of race, color, national origin, religion, sex, gender, gender expression, gender identity, pregnancy, physical or mental disability, medical condition, genetic information, ancestry, marital status, age, sexual orientation, citizenship, or service in the uniformed services. Furthermore, University policy prohibits retaliation against any member of the University community filing a complaint of discrimination or harassment. This policy is intended to be consistent with the provisions of applicable State and Federal laws and University policies. 
 
-#### Technology Policy
-The use of laptop computers or tablet to follow the notebooks during lectures is permitted and encouraged.  
+#### Mental Health
+As a student, you may experience a range of issues that can cause barriers to learning, such as strained relationships, alcohol/drug problems, anxiety, depression, difficulty concentrating and lack of motivation. These mental health concerns or stressful events may lead to diminished academic performance or reduce a student's ability to participate in daily activities – UCR has resources to help! If you or a friend are in distress or experiencing any of these issues, please contact 951-UCR-TALK 24-hours a day to speak to a mental health professional, or call the National Suicide Prevention Lifeline at 1-800-273-TALK. Please refer to [https://mentalhealth.ucr.edu](https://mentalhealth.ucr.edu) for additional resources.
 
-#### Course Schedule
+#### Basic Needs
+If you or someone you know are in need of economic, food or housing support, you can find help at
+[https://basicneeds.ucr.edu](https://basicneeds.ucr.edu). You may be eligible for money to buy groceries via [https://basicneeds.ucr.edu/calfresh](https://basicneeds.ucr.edu/calfresh). If you are in need of immediate assistance, see the Student Affairs Case Manager at [https://casemanagement.ucr.edu/](https://casemanagement.ucr.edu/) or visit the R'Pantry at [https://basicneeds.ucr.edu/rpantry](https://basicneeds.ucr.edu/rpantry). You can find more information by clicking the Student Success Resources tab on your iLearn course menu.
 
+#### Self Care
+ Categories of self care include biobehavioral (e.g., get plenty of sleep), affective-cognitive (e.g., watching a favorite, comforting movie), relational (e.g., talking with a friend), and spiritual (e.g., connecting with a faith community or the natural environment). In addition to the following resources, your instructor and TA are available to provide support and referrals.
 
-| Tu     | Activity   | Th     | Activity   | F       | Activity   |
-|--------|------------|--------|------------|---------|------------|
-|        |                    | Sep 26 | Syllabus           | Sep 27  | No Meeting |
-| Oct 1  | Introduction       | Oct 3  | Fourier Transform  | Oct 4   | Discussion |
-| Oct 8  | Fourier Transform  | Oct 10 | Fourier Transform  | Oct 11  | Discussion |
-| Oct 15 | Vector Calculus    | Oct 17 | Vector Calculus    | Oct 18  | Discussion |
-| Oct 22 | **Midterm 1**      | Oct 24 | Regularization     | Oct 25  | Discussion |
-| Oct 29 | Regularization     | Oct 31 | Regularization     | Nov 1   | Discussion |
-| Nov 5  | Coupled Reactions  | Nov 7  | Coupled Reactions  | Nov 8   | Discussion |
-| Nov 12 | Control Systems    | Nov 14 | Control Systems    | Nov 15  | Discussion |
-| Nov 19 | Control Systems    | Nov 21 | **Midterm 2**      | Nov 22  | Discussion |
-| Nov 26 | Transport          | Nov 28 | *Thanksgiving*     | Nov 29  | *Thanksgiving*  |
-| Dec 3  | Transport          | Dec 5  | Transport          | Dec 6   | No Meeting |
-| Dec 10 | Reading Week       | Dec 12 | Reading Week       | Dec 13  | **Final Exam\\ 11:30 AM-2:30 PM** |
+**University resources that may help you include:**
+- Counseling Center: (951) 827-5531 | [link](http://counseling.ucr.edu/Pages/default.aspx)
+- Wellness Center: [link](http://well.ucr.edu/Pages/default.aspx)
+- Campus Health Center: (951) 827-3031 | [link](http://campushealth.ucr.edu/Pages/default.aspx)
+- Student Special Services (for students with disabilities and veterans): [link](http://specialservices.ucr.edu/Pages/default.aspx)
+- Ethnic and gender program offices: [link](http://www.ucr.edu/students/ethnic_gender.html)
+- Healing Highlanders Collegiate Recovery Program: [link](http://healinghighlanders.weebly.com)
+- Campus Safety Escort Service: (951) 827-3772
+- UCR Ombudsperson: (951) 827-3213,
+- UCR Sexual Assault Resource Services: (951) 827-6225
+- UCR Student Conduct: (951) 827-4208
+- UCR Student Affairs Case Manager: (951) 827-9354
+- UCR Title IX/Sexual Harassment Office: (951) 827-5670
+- Office of the Ombuds: (951) 827-3213
+- Campus advocate for campus members affected by interpersonal violence:\\
+Naddia Palacios | naddia.palacios@ucr.edu \\
+384 and 386 Surge Building | (951) 827-6225 | [link](http://advocacy.ucr.edu/services.html)
 
+**Off-campus resources include:**
+- Alternatives to Domestic Violence: (800) 339-7233
+- Riverside Area Rape Crisis Center (24/7): (951) 686-7273)
+- Riverside County Regional Medical Center: (951) 486-5650
+- National Sexual Assault Hotline: (951) 656-4673
+- National Dating Abuse Hotline: (866) 331-9474
+- National Domestic Violence Hotline: (800) 799-7233
+- Family Justice Center: (951) 955-6100
