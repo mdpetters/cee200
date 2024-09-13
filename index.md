@@ -49,8 +49,8 @@ The use of laptop computers or tablet to follow the notebooks during lectures is
 | Oct 22 | **Midterm 1**      | Oct 24 | Regularization     | Oct 25  | Discussion |
 | Oct 29 | Regularization     | Oct 31 | Regularization     | Nov 1   | Discussion |
 | Nov 5  | Coupled Reactions  | Nov 7  | Coupled Reactions  | Nov 8   | Discussion |
-| Nov 12 | Control Systems    | Nov 14 | Control Systems    | Nov 15  | Discussion |
-| Nov 19 | Control Systems    | Nov 21 | **Midterm 2**      | Nov 22  | Discussion |
+| Nov 12 | Control Systems    | Nov 14 | **Midterm 2**      | Nov 15  | Discussion |
+| Nov 19 | Control Systems    | Nov 21 | Control Systems    | Nov 22  | Discussion |
 | Nov 26 | Transport          | Nov 28 | *Thanksgiving*     | Nov 29  | *Thanksgiving*  |
 | Dec 3  | Transport          | Dec 5  | Transport          | Dec 6   | No Meeting |
 | Dec 10 | Reading Week       | Dec 12 | Reading Week       | Dec 13  | **Final Exam\\ 11:30 AM-2:30 PM** |

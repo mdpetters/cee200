@@ -40,11 +40,11 @@ Pluto.jl provides a reactive notebook environment specific to Julia.
   (_)     | (_) (_)    |
    _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
   | | | | | | |/ _` |  |
-  | | |_| | | | (_| |  |  Version 1.9.3 (2023-08-24)
+  | | |_| | | | (_| |  |  Version 1.10.5 (2024-08-27)
  _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
 |__/                   |
 
-julia> 
+julia>
 ```
 
 #### Installing Pluto (only need to do this once):
