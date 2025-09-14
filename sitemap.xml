@@ -104,6 +104,12 @@
     <priority>0.5</priority>
 </url>
 <url>
+    <loc>https://mdpetters.github.io/cee200/dft/</loc>
+    <lastmod>2025-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>https://mdpetters.github.io/cee200/notebooks/sympy/</loc>
     <lastmod>2024-09-13</lastmod>
     <changefreq>monthly</changefreq>
