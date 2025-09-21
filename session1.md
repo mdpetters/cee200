@@ -167,5 +167,5 @@ The first time you run these notebooks it will be exceptionally slow (up to a fe
 This section contains links to homework assignments. The link is password protected to ensure that only students enrolled in the course submit homework. Once you accept, please associate your GitHub account with your name in GitHub classroom. You only need to do this once.  
 
 \exercise{
-[Homework #1](https://classroom.github.com/a/Va47Q4OA)
+[Homework #1](https://classroom.github.com/a/R4y-Jdd7)
 }

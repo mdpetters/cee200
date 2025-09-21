@@ -11,9 +11,6 @@ Covers how to solve ordinary differential equations using analytic, symbolic, an
 
 ## Slides and Lecture Notes
 
-~~~
-Notes: <a href="https://drive.google.com/file/d/1Xv7MxuE83KXzkYsFAseEfWEA5obUAcF1/view?usp=sharing" target="_blank"> ODE Notes</a>
-~~~
 
 ## Notebooks
 
@@ -32,5 +29,5 @@ Notebook 5: <a href="https://mdpetters.github.io/cee200/notebooks/ode_system2/" 
 ## Homework
 
 \exercise{
-[Homework #5](https://classroom.github.com/a/VxDFCjKH) 
+[Homework #5](https://classroom.github.com/a/GPr5d_62) 
 }

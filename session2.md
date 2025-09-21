@@ -13,10 +13,6 @@ Covers symbolic solvers and reviews key concepts in vector calculus with the obj
 
 ## Slides and Lecture Notes
 
-~~~
-Notes: <a href="https://drive.google.com/file/d/1fPim01vDPKJwwuxCCmNEnFZyARAIJ4R6/view?usp=sharing
-" target="_blank"> Oct 19, 2023</a>
-~~~
 
 
 ## Notebooks
@@ -31,5 +27,5 @@ Notebook 2 : <a href="https://mdpetters.github.io/cee200/notebooks/vectors/" tar
 ## Homework
 
 \exercise{
-[Homework #3](https://classroom.github.com/a/-foQ3yX-) 
+[Homework #3](https://classroom.github.com/a/_84cL8Q0) 
 }

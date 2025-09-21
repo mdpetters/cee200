@@ -16,10 +16,6 @@ This session teaches you how to apply the discrete Fourier transform to perform 
 Slides: <a href="https://docs.google.com/presentation/d/1tgb63vTVY6S9e0WIXNf5MfuL_AzIdu0sKpb-fQruZPk/edit?usp=sharing" target="_blank"> Fourier Transform</a> <br><br>
 ~~~
 
-~~~
-Notes: <a href="https://drive.google.com/file/d/10FDL03vgqHy_gPjufjJxbAgG8gp-HZSK/view?usp=sharing" target="_blank"> Notes</a>
-~~~
-
 
 ## Notebooks
 
@@ -31,5 +27,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/dft/" target="_b
 ## Homework
 
 \exercise{
-[Homework #2](https://classroom.github.com/a/KT2gotT9) 
+[Homework #2](https://classroom.github.com/a/tX_ZE0gJ) 
 }

@@ -13,10 +13,6 @@ Covers matrix based ordinary least squares regression, discretization of Fredhol
 
 ## Slides and Lecture Notes
 
-~~~
-Notes: <a href="https://drive.google.com/file/d/1pE-f5JEwXMYOx7adz2A-SrONOdS5uuLJ/view?usp=sharing" target="_blank"> Notes</a>
-~~~
-
 ## Notebooks
 
 ~~~
@@ -26,5 +22,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/regression/" tar
 ## Homework
 
 \exercise{
-[Homework #4](https://classroom.github.com/a/MbLC_jId) 
+[Homework #4](https://classroom.github.com/a/u4TQ4_PF) 
 }

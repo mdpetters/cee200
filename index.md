@@ -6,7 +6,7 @@ CEE-200: Advanced Engineering Computation
 #### Academic Department 
 Chemical and Environmental Engineering
 
-#### Course Instructor
+#### Course Instructors
 Markus Petters, Department of Chemical and Environmental Engineering \\
 Web: [https://mdpetters.github.io](https://mdpetters.github.io) \\
 Email: [markus.petters@ucr.edu](mailto:markus.petters@ucr.edu) \\
@@ -16,59 +16,59 @@ Office Hours: Friday 3:50-4:50 pm
 Develops problem-solving techniques for basic engineering systems including heat and mass transfer, coupled reactions, fluid flow potential, and control.
 
 #### Meeting Time/Location
-Lecture: Tu/Th, 12:30 PM - 1:50 PM \\
-Discussion: F, 03:00 PM - 03:50 PM \\
-Location: Riverside Campus | Materials Sci and Engineering | Room 011 
 
-#### Course Materials
+Lecture: Tu/Th, 12:30 PM - 1:50 PM \\
+Discussion: F, 04:00 PM - 04:50 PM \\
+Location: Riverside Campus | Materials Sci and Engineering | Room 011
+
 Students will need access to a laptop computer. The choice of software is up to the student and may be one of the following: MATLAB, Python, R, or Julia. Students need to be able to run git from the command line and be able to install add-on packages on their device. Students are provided the option to either use a web-based JupyterHub environment or use their personal device for development work. The computer will be needed for exams. 
 
 #### Key Learning Outcomes
 \outcomes{
-*At the end of the term, participants will be able to write computer programs*
-1. to manipulate and solve differential equation using symbolic solvers
-2. to perform matrix-based regression and inversion problems on data
-3. to perform spectral analysis on data sets
-4. to solve ordinary differential equations using ODE solvers
-5. to perform discrete event system simulations of linear systems and interface those with control systems
-6. to solve partial differential equations using numerical methods
+1. Manipulate and solve differential equation using analytical approaches and symbolic solvers
+2. Perform matrix-based regression and inversion problems on data
+3. Perform spectral analysis on data sets
+4. Solve ordinary differential equations using numerical methods
+5. Perform discrete event system simulations of linear systems and interface those with control systems
+6. Solve partial differential equations using numerical methods
 }
 
 #### Technology Policy
-The use of laptop computers or tablet to follow the notebooks during lectures is permitted and encouraged.  
+The use of laptop computers or tablets during lecture is strongly discouraged.
 
 #### Course Schedule
 
 
-| Tu     | Activity   | Th     | Activity   | F       | Activity   |
-|--------|------------|--------|------------|---------|------------|
-|        |                    | Sep 26 | Syllabus           | Sep 27  | No Meeting |
-| Oct 1  | Introduction       | Oct 3  | Fourier Transform  | Oct 4   | Discussion |
-| Oct 8  | Fourier Transform  | Oct 10 | Fourier Transform  | Oct 11  | Discussion |
-| Oct 15 | Vector Calculus    | Oct 17 | Vector Calculus    | Oct 18  | Discussion |
-| Oct 22 | **Midterm 1**      | Oct 24 | Regularization     | Oct 25  | Discussion |
-| Oct 29 | Regularization     | Oct 31 | Regularization     | Nov 1   | Discussion |
-| Nov 5  | Coupled Reactions  | Nov 7  | Coupled Reactions  | Nov 8   | Discussion |
-| Nov 12 | Control Systems    | Nov 14 | **Midterm 2**      | Nov 15  | Discussion |
-| Nov 19 | Control Systems    | Nov 21 | Control Systems    | Nov 22  | Discussion |
-| Nov 26 | Transport          | Nov 28 | *Thanksgiving*     | Nov 29  | *Thanksgiving*  |
-| Dec 3  | Transport          | Dec 5  | Transport          | Dec 6   | No Meeting |
-| Dec 10 | Reading Week       | Dec 12 | Reading Week       | Dec 13  | **Final Exam\\ 11:30 AM-2:30 PM** |
+| Tu     | Activity                          | Th     | Activity                | F      | Activity       |
+|--------|-----------------------------------|--------|-------------------------|--------|----------------|
+|        |                                   | Sep 25 | Syllabus                | Sep 26 | No Meeting     |
+| Sep 30 | Introduction                      | Oct 2  | Fourier Transform       | Oct 3  | Discussion     |
+| Oct 7  | Fourier Transform                 | Oct 9  | Fourier Transform       | Oct 10 | Discussion     |
+| Oct 14 | Vector Calculus                   | Oct 16 | Vector Calculus         | Oct 17 | Discussion     |
+| Oct 21 | Regularization                    | Oct 23 | Regularization          | Oct 24 | Discussion     |
+| Oct 28 | Regularization                    | Oct 30 | Coupled Reactions       | Oct 31 | Discussion     |
+| Nov 4  | **Midterm**                       | Nov 6  | Coupled Reactions       | Nov 7  | Discussion     |
+| Nov 11 | *Veterans Day/No Class*           | Nov 13 | Control Systems         | Nov 14 | Discussion     |
+| Nov 18 | Control Systems                   | Nov 20 | Control Systems         | Nov 21 | Discussion     |
+| Nov 25 | Transport                         | Nov 27 | *Thanksgiving/No Class* | Nov 28 | *Thanksgiving* |
+| Dec 2  | Transport                         | Dec 4  | Transport               | Dec 5  | No Meeting     |
+| Dec 9  | **Final Exam\\ 11:30 AM-2:30 PM** | Dec 11 | No Meeting              | Dec 12 | No Meeting     |
 
 #### Assessment
-Assessment of learning objectives will be through coding assignments and frequent exams. The homework assignments will require students to demonstrate that they are able to write the computer programs to perform the tasks taught in class.  
+Assessment of learning objectives will be through coding assignments and exams. The homework assignments will require students to demonstrate that they are able to write the computer programs to perform the tasks taught in class.
 
 #### Evaluation of Student Performance
 
 The grade components in the class include:
 
-| Activity      | Weight | Details                                                        |
-| --------------|--------|----------------------------------------------------------------|
-| Homework      | 40%    | Each module will have one or more graded homework assignments. |
-| Midterm Exams | 30%    | Two midterm exams are scheduled.                               |
-| Final Exam    | 30%    | The final exam is cumulative.                                  |
+| Activity       | Weight   | Details                                                          |
+| -------------- | -------- | ---------------------------------------------------------------- |
+| Homework       | 30%      | Each module will have one or more graded homework assignments.   |
+| Midterm Exam   | 30%      | One Midterm Exam                                                 |
+| Final Exam     | 40%      | The final exam is cumulative.                                    |
 
-Exams will mimic the homework assignments and are to be taken in person. They will be administered via GitHub Classroom. A laptop computer with appropriate software installed will be required for taking the exam.
+
+Exams will be in-person, on paper, closed notes, closed book.
 
 **Definition of Letter Grades**
 
@@ -104,7 +104,7 @@ Consistent class attendance is the number one predictor of academic success. The
 1. Medical Conditions
 2. Death in the Immediate Family
 3. Military Orders
-3. Legal Obligations
+4. Legal Obligations
 
 Written verification from a from physician, lawyer, judge, or commanding officer needs to be provided for any makeup exam.
 
@@ -115,7 +115,6 @@ Late homework will receive no credit. An extension may be granted if the student
 #### Methods of Student Instruction 
 - Slides: Slide deck presentation are used to deliver boilerplate content
 - Lecture Notes: Handwritten lecture notes are used to deliver key derivations
-- Poll Everywhere: In-class polling questions for formative assessments 
 - GitHub Classroom: GitHub Classroom is used for homework projects 
 - Pluto Notebooks: Pluto notebooks are used as reference text and demonstration of implementation of algorithms in computer language
 - Discussion Sessions: Discussion sessions are used for one-on-one instruction 
@@ -160,7 +159,6 @@ Students may be required to disclose personally identifiable information to othe
 *Digital Course Components:* Digital course components include 
 - GitHub Classroom platform.
 - Canvas LMS
-- PollEverywhere
 
 #### Non-Discrimination Policy
 It is the policy of the University of California Riverside not to engage in discrimination against or harassment of any person employed or seeking employment with the University of California on the basis of race, color, national origin, religion, sex, gender, gender expression, gender identity, pregnancy, physical or mental disability, medical condition, genetic information, ancestry, marital status, age, sexual orientation, citizenship, or service in the uniformed services. Furthermore, University policy prohibits retaliation against any member of the University community filing a complaint of discrimination or harassment. This policy is intended to be consistent with the provisions of applicable State and Federal laws and University policies. 
@@ -176,11 +174,11 @@ If you or someone you know are in need of economic, food or housing support, you
  Categories of self care include biobehavioral (e.g., get plenty of sleep), affective-cognitive (e.g., watching a favorite, comforting movie), relational (e.g., talking with a friend), and spiritual (e.g., connecting with a faith community or the natural environment). In addition to the following resources, your instructor and TA are available to provide support and referrals.
 
 **University resources that may help you include:**
-- Counseling Center: (951) 827-5531 | [link](http://counseling.ucr.edu/Pages/default.aspx)
-- Wellness Center: [link](http://well.ucr.edu/Pages/default.aspx)
-- Campus Health Center: (951) 827-3031 | [link](http://campushealth.ucr.edu/Pages/default.aspx)
-- Student Special Services (for students with disabilities and veterans): [link](http://specialservices.ucr.edu/Pages/default.aspx)
-- Ethnic and gender program offices: [link](http://www.ucr.edu/students/ethnic_gender.html)
+- Counseling Center: (951) 827-5531 | [link](https://counseling.ucr.edu/)
+- Wellness Center: [link](https://well.ucr.edu/)
+- Campus Health Center: (951) 827-3031 | [link](https://campushealth.ucr.edu/)
+- Student Special Services (for students with disabilities and veterans): [link](https://sdrc.ucr.edu/)
+- Ethnic and gender program offices: [link](https://www.ucr.edu/students/ethnic_gender.html)
 - Healing Highlanders Collegiate Recovery Program: [link](http://healinghighlanders.weebly.com)
 - Campus Safety Escort Service: (951) 827-3772
 - UCR Ombudsperson: (951) 827-3213,
@@ -191,7 +189,7 @@ If you or someone you know are in need of economic, food or housing support, you
 - Office of the Ombuds: (951) 827-3213
 - Campus advocate for campus members affected by interpersonal violence:\\
 Naddia Palacios | naddia.palacios@ucr.edu \\
-384 and 386 Surge Building | (951) 827-6225 | [link](http://advocacy.ucr.edu/services.html)
+384 and 386 Surge Building | (951) 827-6225 | [link](https://care.ucr.edu/)
 
 **Off-campus resources include:**
 - Alternatives to Domestic Violence: (800) 339-7233

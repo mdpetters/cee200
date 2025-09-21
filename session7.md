@@ -15,10 +15,6 @@ Covers the advection-diffusion equation to describe heat and mass transport phen
 Slides: <a href="https://docs.google.com/presentation/d/1BXhPkyp6f25HSSSMVER4HYaKyujzf5oFa7_2xbDalnQ/edit?usp=sharing" target="_blank">Transport Slides</a> <br><br>
 ~~~
 
-~~~
-Notes: <a href="https://drive.google.com/file/d/1pUYbc-7TXx51YcaKzFu--HTlRYCD6ePb/view?usp=sharing" target="_blank"> Notes</a>
-~~~
-
 ## Notebooks
 
 ~~~
@@ -28,5 +24,5 @@ Notebook: <a href="https://mdpetters.github.io/cee200/notebooks/heat/" target="_
 ## Homework
 
 \exercise{
-[Homework #7](https://classroom.github.com/a/y4XE_W6L)
+[Homework #7](https://classroom.github.com/a/tZpZc3C2)
 }

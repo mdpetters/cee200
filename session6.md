@@ -13,10 +13,6 @@ Covers the state-space equations, how to set up discrete event simulations of li
 
 ## Slides and Lecture Notes
 
-~~~
-Notes: <a href="https://drive.google.com/file/d/1kCAzCY8g826XIjsq5ZCUeJEqEntOHvPc/view?usp=sharing" target="_blank"> Control Notes</a>
-~~~
-
 ## Notebooks
 
 ~~~
@@ -28,5 +24,5 @@ Notebook 2: <a href="https://mdpetters.github.io/cee200/notebooks/control/" targ
 ## Homework
 
 \exercise{
-[Homework #6](https://classroom.github.com/a/ndqhgkwn) 
+[Homework #6](https://classroom.github.com/a/2bQk8iML) 
 }
